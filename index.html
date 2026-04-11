@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[ О Н И К С ]</title>
+    <style>
+        @font-face {
+            font-family: 'VCRFont';
+            src: url('https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/VCR%20OSD%20Mono%20Cyr.ttf') format('truetype');
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body, html {
+            font-family: VCRFont, 'Courier New', monospace;
+            font-weight: bold;
+            min-height: 100%;
+            background-color: #0066ff;
+        }
+
+        ::-webkit-scrollbar { width: 15px; height: 15px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: white; }
+
+        .background-video {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .video-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .video-container video { width: 100%; height: auto; object-fit: cover; }
+
+        .page-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 10px 40px;
+            min-height: 100vh;
+        }
+
+        .site-block {
+            width: 35vw;
+            min-width: 300px;
+            max-width: 600px;
+        }
+
+        /* ===== ЗАГОЛОВОК ===== */
+        .site-title {
+            background-color: white;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+        .site-title span {
+            color: #0066ff;
+            font-family: VCRFont, 'Courier New', monospace;
+            font-weight: bold;
+            display: block;
+            white-space: nowrap;
+        }
+
+        /* ===== ПРОГРЕССБАР САЙТА ===== */
+        .site-progressbar {
+            height: 18px;
+            border: 2px solid white;
+            margin-bottom: 16px;
+            position: relative;
+            background-color: transparent;
+        }
+        .site-progressbar-fill {
+            height: 100%;
+            background-color: white;
+            width: 70%;
+        }
+        .site-progressbar-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: #0066ff;
+            font-family: VCRFont, 'Courier New', monospace;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        /* ===== ПЛЕЕР ===== */
+        .outer-block {
+            border: 3px solid white;
+            padding: 8px;
+            background-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .top-row {
+            display: flex;
+            width: 100%;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .cover-block {
+            width: 80px;
+            min-width: 80px;
+            height: 80px;
+            border: 3px solid white;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+        }
+
+        .tracklist-block {
+            flex: 1;
+            height: 80px;
+            border: 3px solid white;
+            overflow-y: auto;
+        }
+
+        .track-list { list-style: none; width: 100%; }
+
+        .track-list li {
+            cursor: pointer;
+            padding: 3px 6px;
+            color: white;
+            font-family: VCRFont, 'Courier New', monospace;
+            font-size: 0.82em;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .track-list li:hover { background-color: rgba(255,255,255,0.15); }
+        .track-name { flex-shrink: 0; }
+        .track-dots {
+            flex: 1;
+            overflow: hidden;
+            min-width: 10px;
+            background-image: radial-gradient(circle, white 1px, transparent 1px);
+            background-size: 7px 7px;
+            background-repeat: repeat-x;
+            background-position: center center;
+            height: 1em;
+            margin: 0 3px;
+        }
+        .track-duration { flex-shrink: 0; }
+
+        .player-progress-bar {
+            width: 100%;
+            height: 18px;
+            background-color: white;
+        }
+        .player-progress-fill {
+            height: 100%;
+            background-color: #0066ff;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            color: white;
+            font-family: VCRFont, 'Courier New', monospace;
+            font-size: 0.85em;
+            margin-top: 4px;
+        }
+
+        /* ===== БЛОК АРХИВА ===== */
+        .content-section {
+            width: 35vw;
+            min-width: 300px;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        /* Шапка: "АРХИВ" слева по центру линии + поиск справа */
+        .content-header {
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            margin-bottom: -3px; /* перекрываем верхнюю линию блока */
+        }
+
+        .menu-item {
+            padding: 4px 14px;
+            color: white;
+            text-decoration: none;
+            font-size: 1em;
+            font-family: VCRFont, 'Courier New', monospace;
+            cursor: pointer;
+            border: 3px solid white;
+            background-color: #0066ff;
+            white-space: nowrap;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+        .menu-item:hover, .menu-item.active {
+            background-color: white;
+            color: #0066ff;
+        }
+
+        .search-field {
+            flex: 1;
+            border: 3px solid white;
+            border-left: none;
+            background-color: transparent;
+            color: white;
+            font-family: VCRFont, 'Courier New', monospace;
+            font-size: 0.85em;
+            padding: 4px 8px;
+            outline: none;
+            line-height: 1;
+        }
+        .search-field::placeholder { color: rgba(255,255,255,0.5); }
+
+        /* Сам блок статей */
+        .articles-block {
+            border: 3px solid white;
+            padding: 8px;
+            max-height: 50vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Карточка статьи */
+        .article-card {
+            border: 3px solid white;
+        }
+
+        .article-header {
+            background-color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 8px;
+        }
+        .article-title {
+            color: #0066ff;
+            font-family: VCRFont, 'Courier New', monospace;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .article-date {
+            color: #0066ff;
+            font-family: VCRFont, 'Courier New', monospace;
+            font-size: 0.8em;
+            flex-shrink: 0;
+            margin-left: 10px;
+        }
+        .article-body {
+            padding: 8px;
+            color: white;
+            font-family: VCRFont, 'Courier New', monospace;
+            font-size: 0.82em;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 600px) {
+            .site-block, .content-section { width: 95vw; }
+            .cover-block { width: 60px; min-width: 60px; height: 60px; }
+            .tracklist-block { height: 60px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-container" id="video-container">
+        <video id="intro-video" autoplay muted playsinline>
+            <source src="Preloader.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <video id="background-video" class="background-video" autoplay muted loop playsinline>
+        <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/LogoRender_2.wmv" type="video/x-ms-wmv" id="video-source">
+    </video>
+
+    <div class="page-content">
+
+        <!-- Заголовок -->
+        <div class="site-block site-title">
+            <span id="site-title-text">СВЕРХЪЕСТЕСТВЕННЫЙОТБОР</span>
+        </div>
+
+        <!-- Прогрессбар -->
+        <div class="site-block site-progressbar">
+            <div class="site-progressbar-fill"></div>
+            <span class="site-progressbar-text">70%</span>
+        </div>
+
+        <!-- Плеер -->
+        <div class="site-block outer-block">
+            <div class="top-row">
+                <div class="cover-block" id="cover"></div>
+                <div class="tracklist-block">
+                    <ul class="track-list">
+                        <li class="player-item" data-src="Naga.wav" data-cover="Eye.png">
+                            <span class="track-name">Нага</span><span class="track-dots"></span><span class="track-duration">03:59</span>
+                        </li>
+                        <li class="player-item" data-src="track2.mp3" data-cover="cover2.jpg">
+                            <span class="track-name">Матриарх</span><span class="track-dots"></span><span class="track-duration">03:13</span>
+                        </li>
+                        <li class="player-item" data-src="track3.mp3" data-cover="cover3.jpg">
+                            <span class="track-name">У нас есть бомбы</span><span class="track-dots"></span><span class="track-duration">03:35</span>
+                        </li>
+                        <li class="player-item" data-src="track4.mp3" data-cover="cover4.jpg">
+                            <span class="track-name">Овод</span><span class="track-dots"></span><span class="track-duration">03:40</span>
+                        </li>
+                        <li class="player-item" data-src="Lisa.wav.mp3" data-cover="cover5.jpg">
+                            <span class="track-name">Лиза</span><span class="track-dots"></span><span class="track-duration">03:55</span>
+                        </li>
+                        <li class="player-item" data-src="track6.mp3" data-cover="cover6.jpg">
+                            <span class="track-name">Железный кулак</span><span class="track-dots"></span><span class="track-duration">03:28</span>
+                        </li>
+                        <li class="player-item" data-src="track7.mp3" data-cover="cover7.jpg">
+                            <span class="track-name">Пятница XIII</span><span class="track-dots"></span><span class="track-duration">03:14</span>
+                        </li>
+                        <li class="player-item" data-src="track8.mp3" data-cover="cover8.jpg">
+                            <span class="track-name">Бантик</span><span class="track-dots"></span><span class="track-duration">04:11</span>
+                        </li>
+                        <li class="player-item" data-src="track9.mp3" data-cover="cover9.jpg">
+                            <span class="track-name">Антигерой</span><span class="track-dots"></span><span class="track-duration">03:50</span>
+                        </li>
+                        <li class="player-item" data-src="track10.mp3" data-cover="cover10.jpg">
+                            <span class="track-name">Здесь был праздник</span><span class="track-dots"></span><span class="track-duration">03:33</span>
+                        </li>
+                        <li class="player-item" data-src="track11.mp3" data-cover="cover11.jpg">
+                            <span class="track-name">Траур</span><span class="track-dots"></span><span class="track-duration">04:39</span>
+                        </li>
+                        <li class="player-item" data-src="track12.mp3" data-cover="cover12.jpg">
+                            <span class="track-name">Зомби</span><span class="track-dots"></span><span class="track-duration">03:35</span>
+                        </li>
+                        <li class="player-item" data-src="track13.mp3" data-cover="cover13.jpg">
+                            <span class="track-name">Унесёт архангел</span><span class="track-dots"></span><span class="track-duration">03:28</span>
+                        </li>
+                        <li class="player-item" data-src="track14.mp3" data-cover="cover14.jpg">
+                            <span class="track-name">Царство небесное</span><span class="track-dots"></span><span class="track-duration">03:04</span>
+                        </li>
+                        <li class="player-item" data-src="track15.mp3" data-cover="cover15.jpg">
+                            <span class="track-name">Шипы и гвозди</span><span class="track-dots"></span><span class="track-duration">03:39</span>
+                        </li>
+                        <li class="player-item" data-src="track16.mp3" data-cover="cover16.jpg">
+                            <span class="track-name">Из страшилки</span><span class="track-dots"></span><span class="track-duration">03:21</span>
+                        </li>
+                        <li class="player-item" data-src="track17.mp3" data-cover="cover17.jpg">
+                            <span class="track-name">По частям</span><span class="track-dots"></span><span class="track-duration">04:06</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="player-progress-bar">
+                <div class="player-progress-fill" id="progress"></div>
+            </div>
+            <div class="time-info">
+                <span id="current-time">0:00</span>
+                <span id="duration">0:00</span>
+            </div>
+        </div>
+
+        <!-- Архив -->
+        <div class="content-section">
+            <!-- Шапка: АРХИВ слева + поиск справа, разрывают верхнюю линию -->
+            <div class="content-header">
+                <a href="#" class="menu-item active" id="item1" onclick="return false;">АРХИВ</a>
+                <input class="search-field" type="text" placeholder="ВВЕДИТЕ СЛОВО, ЧТОБЫ ВЫПОЛНИТЬ ПОИСК...">
+            </div>
+            <!-- Фид статей -->
+            <div class="articles-block">
+
+                <div class="article-card">
+                    <div class="article-header">
+                        <span class="article-title">НОВЫЙ МЕРЧ</span>
+                        <span class="article-date">14.02.2026</span>
+                    </div>
+                    <div class="article-body">
+                        Новая партия футболок уже на витрине магазина. Шелкография, прямая печать и немного вышивки. На этот раз с абсолютно новыми символами и цитатами. Первые 10 человек получают бонус к заказу.
+                    </div>
+                </div>
+
+                <div class="article-card">
+                    <div class="article-header">
+                        <span class="article-title">КОНЦЕРТ В МОСКВЕ</span>
+                        <span class="article-date">01.02.2026</span>
+                    </div>
+                    <div class="article-body">
+                        Выступление состоится 15 марта. Площадка — клуб Volta. Начало в 20:00. Билеты уже в продаже, количество ограничено.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <audio id="audio"></audio>
+
+    <script>
+        // Растягиваем текст заголовка на всю ширину
+        function stretchTitle() {
+            const wrap = document.querySelector('.site-title');
+            const span = document.getElementById('site-title-text');
+            span.style.transform = 'none';
+            const wrapW = wrap.clientWidth - 24;
+            const spanW = span.scrollWidth;
+            if (spanW > 0) {
+                span.style.transform = `scaleX(${wrapW / spanW})`;
+                span.style.transformOrigin = 'left center';
+            }
+        }
+        window.addEventListener('load', stretchTitle);
+        window.addEventListener('resize', stretchTitle);
+
+        // Прелоадер
+        window.addEventListener('load', function () {
+            const vc = document.getElementById('video-container');
+            const video = document.getElementById('intro-video');
+            video.addEventListener('ended', () => vc.style.display = 'none');
+            setTimeout(() => vc.style.display = 'none', 0);
+        });
+
+        // Фоновое видео по времени суток
+        function updateBackgroundVideo() {
+            const vs = document.getElementById('video-source');
+            const vEl = document.getElementById('background-video');
+            const h = new Date().getHours();
+            vs.src = (h >= 22 || h < 5)
+                ? 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/%D0%9A%D0%BE%D0%BC%D0%BF%D0%BE%D0%B7%D0%B8%D1%86%D0%B8%D1%8F%201_19.wmv'
+                : 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/LogoRender_2.wmv';
+            vEl.load();
+        }
+        window.onload = updateBackgroundVideo;
+
+        // Плеер
+        const audio = document.getElementById('audio');
+        const progressFill = document.getElementById('progress');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationEl = document.getElementById('duration');
+        const cover = document.getElementById('cover');
+
+        document.querySelectorAll('.player-item').forEach(track => {
+            track.addEventListener('click', function () {
+                const src = this.getAttribute('data-src');
+                cover.style.backgroundImage = `url(${this.getAttribute('data-cover')})`;
+                if (audio.src.includes(src)) {
+                    audio.paused ? audio.play() : audio.pause();
+                } else {
+                    audio.src = src;
+                    audio.play();
+                }
+            });
+        });
+
+        audio.addEventListener('timeupdate', function () {
+            const pct = (audio.currentTime / audio.duration) * 100 || 0;
+            progressFill.style.width = pct + '%';
+            currentTimeEl.textContent = fmt(audio.currentTime);
+            durationEl.textContent = fmt(audio.duration);
+        });
+
+        function fmt(s) {
+            if (!s || isNaN(s)) return '0:00';
+            const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+            return m + ':' + (sec < 10 ? '0' : '') + sec;
+        }
+    </script>
+
+</body>
+</html>
