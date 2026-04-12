@@ -355,6 +355,21 @@
         // Strip inline styles from article-body so CSS classes take effect
         document.querySelectorAll('.article-body').forEach(el => el.removeAttribute('style'));
 
+        // Load snippets from article files
+        document.querySelectorAll('.article[data-src]').forEach(article => {
+            const src = article.dataset.src;
+            const body = article.querySelector('.article-body');
+            if (!body || body.textContent.trim()) return; // уже есть текст
+            fetch(src)
+                .then(r => r.text())
+                .then(html => {
+                    const doc = new DOMParser().parseFromString(html, 'text/html');
+                    const firstP = doc.querySelector('p');
+                    if (firstP) body.textContent = firstP.textContent.trim();
+                })
+                .catch(() => {});
+        });
+
         // Archive search
         document.getElementById('archive-search').addEventListener('input', function () {
             const q = this.value.trim().toLowerCase();
