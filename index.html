@@ -5,64 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>[ О Н И К С ]</title>
     <style>
-        @font-face {
-            font-family: 'VCRFont';
-            src: url('VCRFont.ttf') format('truetype');
-        }
+        @font-face { font-family: 'VCRFont'; src: url('VCRFont.ttf') format('truetype'); }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body, html { height: 100%; font-family: VCRFont, sans-serif; background: #000; overflow: hidden; }
-
         ::-webkit-scrollbar { width: 15px; height: 15px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: white; border-radius: 0; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
 
-        .video-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; display: flex; justify-content: center; align-items: center; z-index: 9999;
-        }
-        .video-container video { width: 100%; height: 100%; object-fit: cover; }
-
-        .background-video {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: -1;
-        }
-
-        .content {
-            display: none; height: 100vh;
-            flex-direction: column; overflow: hidden;
+        @media (max-width: 768px) {
+            .outer-block { width: 90vw; }
+            .inner-block-1 { width: 20vw; }
+            .inner-block-2 { flex: 1; }
+            .inner-block-3 { width: calc(100% - 10px); }
+            .archive-container { width: 90vw !important; }
+            .header-img { width: 90% !important; }
+            .progress-container { width: 90% !important; }
         }
 
-        .outer-block {
-            width: 35vw; border: 3px solid white; padding: 10px;
-            display: flex; flex-direction: column; align-items: center; margin: 0 auto;
-        }
-        .top-row { display: flex; justify-content: space-between; width: 100%; }
-        .inner-block-1 {
-            width: 7vw; height: 14.4vh; border: 3px solid white;
-            background-size: cover; background-position: center; margin: 5px; flex-shrink: 0;
-        }
-        .inner-block-2 {
-            flex: 1; height: 14.4vh; border: 3px solid white;
-            overflow-y: scroll; margin: 5px; scroll-snap-type: y mandatory;
-        }
-        .inner-block-3 {
-            width: calc(100% - 10px); border: 3px solid white;
-            display: flex; flex-direction: column; margin: 5px;
-        }
-        .progress-bar { width: 100%; height: 12px; background: white; position: relative; cursor: pointer; }
-        .progress { height: 100%; background: #00f; width: 0%; }
-        .time-info { display: flex; justify-content: space-between; width: 100%; color: white; font-size: 0.9em; padding: 2px 0; }
+        .video-container { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; display:flex; justify-content:center; align-items:center; z-index:9999; }
+        .video-container video { width:100%; height:100%; object-fit:cover; }
+        .background-video { position:fixed; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-1; }
+        .content { display:none; height:100vh; flex-direction:column; overflow:hidden; }
 
-        .track-list { padding: 0; margin: 0; width: 100%; list-style: none; }
-        .track-list li {
-            cursor: pointer; padding: 3px 6px; color: white;
-            display: flex; scroll-snap-align: start; white-space: nowrap; overflow: hidden;
+        .outer-block { width:35vw; border:3px solid white; padding:10px; display:flex; flex-direction:column; align-items:center; margin:0 auto; }
+        .top-row { display:flex; justify-content:space-between; width:100%; }
+        .inner-block-1 { width:7vw; height:14.4vh; border:3px solid white; background-size:cover; background-position:center; margin:5px; flex-shrink:0; }
+        .inner-block-2 { flex:1; height:14.4vh; border:3px solid white; overflow-y:scroll; margin:5px; scroll-snap-type:y mandatory; }
+        .inner-block-3 { width:calc(100% - 10px); border:3px solid white; display:flex; flex-direction:column; margin:5px; }
+        .progress-bar { width:100%; height:12px; background:white; position:relative; cursor:pointer; }
+        .progress { height:100%; background:#00f; width:0%; }
+        .time-info { display:flex; justify-content:space-between; width:100%; color:white; font-size:0.9em; padding:2px 0; }
+
+        .track-list { padding:0; margin:0; width:100%; list-style:none; }
+        .track-list li { cursor:pointer; padding:3px 6px; color:white; display:flex; scroll-snap-align:start; white-space:nowrap; overflow:hidden; }
+        .track-list li .track-name { flex-shrink:0; }
+        .track-list li .track-dots { flex:1; overflow:hidden; text-align:right; letter-spacing:1px; min-width:0; }
+        .track-list li .track-time { flex-shrink:0; margin-left:4px; }
+        .track-list li:hover { background:rgba(255,255,255,0.2); }
+
+        @media (max-width: 768px) {
+            .outer-block { width: 90vw; }
+            .inner-block-1 { width: 20vw; height: 12vh; }
+            .inner-block-2 { height: 12vh; }
+            .inner-block-3 { width: calc(100% - 10px); }
+            div[style*="width:35%"] { width: 90% !important; }
+            div[style*="width:35vw"] { width: 90vw !important; }
+            img[width="35%"] { width: 90% !important; }
         }
-        .track-list li .track-name { flex-shrink: 0; }
-        .track-list li .track-dots { flex: 1; overflow: hidden; text-align: right; letter-spacing: 1px; min-width: 0; }
-        .track-list li .track-time { flex-shrink: 0; margin-left: 4px; }
-        .track-list li:hover { background: rgba(255,255,255,0.2); }
     </style>
 </head>
 <body>
@@ -78,10 +68,10 @@
     <div class="content" id="main-content">
 
         <div style="margin-top:2vh;text-align:center;flex-shrink:0;">
-            <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/9f5d3273509498fdb22b1c3e888dca08e4ac2558/HeaderSVG.svg" width="35%">
+            <img class="header-img" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/9f5d3273509498fdb22b1c3e888dca08e4ac2558/HeaderSVG.svg" width="35%">
         </div>
 
-        <div style="width:35%;margin:2vh auto 0;border:3px solid white;height:18px;position:relative;flex-shrink:0;">
+        <div class="progress-container" style="width:35%;margin:2vh auto 0;border:3px solid white;height:18px;position:relative;flex-shrink:0;">
             <div id="header-progress-fill" style="height:100%;background:white;width:70%;"></div>
             <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#000;font-family:VCRFont,sans-serif;font-size:15px;line-height:1;pointer-events:none;">70%</span>
         </div>
@@ -127,45 +117,50 @@
 
         <!-- Archive -->
         <div style="margin-top:2vh;flex:1;min-height:0;padding-bottom:5vh;display:flex;flex-direction:column;">
-            <div style="width:35vw;margin:0 auto;border:3px solid white;display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;">
-                <input type="text" placeholder="ВВЕДИТЕ СЛОВО ЧТОБЫ НАЧАТЬ ПОИСК В АРХИВЕ..." style="width:100%;background:transparent;border:none;border-bottom:3px solid white;outline:none;color:white;font-family:VCRFont,sans-serif;font-size:13px;padding:6px 10px;text-align:center;box-sizing:border-box;flex-shrink:0;">
-                <div class="no-scrollbar" style="flex:1;min-height:0;overflow-y:auto;padding:5px 15px;scrollbar-width:none;-ms-overflow-style:none;">
-                    <div style="width:100%;border:3px solid white;margin-bottom:5px;box-sizing:border-box;">
+            <div class="archive-container" style="width:35vw;margin:0 auto;border:3px solid white;display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;">
+                <input id="archive-search" type="text" placeholder="ВВЕДИТЕ СЛОВО ЧТОБЫ НАЧАТЬ ПОИСК В АРХИВЕ..." style="width:100%;background:transparent;border:none;border-bottom:3px solid white;outline:none;color:white;font-family:VCRFont,sans-serif;font-size:13px;padding:6px 10px;text-align:center;box-sizing:border-box;flex-shrink:0;">
+                <div class="no-scrollbar" id="articles-container" style="flex:1;min-height:0;overflow-y:auto;padding:5px 10px;scrollbar-width:none;-ms-overflow-style:none;">
+
+                    <div class="article" style="width:100%;border:3px solid white;margin-bottom:10px;box-sizing:border-box;">
                         <div style="background:white;display:flex;justify-content:space-between;padding:2px 8px;">
-                            <span style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Stay Home</span>
+                            <span class="article-title" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Stay Home</span>
                             <span style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">12.04.2026</span>
                         </div>
-                        <div style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">
+                        <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">
                             Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов.
                         </div>
                     </div>
-                    <div style="width:100%;border:3px solid white;margin-bottom:5px;box-sizing:border-box;">
+
+                    <div class="article" style="width:100%;border:3px solid white;margin-bottom:10px;box-sizing:border-box;">
                         <div style="background:white;display:flex;justify-content:space-between;padding:2px 8px;">
-                            <span style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Новый альбом</span>
+                            <span class="article-title" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Новый альбом</span>
                             <span style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">05.03.2026</span>
                         </div>
-                        <div style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">
+                        <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">
                             Работа над новым материалом продолжается. Записано уже более десяти треков, часть из которых войдёт в финальный релиз. Дата выхода пока не объявлена.
                         </div>
                     </div>
-                    <div style="width:100%;border:3px solid white;margin-bottom:5px;box-sizing:border-box;">
+
+                    <div class="article" style="width:100%;border:3px solid white;margin-bottom:10px;box-sizing:border-box;">
                         <div style="background:white;display:flex;justify-content:space-between;padding:2px 8px;">
-                            <span style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Концерт</span>
+                            <span class="article-title" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Концерт</span>
                             <span style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">18.02.2026</span>
                         </div>
-                        <div style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">
+                        <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">
                             Выступление прошло в клубе «Точка». Зал был заполнен до отказа. Сыграли весь старый материал плюс три новых трека. Спасибо всем кто пришёл.
                         </div>
                     </div>
-                    <div style="width:100%;border:3px solid white;margin-bottom:5px;box-sizing:border-box;">
+
+                    <div class="article" style="width:100%;border:3px solid white;margin-bottom:10px;box-sizing:border-box;">
                         <div style="background:white;display:flex;justify-content:space-between;padding:2px 8px;">
-                            <span style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Интервью</span>
+                            <span class="article-title" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Интервью</span>
                             <span style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">01.01.2026</span>
                         </div>
-                        <div style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">
+                        <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">
                             Большое интервью для журнала «Звук» опубликовано на их сайте. Говорили о процессе записи, текстах и планах на год.
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -195,6 +190,7 @@
             v.load();
         })();
 
+        // Scroll by 4 tracks
         const trackList = document.getElementById('track-list');
         const trackContainer = trackList.parentElement;
         trackContainer.addEventListener('wheel', function(e) {
@@ -203,6 +199,7 @@
             trackContainer.scrollTop += e.deltaY > 0 ? h * 4 : -h * 4;
         }, { passive: false });
 
+        // Audio player
         const audio = document.getElementById('audio');
         const progress = document.getElementById('progress');
         const currentTimeDisplay = document.getElementById('current-time');
@@ -215,10 +212,7 @@
                 cover.style.backgroundImage = `url(${this.dataset.cover})`;
                 if (audio.src.includes(src)) {
                     audio.paused ? audio.play() : audio.pause();
-                } else {
-                    audio.src = src;
-                    audio.play();
-                }
+                } else { audio.src = src; audio.play(); }
             });
         });
 
@@ -235,6 +229,16 @@
             const sec = Math.floor(s % 60);
             return `${m}:${sec < 10 ? '0' : ''}${sec}`;
         }
+
+        // Archive search
+        document.getElementById('archive-search').addEventListener('input', function () {
+            const q = this.value.trim().toLowerCase();
+            document.querySelectorAll('.article').forEach(article => {
+                const title = article.querySelector('.article-title').textContent.toLowerCase();
+                const body = article.querySelector('.article-body').textContent.toLowerCase();
+                article.style.display = (!q || title.includes(q) || body.includes(q)) ? '' : 'none';
+            });
+        });
     </script>
 
 </body>
