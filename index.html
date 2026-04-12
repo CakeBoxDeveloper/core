@@ -87,23 +87,13 @@
         #article-fs-body {
             flex: 1;
             overflow-y: auto;
-            padding: 10px;
-            color: white;
-            font-family: VCRFont, sans-serif;
-            font-size: 15px;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            max-height: none;
-            display: block;
-            -webkit-line-clamp: unset;
-            line-clamp: unset;
-            -webkit-box-orient: unset;
+            padding: 0;
+            scrollbar-width: thin;
+            scrollbar-color: white transparent;
         }
-        #article-fs-body::-webkit-scrollbar { display: none; }
-        #article-fs-body p { margin-bottom: 1em; }
-        #article-fs-body h2 { font-size: 15px; border-left: 3px solid white; padding-left: 8px; margin: 1.2em 0 0.6em; }
-        #article-fs-body img { width: 100%; border: 3px solid white; margin: 12px 0; display: block; }
-        #article-fs-body blockquote { border-left: 3px solid white; padding: 6px 10px; margin: 12px 0; opacity: 0.8; }
+        #article-fs-body::-webkit-scrollbar { width: 8px; }
+        #article-fs-body::-webkit-scrollbar-track { background: transparent; }
+        #article-fs-body::-webkit-scrollbar-thumb { background: white; border-radius: 0; }
 
         @media (max-width: 768px) {
             .outer-block { width: 90vw; }
@@ -284,6 +274,11 @@
         function toggleTheme() {
             showNoise(600);
             setTheme(!isDark);
+            // Синхронизируем тему с открытой статьёй
+            const iframe = document.getElementById('article-iframe');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage({ type: 'setTheme', dark: isDark }, '*');
+            }
         }
 
         setTheme(isDark);
@@ -390,19 +385,18 @@
                 articleFS.style.display = 'flex';
 
                 if (src) {
-                    fsBody.innerHTML = '<p style="opacity:0.5;padding:10px;">Загрузка...</p>';
-                    fetch(src)
-                        .then(r => r.text())
-                        .then(html => {
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(html, 'text/html');
-                            // Инжектим стили статьи + контент
-                            const styles = Array.from(doc.querySelectorAll('style')).map(s => s.outerHTML).join('');
-                            fsBody.innerHTML = styles + doc.body.innerHTML;
-                        })
-                        .catch(() => {
-                            fsBody.innerHTML = '<p style="padding:10px;">Не удалось загрузить статью.</p>';
-                        });
+                    fsBody.style.padding = '0';
+                    const iframe = document.createElement('iframe');
+                    iframe.src = src;
+                    iframe.style.cssText = 'width:100%;height:100%;border:none;display:block;background:transparent;';
+                    iframe.setAttribute('allowtransparency', 'true');
+                    iframe.id = 'article-iframe';
+                    fsBody.innerHTML = '';
+                    fsBody.appendChild(iframe);
+                    // Передаём текущую тему в iframe после загрузки
+                    iframe.addEventListener('load', function() {
+                        iframe.contentWindow.postMessage({ type: 'setTheme', dark: isDark }, '*');
+                    });
                 } else {
                     const fullText = article.dataset.full || article.querySelector('.article-body').textContent.trim();
                     fsBody.innerHTML = fullText.split('\n\n').map(p => `<p style="margin-bottom:1em;">${p.trim()}</p>`).join('');
