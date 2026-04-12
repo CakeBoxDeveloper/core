@@ -14,6 +14,14 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         #archive-search::placeholder { color: white; opacity: 1; }
 
+        /* Article snippet clamp */
+        .article-body {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
         .video-container { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; display:flex; justify-content:center; align-items:center; z-index:9999; }
         .video-container video { width:100%; height:100%; object-fit:cover; }
         .background-video { position:fixed; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-1; }
@@ -23,7 +31,7 @@
         .top-row { display:flex; justify-content:space-between; width:100%; }
         .inner-block-1 { width:7vw; height:14.4vh; border:3px solid white; background-size:cover; background-position:center; margin:5px; flex-shrink:0; }
         .inner-block-2 { flex:1; height:14.4vh; border:3px solid white; overflow-y:scroll; margin:5px; scroll-snap-type:y mandatory; }
-        .inner-block-3 { width:calc(100% - 10px); border:3px solid white; display:flex; flex-direction:column; margin:5px; }
+        .inner-block-3 { width:calc(100% - 10px); border:3px solid white; display:flex; flex-direction:column; margin:2px 5px 5px; }
         .progress-bar { width:100%; height:8px; background:white; position:relative; cursor:pointer; }
         .progress { height:calc(100% - 4px); margin:2px; background:#00f; width:0%; }
         .time-info { display:flex; justify-content:space-between; width:100%; color:white; font-size:0.9em; padding:2px 0; }
@@ -35,7 +43,15 @@
         .track-list li .track-time { flex-shrink:0; margin-left:4px; }
         .track-list li:hover { background:rgba(255,255,255,0.2); }
 
-        /* Article fullscreen */
+        /* Article body snippet (collapsed) */
+        .article-body {
+            max-height: 3.6em;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
         #article-fullscreen {
             display: none;
             position: absolute;
@@ -62,6 +78,11 @@
             font-size: 15px;
             scrollbar-width: none;
             -ms-overflow-style: none;
+            max-height: none;
+            display: block;
+            -webkit-line-clamp: unset;
+            line-clamp: unset;
+            -webkit-box-orient: unset;
         }
         #article-fs-body::-webkit-scrollbar { display: none; }
 
@@ -73,6 +94,7 @@
             .archive-container { width: 90vw !important; }
             .header-img { width: 90% !important; }
             .progress-container { width: 90% !important; }
+            .bottom-bar { width: 90vw !important; }
         }
     </style>
 </head>
@@ -127,7 +149,6 @@
                         </ul>
                     </div>
                 </div>
-                <br>
                 <div class="inner-block-3">
                     <div class="progress-bar"><div class="progress" id="progress"></div></div>
                     <div class="time-info">
@@ -163,7 +184,11 @@
                             <span class="article-date" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">12.04.2026</span>
                         </div>
                         <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">
-                            Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов.
+                            Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов.<br><br>
+                            С тех пор прошло больше пяти веков, но этот текст по-прежнему остаётся неизменным. Он был популяризирован в 1960-х годах с выходом листов Letraset, содержащих отрывки Lorem Ipsum, а в последнее время — благодаря программам компьютерной вёрстки, таким как Aldus PageMaker, в шаблонах которых используется Lorem Ipsum.<br><br>
+                            Многие думают, что Lorem Ipsum — это случайный набор слов, но это не так. Он восходит к произведению Цицерона «О пределах добра и зла», написанному в 45 году до нашей эры. Ричард МакКлинток, профессор латыни из колледжа Хампден-Сидни в Вирджинии, нашёл одно из наиболее неизвестных латинских слов — consectetur — в отрывке Lorem Ipsum и, изучив все упоминания этого слова в классической литературе, установил его неоспоримый источник.<br><br>
+                            Lorem Ipsum происходит из разделов 1.10.32 и 1.10.33 книги «О пределах добра и зла». Этот трактат, написанный в 45 году до н.э., является трактатом по теории этики, очень популярным в эпоху Возрождения. Первая строка Lorem Ipsum — «Lorem ipsum dolor sit amet» — происходит из строки в разделе 1.10.32.<br><br>
+                            Стандартный фрагмент Lorem Ipsum, используемый с 1500-х годов, воспроизведён ниже для тех, кто интересуется. Разделы 1.10.32 и 1.10.33 из «О пределах добра и зла» Цицерона также воспроизведены в точной оригинальной форме, сопровождаемые английскими версиями перевода 1914 года Х. Рэкхема.
                         </div>
                     </div>
 
@@ -173,7 +198,10 @@
                             <span class="article-date" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">05.03.2026</span>
                         </div>
                         <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">
-                            Работа над новым материалом продолжается. Записано уже более десяти треков, часть из которых войдёт в финальный релиз. Дата выхода пока не объявлена.
+                            Работа над новым материалом продолжается. Записано уже более десяти треков, часть из которых войдёт в финальный релиз. Дата выхода пока не объявлена.<br><br>
+                            Звучание нового альбома заметно отличается от предыдущего. Мы экспериментировали с живыми барабанами, добавили больше синтезаторных слоёв и переосмыслили подход к сведению. Каждый трек — отдельная история, но вместе они складываются в единое полотно.<br><br>
+                            Тексты на этот раз писались иначе — не за один присест, а постепенно, в течение нескольких месяцев. Некоторые строчки появились случайно, во время репетиций, другие вынашивались долго. Есть треки, которые переписывались по пять-шесть раз, прежде чем стали такими, какими должны быть.<br><br>
+                            Мы намеренно не торопимся. Лучше выпустить позже, но так, чтобы не было стыдно. Следите за обновлениями — скоро будет больше информации о дате релиза и первых синглах.
                         </div>
                     </div>
 
@@ -183,7 +211,11 @@
                             <span class="article-date" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">18.02.2026</span>
                         </div>
                         <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">
-                            Выступление прошло в клубе «Точка». Зал был заполнен до отказа. Сыграли весь старый материал плюс три новых трека. Спасибо всем кто пришёл.
+                            Выступление прошло в клубе «Точка». Зал был заполнен до отказа. Сыграли весь старый материал плюс три новых трека. Спасибо всем кто пришёл.<br><br>
+                            Сет-лист в этот раз был длиннее обычного — почти полтора часа без перерыва. Начали с «Наги», закончили «Зомби» на бис. Публика держалась до последнего, и это было видно — никто не уходил.<br><br>
+                            Звук в «Точке» всегда хороший, но в этот раз звукорежиссёр сделал особенно чисто. Бас чувствовался физически, синтезаторы не перекрывали вокал. Редкое удовольствие, когда всё складывается именно так, как задумано на репетициях.<br><br>
+                            После концерта долго общались с людьми у входа. Многие подходили, говорили что слушают давно, некоторые — что пришли впервые и теперь хотят ещё. Ради таких моментов всё это и делается.<br><br>
+                            Следующее выступление пока не анонсировано, но оно будет. Подписывайтесь, чтобы не пропустить.
                         </div>
                     </div>
 
@@ -193,7 +225,11 @@
                             <span class="article-date" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">01.01.2026</span>
                         </div>
                         <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">
-                            Большое интервью для журнала «Звук» опубликовано на их сайте. Говорили о процессе записи, текстах и планах на год.
+                            Большое интервью для журнала «Звук» опубликовано на их сайте. Говорили о процессе записи, текстах и планах на год.<br><br>
+                            Разговор получился неожиданно откровенным. Обсуждали не только музыку, но и то, откуда берутся образы в текстах, как устроен творческий процесс изнутри, почему некоторые треки так и не выходят в свет.<br><br>
+                            Отдельно говорили о влияниях — что слушали в детстве, что слушаем сейчас, и как это всё трансформируется во что-то своё. Оказалось, что у нас довольно неожиданные ориентиры для тех, кто знает нас только по музыке.<br><br>
+                            Журналист попросил назвать три альбома, которые изменили подход к написанию песен. Это оказалось сложнее, чем казалось — в итоге назвали пять, и всё равно чувствовали, что список неполный.<br><br>
+                            Интервью доступно на сайте журнала «Звук» в разделе «Разговоры». Там же — несколько фотографий со студии, которые мы раньше нигде не публиковали.
                         </div>
                     </div>
 
@@ -201,7 +237,7 @@
             </div>
         </div>
 
-        <div style="width:35vw;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:3px 0 1.5vh;flex-shrink:0;">
+        <div class="bottom-bar" style="width:35vw;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:3px 0 1.5vh;flex-shrink:0;white-space:nowrap;">
             <span id="theme-toggle" onclick="toggleTheme()" style="color:white;font-family:VCRFont,sans-serif;font-size:13px;cursor:pointer;">[ ПЕРЕКЛЮЧИТЬ РЕЖИМ ]</span>
             <img id="theme-icon" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/d757f416ff0d602a3bee9b24982ca2b1d7cd1f7b/Night.svg" style="width:20px;height:20px;filter:brightness(0) invert(1);">
         </div>
@@ -342,7 +378,11 @@
                 const body = this.closest('.article').querySelector('.article-body').innerHTML;
                 document.getElementById('article-fs-title').textContent = title;
                 document.getElementById('article-fs-date').textContent = date;
-                document.getElementById('article-fs-body').innerHTML = body;
+                const fsBody = document.getElementById('article-fs-body');
+                fsBody.innerHTML = body;
+                fsBody.style.webkitLineClamp = 'unset';
+                fsBody.style.display = 'block';
+                fsBody.style.overflow = 'auto';
                 articlesContainer.style.display = 'none';
                 archiveSearch.style.display = 'none';
                 articleFS.style.display = 'flex';
