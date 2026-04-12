@@ -230,7 +230,7 @@
 
         <div class="bottom-bar" style="width:35vw;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:10px 0 3.5vh;flex-shrink:0;white-space:nowrap;">
             <span id="theme-toggle" onclick="toggleTheme()" style="color:white;font-family:VCRFont,sans-serif;font-size:13px;cursor:pointer;">[ ПЕРЕКЛЮЧИТЬ РЕЖИМ ]</span>
-            <img id="theme-icon" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/d757f416ff0d602a3bee9b24982ca2b1d7cd1f7b/Night.svg" style="width:20px;height:20px;filter:brightness(0) invert(1);">
+            <img id="theme-icon" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/4afc3f693afda411900582d1698b4bbef11f2e9d/brightness.svg" style="width:20px;height:20px;filter:brightness(0) invert(1);cursor:pointer;" onclick="toggleTheme()">
         </div>
 
     </div>
@@ -266,9 +266,8 @@
             document.querySelector('.progress').style.background = dark ? '#000' : '#0000cc';
             const pct70 = document.querySelector('#header-progress-fill')?.nextElementSibling;
             if (pct70) pct70.style.color = dark ? '#000' : '#0000cc';
-            document.getElementById('theme-icon').src = dark
-                ? 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/d757f416ff0d602a3bee9b24982ca2b1d7cd1f7b/Night.svg'
-                : 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/d757f416ff0d602a3bee9b24982ca2b1d7cd1f7b/Day.svg';
+            const icon = document.getElementById('theme-icon');
+            icon.style.transform = dark ? 'scaleX(-1)' : 'scaleX(1)';
         }
 
         function toggleTheme() {
