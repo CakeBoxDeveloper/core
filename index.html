@@ -63,7 +63,9 @@
         </video>
     </div>
 
-    <video id="background-video" class="background-video" autoplay muted loop playsinline></video>
+    <video id="background-video" class="background-video" autoplay muted loop playsinline>
+        <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Dark.webm" type="video/webm">
+    </video>
 
     <div class="content" id="main-content">
 
@@ -178,17 +180,6 @@
         }
         introVideo.addEventListener('ended', showContent);
         setTimeout(showContent, 5000);
-
-        (function () {
-            const hour = new Date().getHours();
-            const src = (hour >= 22 || hour < 5)
-                ? 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Dark.webm'
-                : 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Light.webm';
-            const v = document.getElementById('background-video');
-            v.src = src; v.muted = true; v.loop = true;
-            v.addEventListener('canplaythrough', () => v.play(), { once: true });
-            v.load();
-        })();
 
         // Scroll by 4 tracks
         const trackList = document.getElementById('track-list');
