@@ -14,12 +14,37 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         #archive-search::placeholder { color: white; opacity: 1; }
 
-        /* Article snippet clamp */
+        /* Article snippet */
         .article-body {
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
             overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            line-clamp: 4;
+            -webkit-box-orient: vertical;
+            font-size: 13px;
+            padding: 8px;
+            line-height: 1.5em;
+            color: white;
+            font-family: VCRFont, sans-serif;
+        }
+        .article {
+            width: 100%;
+            border: 3px solid white;
+            margin-bottom: 8px;
+            box-sizing: border-box;
+        }
+        .article-header {
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 8px;
+            cursor: pointer;
+        }
+        .article-header:hover { opacity: 0.85; }
+        .article-title, .article-date {
+            font-family: VCRFont, sans-serif;
+            font-size: 13px;
+            color: #000;
         }
 
         .video-container { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; display:flex; justify-content:center; align-items:center; z-index:9999; }
@@ -42,16 +67,6 @@
         .track-list li .track-dots { flex:1; overflow:hidden; text-align:right; letter-spacing:1px; min-width:0; }
         .track-list li .track-time { flex-shrink:0; margin-left:4px; }
         .track-list li:hover { background:rgba(255,255,255,0.2); }
-
-        /* Article body snippet (collapsed) */
-        .article-body {
-            max-height: 3.6em;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            line-clamp: 3;
-            -webkit-box-orient: vertical;
-        }
         #article-fullscreen {
             display: none;
             position: absolute;
@@ -85,6 +100,10 @@
             -webkit-box-orient: unset;
         }
         #article-fs-body::-webkit-scrollbar { display: none; }
+        #article-fs-body p { margin-bottom: 1em; }
+        #article-fs-body h2 { font-size: 15px; border-left: 3px solid white; padding-left: 8px; margin: 1.2em 0 0.6em; }
+        #article-fs-body img { width: 100%; border: 3px solid white; margin: 12px 0; display: block; }
+        #article-fs-body blockquote { border-left: 3px solid white; padding: 6px 10px; margin: 12px 0; opacity: 0.8; }
 
         @media (max-width: 768px) {
             .outer-block { width: 90vw; }
@@ -162,8 +181,8 @@
         <audio id="audio" style="display:none;"></audio>
 
         <!-- Archive -->
-        <div style="margin-top:2vh;flex:1;min-height:0;padding-bottom:1.5vh;display:flex;flex-direction:column;">
-            <div class="archive-container" style="width:35vw;margin:0 auto;border:3px solid white;display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;position:relative;">
+        <div style="margin-top:2vh;flex:1;min-height:0;padding-bottom:0;display:flex;flex-direction:column;overflow:hidden;">
+            <div class="archive-container" style="width:35vw;margin:0 auto;border:3px solid white;display:flex;flex-direction:column;min-height:0;overflow:hidden;position:relative;flex:1;">
 
                 <!-- Fullscreen article overlay -->
                 <div id="article-fullscreen">
@@ -178,66 +197,48 @@
 
                 <div class="no-scrollbar" id="articles-container" style="flex:1;min-height:0;overflow-y:auto;padding:5px 10px;scrollbar-width:none;-ms-overflow-style:none;">
 
-                    <div class="article" style="width:100%;border:3px solid white;margin-bottom:10px;box-sizing:border-box;">
+                    <div class="article" style="width:100%;border:3px solid white;margin-bottom:10px;box-sizing:border-box;"
+                         data-src="articles/stay-home.html"
+                         data-full="Lorem Ipsum - это текст-&quot;рыба&quot;, часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной &quot;рыбой&quot; для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов.&#10;&#10;С тех пор прошло больше пяти веков, но этот текст по-прежнему остаётся неизменным. Он был популяризирован в 1960-х годах с выходом листов Letraset, содержащих отрывки Lorem Ipsum, а в последнее время — благодаря программам компьютерной вёрстки, таким как Aldus PageMaker, в шаблонах которых используется Lorem Ipsum.&#10;&#10;Многие думают, что Lorem Ipsum — это случайный набор слов, но это не так. Он восходит к произведению Цицерона «О пределах добра и зла», написанному в 45 году до нашей эры.&#10;&#10;Lorem Ipsum происходит из разделов 1.10.32 и 1.10.33 книги «О пределах добра и зла». Этот трактат, написанный в 45 году до н.э., является трактатом по теории этики, очень популярным в эпоху Возрождения.&#10;&#10;Стандартный фрагмент Lorem Ipsum, используемый с 1500-х годов, воспроизведён ниже для тех, кто интересуется.">
                         <div class="article-header" style="background:white;display:flex;justify-content:space-between;padding:2px 8px;cursor:pointer;">
                             <span class="article-title" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Stay Home</span>
                             <span class="article-date" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">12.04.2026</span>
                         </div>
-                        <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">
-                            Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов.<br><br>
-                            С тех пор прошло больше пяти веков, но этот текст по-прежнему остаётся неизменным. Он был популяризирован в 1960-х годах с выходом листов Letraset, содержащих отрывки Lorem Ipsum, а в последнее время — благодаря программам компьютерной вёрстки, таким как Aldus PageMaker, в шаблонах которых используется Lorem Ipsum.<br><br>
-                            Многие думают, что Lorem Ipsum — это случайный набор слов, но это не так. Он восходит к произведению Цицерона «О пределах добра и зла», написанному в 45 году до нашей эры. Ричард МакКлинток, профессор латыни из колледжа Хампден-Сидни в Вирджинии, нашёл одно из наиболее неизвестных латинских слов — consectetur — в отрывке Lorem Ipsum и, изучив все упоминания этого слова в классической литературе, установил его неоспоримый источник.<br><br>
-                            Lorem Ipsum происходит из разделов 1.10.32 и 1.10.33 книги «О пределах добра и зла». Этот трактат, написанный в 45 году до н.э., является трактатом по теории этики, очень популярным в эпоху Возрождения. Первая строка Lorem Ipsum — «Lorem ipsum dolor sit amet» — происходит из строки в разделе 1.10.32.<br><br>
-                            Стандартный фрагмент Lorem Ipsum, используемый с 1500-х годов, воспроизведён ниже для тех, кто интересуется. Разделы 1.10.32 и 1.10.33 из «О пределах добра и зла» Цицерона также воспроизведены в точной оригинальной форме, сопровождаемые английскими версиями перевода 1914 года Х. Рэкхема.
-                        </div>
+                        <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов.</div>
                     </div>
 
-                    <div class="article" style="width:100%;border:3px solid white;margin-bottom:10px;box-sizing:border-box;">
+                    <div class="article" style="width:100%;border:3px solid white;margin-bottom:10px;box-sizing:border-box;"
+                         data-full="Работа над новым материалом продолжается. Записано уже более десяти треков, часть из которых войдёт в финальный релиз. Дата выхода пока не объявлена.&#10;&#10;Звучание нового альбома заметно отличается от предыдущего. Мы экспериментировали с живыми барабанами, добавили больше синтезаторных слоёв и переосмыслили подход к сведению. Каждый трек — отдельная история, но вместе они складываются в единое полотно.&#10;&#10;Тексты на этот раз писались иначе — не за один присест, а постепенно, в течение нескольких месяцев. Некоторые строчки появились случайно, во время репетиций, другие вынашивались долго.&#10;&#10;Мы намеренно не торопимся. Лучше выпустить позже, но так, чтобы не было стыдно. Следите за обновлениями — скоро будет больше информации о дате релиза и первых синглах.">
                         <div class="article-header" style="background:white;display:flex;justify-content:space-between;padding:2px 8px;cursor:pointer;">
                             <span class="article-title" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Новый альбом</span>
                             <span class="article-date" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">05.03.2026</span>
                         </div>
-                        <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">
-                            Работа над новым материалом продолжается. Записано уже более десяти треков, часть из которых войдёт в финальный релиз. Дата выхода пока не объявлена.<br><br>
-                            Звучание нового альбома заметно отличается от предыдущего. Мы экспериментировали с живыми барабанами, добавили больше синтезаторных слоёв и переосмыслили подход к сведению. Каждый трек — отдельная история, но вместе они складываются в единое полотно.<br><br>
-                            Тексты на этот раз писались иначе — не за один присест, а постепенно, в течение нескольких месяцев. Некоторые строчки появились случайно, во время репетиций, другие вынашивались долго. Есть треки, которые переписывались по пять-шесть раз, прежде чем стали такими, какими должны быть.<br><br>
-                            Мы намеренно не торопимся. Лучше выпустить позже, но так, чтобы не было стыдно. Следите за обновлениями — скоро будет больше информации о дате релиза и первых синглах.
-                        </div>
+                        <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">Работа над новым материалом продолжается. Записано уже более десяти треков, часть из которых войдёт в финальный релиз. Дата выхода пока не объявлена.</div>
                     </div>
 
-                    <div class="article" style="width:100%;border:3px solid white;margin-bottom:10px;box-sizing:border-box;">
+                    <div class="article" style="width:100%;border:3px solid white;margin-bottom:10px;box-sizing:border-box;"
+                         data-full="Выступление прошло в клубе «Точка». Зал был заполнен до отказа. Сыграли весь старый материал плюс три новых трека. Спасибо всем кто пришёл.&#10;&#10;Сет-лист в этот раз был длиннее обычного — почти полтора часа без перерыва. Начали с «Наги», закончили «Зомби» на бис. Публика держалась до последнего, и это было видно — никто не уходил.&#10;&#10;Звук в «Точке» всегда хороший, но в этот раз звукорежиссёр сделал особенно чисто. Бас чувствовался физически, синтезаторы не перекрывали вокал.&#10;&#10;После концерта долго общались с людьми у входа. Многие подходили, говорили что слушают давно, некоторые — что пришли впервые и теперь хотят ещё.&#10;&#10;Следующее выступление пока не анонсировано, но оно будет. Подписывайтесь, чтобы не пропустить.">
                         <div class="article-header" style="background:white;display:flex;justify-content:space-between;padding:2px 8px;cursor:pointer;">
                             <span class="article-title" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Концерт</span>
                             <span class="article-date" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">18.02.2026</span>
                         </div>
-                        <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">
-                            Выступление прошло в клубе «Точка». Зал был заполнен до отказа. Сыграли весь старый материал плюс три новых трека. Спасибо всем кто пришёл.<br><br>
-                            Сет-лист в этот раз был длиннее обычного — почти полтора часа без перерыва. Начали с «Наги», закончили «Зомби» на бис. Публика держалась до последнего, и это было видно — никто не уходил.<br><br>
-                            Звук в «Точке» всегда хороший, но в этот раз звукорежиссёр сделал особенно чисто. Бас чувствовался физически, синтезаторы не перекрывали вокал. Редкое удовольствие, когда всё складывается именно так, как задумано на репетициях.<br><br>
-                            После концерта долго общались с людьми у входа. Многие подходили, говорили что слушают давно, некоторые — что пришли впервые и теперь хотят ещё. Ради таких моментов всё это и делается.<br><br>
-                            Следующее выступление пока не анонсировано, но оно будет. Подписывайтесь, чтобы не пропустить.
-                        </div>
+                        <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">Выступление прошло в клубе «Точка». Зал был заполнен до отказа. Сыграли весь старый материал плюс три новых трека. Спасибо всем кто пришёл.</div>
                     </div>
 
-                    <div class="article" style="width:100%;border:3px solid white;margin-bottom:10px;box-sizing:border-box;">
+                    <div class="article" style="width:100%;border:3px solid white;margin-bottom:10px;box-sizing:border-box;"
+                         data-full="Большое интервью для журнала «Звук» опубликовано на их сайте. Говорили о процессе записи, текстах и планах на год.&#10;&#10;Разговор получился неожиданно откровенным. Обсуждали не только музыку, но и то, откуда берутся образы в текстах, как устроен творческий процесс изнутри, почему некоторые треки так и не выходят в свет.&#10;&#10;Отдельно говорили о влияниях — что слушали в детстве, что слушаем сейчас, и как это всё трансформируется во что-то своё.&#10;&#10;Журналист попросил назвать три альбома, которые изменили подход к написанию песен. Это оказалось сложнее, чем казалось — в итоге назвали пять.&#10;&#10;Интервью доступно на сайте журнала «Звук» в разделе «Разговоры». Там же — несколько фотографий со студии, которые мы раньше нигде не публиковали.">
                         <div class="article-header" style="background:white;display:flex;justify-content:space-between;padding:2px 8px;cursor:pointer;">
                             <span class="article-title" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Интервью</span>
                             <span class="article-date" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">01.01.2026</span>
                         </div>
-                        <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">
-                            Большое интервью для журнала «Звук» опубликовано на их сайте. Говорили о процессе записи, текстах и планах на год.<br><br>
-                            Разговор получился неожиданно откровенным. Обсуждали не только музыку, но и то, откуда берутся образы в текстах, как устроен творческий процесс изнутри, почему некоторые треки так и не выходят в свет.<br><br>
-                            Отдельно говорили о влияниях — что слушали в детстве, что слушаем сейчас, и как это всё трансформируется во что-то своё. Оказалось, что у нас довольно неожиданные ориентиры для тех, кто знает нас только по музыке.<br><br>
-                            Журналист попросил назвать три альбома, которые изменили подход к написанию песен. Это оказалось сложнее, чем казалось — в итоге назвали пять, и всё равно чувствовали, что список неполный.<br><br>
-                            Интервью доступно на сайте журнала «Звук» в разделе «Разговоры». Там же — несколько фотографий со студии, которые мы раньше нигде не публиковали.
-                        </div>
+                        <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">Большое интервью для журнала «Звук» опубликовано на их сайте. Говорили о процессе записи, текстах и планах на год.</div>
                     </div>
 
                 </div>
             </div>
         </div>
 
-        <div class="bottom-bar" style="width:35vw;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:3px 0 1.5vh;flex-shrink:0;white-space:nowrap;">
+        <div class="bottom-bar" style="width:35vw;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:10px 0 3.5vh;flex-shrink:0;white-space:nowrap;">
             <span id="theme-toggle" onclick="toggleTheme()" style="color:white;font-family:VCRFont,sans-serif;font-size:13px;cursor:pointer;">[ ПЕРЕКЛЮЧИТЬ РЕЖИМ ]</span>
             <img id="theme-icon" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/d757f416ff0d602a3bee9b24982ca2b1d7cd1f7b/Night.svg" style="width:20px;height:20px;filter:brightness(0) invert(1);">
         </div>
@@ -356,6 +357,9 @@
             }, duration || 600);
         }
 
+        // Strip inline styles from article-body so CSS classes take effect
+        document.querySelectorAll('.article-body').forEach(el => el.removeAttribute('style'));
+
         // Archive search
         document.getElementById('archive-search').addEventListener('input', function () {
             const q = this.value.trim().toLowerCase();
@@ -373,19 +377,36 @@
 
         document.querySelectorAll('.article-header').forEach(header => {
             header.addEventListener('click', function () {
+                const article = this.closest('.article');
                 const title = this.querySelector('.article-title').textContent;
                 const date = this.querySelector('.article-date').textContent;
-                const body = this.closest('.article').querySelector('.article-body').innerHTML;
+                const src = article.dataset.src;
+                const fsBody = document.getElementById('article-fs-body');
+
                 document.getElementById('article-fs-title').textContent = title;
                 document.getElementById('article-fs-date').textContent = date;
-                const fsBody = document.getElementById('article-fs-body');
-                fsBody.innerHTML = body;
-                fsBody.style.webkitLineClamp = 'unset';
-                fsBody.style.display = 'block';
-                fsBody.style.overflow = 'auto';
                 articlesContainer.style.display = 'none';
                 archiveSearch.style.display = 'none';
                 articleFS.style.display = 'flex';
+
+                if (src) {
+                    fsBody.innerHTML = '<p style="opacity:0.5;padding:10px;">Загрузка...</p>';
+                    fetch(src)
+                        .then(r => r.text())
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            // Инжектим стили статьи + контент
+                            const styles = Array.from(doc.querySelectorAll('style')).map(s => s.outerHTML).join('');
+                            fsBody.innerHTML = styles + doc.body.innerHTML;
+                        })
+                        .catch(() => {
+                            fsBody.innerHTML = '<p style="padding:10px;">Не удалось загрузить статью.</p>';
+                        });
+                } else {
+                    const fullText = article.dataset.full || article.querySelector('.article-body').textContent.trim();
+                    fsBody.innerHTML = fullText.split('\n\n').map(p => `<p style="margin-bottom:1em;">${p.trim()}</p>`).join('');
+                }
             });
         });
 
