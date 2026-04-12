@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stay Home</title>
+    <style>
+        @font-face { font-family: 'VCRFont'; src: url('../VCRFont.ttf') format('truetype'); }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root { --fg: #fff; }
+
+        html, body { background: transparent; }
+
+        body {
+            font-family: VCRFont, sans-serif;
+            color: var(--fg);
+            padding: 16px 20px 32px;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--fg); border-radius: 0; }
+
+        p { font-size: 14px; line-height: 1.8em; margin-bottom: 1.2em; }
+
+        h2 { font-size: 14px; font-weight: bold; margin: 20px 0 10px; }
+
+        ul { list-style: none; margin-bottom: 1.2em; padding-left: 4px; }
+        ul li { font-size: 14px; line-height: 1.8em; padding-left: 18px; position: relative; }
+        ul li::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0.55em;
+            width: 8px; height: 8px;
+            background: var(--fg);
+        }
+
+        img {
+            width: 70%;
+            border: 1.5px solid var(--fg);
+            display: block;
+            margin: 16px 0 4px;
+            mix-blend-mode: screen;
+        }
+
+        .caption {
+            font-size: 11px;
+            color: var(--fg);
+            opacity: 1;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <p>Этот трек писался в три часа ночи, когда за окном шёл дождь и никуда не хотелось идти. Именно из этого состояния — тихого, почти неподвижного — и вырос весь материал. Не из боли, не из злости. Из тишины.</p>
+
+    <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Planet.png" alt="Stay Home">
+    <p class="caption">обложка трека, апрель 2026</p>
+
+    <h2>О тексте</h2>
+
+    <p>Текст писался отдельно от музыки, что для нас нетипично. Обычно слова и звук идут вместе, но здесь сначала появились строчки — почти дневниковые, без попытки сделать их «песенными». Потом уже под них подстраивалась мелодия.</p>
+
+    <p>Финальная версия текста отличается от первого наброска примерно на семьдесят процентов. Осталась только одна строфа из оригинала — та, что про свет в соседнем окне.</p>
+
+    <h2>Запись</h2>
+
+    <ul>
+        <li>Вокал — один дубль, без переписи</li>
+        <li>Барабаны — живые, через две стены</li>
+        <li>Бас — добавлен за день до финального сведения</li>
+        <li>Сведение — сами, без стороннего звукорежиссёра</li>
+    </ul>
+
+    <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Planet.png" alt="Студия">
+    <p class="caption">студия, февраль 2026</p>
+
+    <p>Запись заняла два дня. Мастеринг отдали на сторону с чёткими инструкциями: не трогать динамику. Трек вышел без анонса — просто появился на всех платформах в полночь.</p>
+
+    <script>
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'setTheme') {
+                document.documentElement.style.setProperty('--fg', '#fff');
+            }
+        });
+    </script>
+</body>
+</html>
