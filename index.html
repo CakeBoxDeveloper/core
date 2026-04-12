@@ -302,24 +302,24 @@
 
         <audio id="audio" style="display:none;"></audio>
 
-        <div style="margin-top:2vh;">
-        <!-- Search -->
-        <div style="width:35vw;margin:0 auto;border:3px solid white;">
-            <input type="text" placeholder="ВВЕДИТЕ СЛОВО ЧТОБЫ НАЧАТЬ ПОИСК В АРХИВЕ..." style="width:100%;background:transparent;border:none;outline:none;color:white;font-family:VCRFont,sans-serif;font-size:13px;padding:6px 10px;text-align:center;box-sizing:border-box;">
-        </div>
-        </div>
-
-        <!-- News text block -->
-        <div style="width:calc(35vw - 10px);margin:0 auto;border:3px solid white;flex:1;display:flex;flex-direction:column;min-height:0;box-sizing:border-box;">
-            <!-- Header bar -->
-            <div style="background:white;display:flex;justify-content:space-between;align-items:center;padding:2px 8px;flex-shrink:0;">
-                <span style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Stay Home</span>
-                <span style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">12.04.2026</span>
+        <div style="margin-top:2vh;flex:1;display:flex;flex-direction:column;min-height:0;">
+        <!-- Archive container -->
+        <div style="width:35vw;margin:0 auto;border:3px solid white;display:flex;flex-direction:column;flex:1;min-height:0;">
+            <!-- Search row -->
+            <div style="border-bottom:3px solid white;flex-shrink:0;">
+                <input type="text" placeholder="ВВЕДИТЕ СЛОВО ЧТОБЫ НАЧАТЬ ПОИСК В АРХИВЕ..." style="width:100%;background:transparent;border:none;outline:none;color:white;font-family:VCRFont,sans-serif;font-size:13px;padding:6px 10px;text-align:center;box-sizing:border-box;">
             </div>
-            <!-- Article text -->
-            <div style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;overflow-y:auto;flex:1;">
-                Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов. Lorem Ipsum не только успешно пережил без заметных изменений пять веков, но и перешагнул в электронный дизайн.
+            <!-- Article block -->
+            <div style="width:calc(100% - 10px);margin:5px auto;border:3px solid white;flex:1;display:flex;flex-direction:column;min-height:0;box-sizing:border-box;">
+                <div style="background:white;display:flex;justify-content:space-between;align-items:center;padding:2px 8px;flex-shrink:0;">
+                    <span style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Stay Home</span>
+                    <span style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">12.04.2026</span>
+                </div>
+                <div style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;overflow-y:auto;flex:1;">
+                    Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов. Lorem Ipsum не только успешно пережил без заметных изменений пять веков, но и перешагнул в электронный дизайн.
+                </div>
             </div>
+        </div>
         </div>
 
         <div style="height:2vh;flex-shrink:0;"></div>
