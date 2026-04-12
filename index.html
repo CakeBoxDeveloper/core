@@ -90,21 +90,22 @@
             background-size: cover;
             background-position: center;
             margin: 5px;
+            flex-shrink: 0;
         }
 
         .inner-block-2 {
-            width: 25vw;
-            height: 14.45vh;
+            flex: 1;
+            height: 14.4vh;
             border: 3px solid white;
-            overflow-y: auto;
+            overflow-y: scroll;
             color: white;
             padding: 0;
             margin: 5px;
+            scroll-snap-type: y mandatory;
         }
 
         .inner-block-3 {
-            width: 32.3vw;
-            height: 3vh;
+            width: calc(100% - 10px);
             border: 3px solid white;
             display: flex;
             flex-direction: column;
@@ -115,9 +116,10 @@
 
         .progress-bar {
             width: 100%;
-            height: 100%;
+            height: 12px;
             background-color: white;
             position: relative;
+            cursor: pointer;
         }
 
         .progress {
@@ -132,6 +134,7 @@
             width: 100%;
             color: white;
             font-size: 0.9em;
+            padding: 2px 0;
         }
 
         .track-list {
@@ -143,8 +146,31 @@
 
         .track-list li {
             cursor: pointer;
-            padding: 5px;
+            padding: 3px 6px;
             color: white;
+            display: flex;
+            justify-content: space-between;
+            scroll-snap-align: start;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .track-list li .track-name {
+            overflow: hidden;
+            text-overflow: clip;
+            flex: 1;
+        }
+
+        .track-list li .track-dots {
+            flex: 1;
+            overflow: hidden;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .track-list li .track-time {
+            flex-shrink: 0;
+            margin-left: 4px;
         }
 
         .track-list li:hover {
@@ -226,36 +252,37 @@
     <!-- Main content -->
     <div class="content" id="main-content">
 
-        <br><br>
+        <div style="margin-top:2vh;text-align:center;">
+            <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/9f5d3273509498fdb22b1c3e888dca08e4ac2558/HeaderSVG.svg" width="35%">
+        </div>
+        <div style="width:35%;margin:2vh auto 0;border:3px solid white;height:18px;position:relative;">
+            <div id="header-progress-fill" style="height:100%;background:white;width:70%;"></div>
+        </div>
 
-        <center><img src="HeaderSVG.svg" width="35%"></center>
-        <br>
-        <center><img src="Progressbar.svg" width="35%"></center>
-        <br>
-
+        <div style="margin-top:2vh;">
         <!-- Player -->
         <div class="outer-block">
             <div class="top-row">
                 <div class="inner-block-1" id="cover"></div>
                 <div class="inner-block-2">
                     <ul class="track-list" id="track-list">
-                        <li class="player-item" data-src="Naga.wav" data-cover="Eye.png">Нага.............................03:59</li>
-                        <li class="player-item" data-src="track2.mp3" data-cover="cover2.jpg">Матриарх.........................03:13</li>
-                        <li class="player-item" data-src="track3.mp3" data-cover="cover3.jpg">У нас есть бомбы................03:35</li>
-                        <li class="player-item" data-src="track4.mp3" data-cover="cover4.jpg">Овод............................03:40</li>
-                        <li class="player-item" data-src="Lisa.wav" data-cover="cover5.jpg">Лиза............................03:55</li>
-                        <li class="player-item" data-src="track6.mp3" data-cover="cover6.jpg">Железный кулак.................03:28</li>
-                        <li class="player-item" data-src="track7.mp3" data-cover="cover7.jpg">Пятница XIII....................03:14</li>
-                        <li class="player-item" data-src="track8.mp3" data-cover="cover8.jpg">Бантик..........................04:11</li>
-                        <li class="player-item" data-src="track9.mp3" data-cover="cover9.jpg">Антигерой.......................03:50</li>
-                        <li class="player-item" data-src="track10.mp3" data-cover="cover10.jpg">Здесь был праздник.............03:33</li>
-                        <li class="player-item" data-src="track11.mp3" data-cover="cover11.jpg">Траур...........................04:39</li>
-                        <li class="player-item" data-src="track12.mp3" data-cover="cover12.jpg">Зомби...........................03:35</li>
-                        <li class="player-item" data-src="track13.mp3" data-cover="cover13.jpg">Унесёт архангел.................03:28</li>
-                        <li class="player-item" data-src="track14.mp3" data-cover="cover14.jpg">Царство небесное................03:04</li>
-                        <li class="player-item" data-src="track15.mp3" data-cover="cover15.jpg">Шипы и гвозди...................03:39</li>
-                        <li class="player-item" data-src="track16.mp3" data-cover="cover16.jpg">Из страшилки....................03:21</li>
-                        <li class="player-item" data-src="track17.mp3" data-cover="cover17.jpg">По частям.......................04:06</li>
+                        <li class="player-item" data-src="Naga.wav" data-cover="Eye.png"><span class="track-name">Нага</span><span class="track-dots">............................................</span><span class="track-time">03:59</span></li>
+                        <li class="player-item" data-src="track2.mp3" data-cover="cover2.jpg"><span class="track-name">Матриарх</span><span class="track-dots">............................................</span><span class="track-time">03:13</span></li>
+                        <li class="player-item" data-src="track3.mp3" data-cover="cover3.jpg"><span class="track-name">У нас есть бомбы</span><span class="track-dots">............................................</span><span class="track-time">03:35</span></li>
+                        <li class="player-item" data-src="track4.mp3" data-cover="cover4.jpg"><span class="track-name">Овод</span><span class="track-dots">............................................</span><span class="track-time">03:40</span></li>
+                        <li class="player-item" data-src="Lisa.wav" data-cover="cover5.jpg"><span class="track-name">Лиза</span><span class="track-dots">............................................</span><span class="track-time">03:55</span></li>
+                        <li class="player-item" data-src="track6.mp3" data-cover="cover6.jpg"><span class="track-name">Железный кулак</span><span class="track-dots">............................................</span><span class="track-time">03:28</span></li>
+                        <li class="player-item" data-src="track7.mp3" data-cover="cover7.jpg"><span class="track-name">Пятница XIII</span><span class="track-dots">............................................</span><span class="track-time">03:14</span></li>
+                        <li class="player-item" data-src="track8.mp3" data-cover="cover8.jpg"><span class="track-name">Бантик</span><span class="track-dots">............................................</span><span class="track-time">04:11</span></li>
+                        <li class="player-item" data-src="track9.mp3" data-cover="cover9.jpg"><span class="track-name">Антигерой</span><span class="track-dots">............................................</span><span class="track-time">03:50</span></li>
+                        <li class="player-item" data-src="track10.mp3" data-cover="cover10.jpg"><span class="track-name">Здесь был праздник</span><span class="track-dots">............................................</span><span class="track-time">03:33</span></li>
+                        <li class="player-item" data-src="track11.mp3" data-cover="cover11.jpg"><span class="track-name">Траур</span><span class="track-dots">............................................</span><span class="track-time">04:39</span></li>
+                        <li class="player-item" data-src="track12.mp3" data-cover="cover12.jpg"><span class="track-name">Зомби</span><span class="track-dots">............................................</span><span class="track-time">03:35</span></li>
+                        <li class="player-item" data-src="track13.mp3" data-cover="cover13.jpg"><span class="track-name">Унесёт архангел</span><span class="track-dots">............................................</span><span class="track-time">03:28</span></li>
+                        <li class="player-item" data-src="track14.mp3" data-cover="cover14.jpg"><span class="track-name">Царство небесное</span><span class="track-dots">............................................</span><span class="track-time">03:04</span></li>
+                        <li class="player-item" data-src="track15.mp3" data-cover="cover15.jpg"><span class="track-name">Шипы и гвозди</span><span class="track-dots">............................................</span><span class="track-time">03:39</span></li>
+                        <li class="player-item" data-src="track16.mp3" data-cover="cover16.jpg"><span class="track-name">Из страшилки</span><span class="track-dots">............................................</span><span class="track-time">03:21</span></li>
+                        <li class="player-item" data-src="track17.mp3" data-cover="cover17.jpg"><span class="track-name">По частям</span><span class="track-dots">............................................</span><span class="track-time">04:06</span></li>
                     </ul>
                 </div>
             </div>
@@ -270,31 +297,26 @@
                 </div>
             </div>
         </div>
+        </div>
 
         <audio id="audio" style="display:none;"></audio>
 
-        <br><br>
-
-        <!-- Menu -->
-        <div class="menu">
-            <a href="#" class="menu-item" id="item1" onclick="activateItem('item1')">НОВОСТИ</a>
-            <a href="#" class="menu-item" id="item2" onclick="activateItem('item2')">МЕДИА</a>
-            <a href="#" class="menu-item" id="item3" onclick="activateItem('item3')">МАГАЗИН</a>
-            <a href="#" class="menu-item" id="item4" onclick="activateItem('item4')">КОНТАКТЫ</a>
-            <a href="#" class="menu-item" id="item5" onclick="activateItem('item5')">РАЗНОЕ</a>
+        <div style="margin-top:2vh;">
+        <!-- Search -->
+        <div style="width:35vw;margin:0 auto;border:3px solid white;">
+            <input type="text" placeholder="ВВЕДИТЕ СЛОВО ЧТОБЫ НАЧАТЬ ПОИСК В АРХИВЕ..." style="width:100%;background:transparent;border:none;outline:none;color:white;font-family:VCRFont,sans-serif;font-size:13px;padding:6px 10px;text-align:center;box-sizing:border-box;">
+        </div>
         </div>
 
-        <br><br>
-
         <!-- News text block -->
-        <div class="text-container">
+        <div class="text-container" style="width:35vw;max-height:none;margin-top:0;">
             <fieldset class="fieldset-container">
                 <legend><b>[</b>Stay Home<b>]</b></legend>
                 Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов. Lorem Ipsum не только успешно пережил без заметных изменений пять веков, но и перешагнул в электронный дизайн.
             </fieldset>
         </div>
 
-        <br><br>
+        <div style="height:2vh;"></div>
 
     </div>
 
@@ -328,6 +350,15 @@
             }, { once: true });
             videoElement.load();
         })();
+
+        // Scroll by 4 tracks
+        const trackList = document.getElementById('track-list');
+        const trackContainer = trackList.parentElement;
+        trackContainer.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            const itemHeight = trackList.querySelector('li').offsetHeight;
+            trackContainer.scrollTop += e.deltaY > 0 ? itemHeight * 4 : -itemHeight * 4;
+        }, { passive: false });
 
         // Audio player
         const audio = document.getElementById('audio');
