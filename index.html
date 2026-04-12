@@ -63,6 +63,8 @@
             display: none;
             overflow-y: auto;
             height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Player */
@@ -156,16 +158,15 @@
         }
 
         .track-list li .track-name {
-            overflow: hidden;
-            text-overflow: clip;
-            flex: 1;
+            flex-shrink: 0;
         }
 
         .track-list li .track-dots {
             flex: 1;
             overflow: hidden;
-            text-align: center;
+            text-align: right;
             letter-spacing: 1px;
+            min-width: 0;
         }
 
         .track-list li .track-time {
@@ -213,7 +214,6 @@
         .text-container {
             font-family: 'VCRFont', sans-serif;
             width: 30.5%;
-            max-height: 30%;
             backdrop-filter: blur(1px);
             padding: 2%;
             border: 3.5px solid white;
@@ -257,6 +257,7 @@
         </div>
         <div style="width:35%;margin:2vh auto 0;border:3px solid white;height:18px;position:relative;">
             <div id="header-progress-fill" style="height:100%;background:white;width:70%;"></div>
+            <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#000;font-family:VCRFont,sans-serif;font-size:15px;line-height:1;pointer-events:none;">70%</span>
         </div>
 
         <div style="margin-top:2vh;">
@@ -309,14 +310,19 @@
         </div>
 
         <!-- News text block -->
-        <div class="text-container" style="width:35vw;max-height:none;margin-top:0;">
-            <fieldset class="fieldset-container">
-                <legend><b>[</b>Stay Home<b>]</b></legend>
+        <div style="width:calc(35vw - 10px);margin:0 auto;border:3px solid white;flex:1;display:flex;flex-direction:column;min-height:0;box-sizing:border-box;">
+            <!-- Header bar -->
+            <div style="background:white;display:flex;justify-content:space-between;align-items:center;padding:2px 8px;flex-shrink:0;">
+                <span style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Stay Home</span>
+                <span style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">12.04.2026</span>
+            </div>
+            <!-- Article text -->
+            <div style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;overflow-y:auto;flex:1;">
                 Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов. Lorem Ipsum не только успешно пережил без заметных изменений пять веков, но и перешагнул в электронный дизайн.
-            </fieldset>
+            </div>
         </div>
 
-        <div style="height:2vh;"></div>
+        <div style="height:2vh;flex-shrink:0;"></div>
 
     </div>
 
