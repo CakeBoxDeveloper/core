@@ -12,9 +12,7 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: white; border-radius: 0; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        #archive-search::placeholder { color: white; opacity: 1; }
 
-        /* Article snippet */
         .article-body {
             overflow: hidden;
             display: -webkit-box;
@@ -27,25 +25,10 @@
             color: white;
             font-family: VCRFont, sans-serif;
         }
-        .article {
-            width: 100%;
-            border: 3px solid white;
-            margin-bottom: 8px;
-            box-sizing: border-box;
-        }
-        .article-header {
-            background: white;
-            display: flex;
-            justify-content: space-between;
-            padding: 3px 8px;
-            cursor: pointer;
-        }
+        .article { width: 100%; border: 3px solid white; margin-bottom: 8px; box-sizing: border-box; }
+        .article-header { background: white; display: flex; justify-content: space-between; padding: 3px 8px; cursor: pointer; }
         .article-header:hover { opacity: 0.85; }
-        .article-title, .article-date {
-            font-family: VCRFont, sans-serif;
-            font-size: 13px;
-            color: #000;
-        }
+        .article-title, .article-date { font-family: VCRFont, sans-serif; font-size: 13px; color: #000; }
 
         .video-container { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; display:flex; justify-content:center; align-items:center; z-index:9999; }
         .video-container video { width:100%; height:100%; object-fit:cover; }
@@ -56,7 +39,7 @@
         .top-row { display:flex; justify-content:space-between; width:100%; }
         .inner-block-1 { width:7vw; height:14.4vh; border:3px solid white; background-size:cover; background-position:center; margin:5px; flex-shrink:0; }
         .inner-block-2 { flex:1; height:14.4vh; border:3px solid white; overflow-y:scroll; margin:5px; scroll-snap-type:y mandatory; }
-        .inner-block-3 { width:calc(100% - 10px); border:3px solid white; display:flex; flex-direction:column; margin:2px 5px 5px; }
+        .inner-block-3 { width:calc(100% - 10px); border:3px solid white; display:flex; flex-direction:column; margin:-2px 5px 5px; }
         .progress-bar { width:100%; height:8px; background:white; position:relative; cursor:pointer; }
         .progress { height:calc(100% - 4px); margin:2px; background:#00f; width:0%; }
         .time-info { display:flex; justify-content:space-between; width:100%; color:white; font-size:0.9em; padding:2px 0; }
@@ -67,39 +50,26 @@
         .track-list li .track-dots { flex:1; overflow:hidden; text-align:right; letter-spacing:1px; min-width:0; }
         .track-list li .track-time { flex-shrink:0; margin-left:4px; }
         .track-list li:hover { background:rgba(255,255,255,0.2); }
+
         #article-fullscreen {
-            display: none;
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            flex-direction: column;
-            z-index: 10;
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            flex-direction: column; z-index: 10; background: transparent;
         }
         #article-fs-header {
-            background: white;
-            display: flex;
-            justify-content: space-between;
-            padding: 2px 8px;
-            cursor: pointer;
-            flex-shrink: 0;
+            background: white; display: flex; justify-content: space-between;
+            padding: 2px 8px; flex-shrink: 0;
         }
-        #article-fs-header:hover { opacity: 0.85; }
         #article-fs-title, #article-fs-date { font-family: VCRFont, sans-serif; font-size: 15px; color: #000; }
-        #article-fs-body {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0;
-            scrollbar-width: thin;
-            scrollbar-color: white transparent;
-        }
+        #article-fs-body { flex: 1; overflow-y: auto; padding: 0; scrollbar-width: thin; scrollbar-color: white transparent; }
         #article-fs-body::-webkit-scrollbar { width: 8px; }
         #article-fs-body::-webkit-scrollbar-track { background: transparent; }
         #article-fs-body::-webkit-scrollbar-thumb { background: white; border-radius: 0; }
+        #article-fs-back { padding: 4px 8px; flex-shrink: 0; }
 
         @media (max-width: 768px) {
             .outer-block { width: 90vw; }
             .inner-block-1 { width: 20vw; height: 12vh; }
             .inner-block-2 { height: 12vh; }
-            .inner-block-3 { width: calc(100% - 10px); }
             .archive-container { width: 90vw !important; }
             .header-img { width: 90% !important; }
             .progress-container { width: 90% !important; }
@@ -140,25 +110,29 @@
                     </div>
                     <div class="inner-block-2">
                         <ul class="track-list" id="track-list">
-                            <li class="player-item" data-src="Naga.wav" data-cover="Eye.png"><span class="track-name">Нага</span><span class="track-dots">............................................</span><span class="track-time">03:59</span></li>
-                            <li class="player-item" data-src="track2.mp3" data-cover="cover2.jpg"><span class="track-name">Матриарх</span><span class="track-dots">............................................</span><span class="track-time">03:13</span></li>
-                            <li class="player-item" data-src="track3.mp3" data-cover="cover3.jpg"><span class="track-name">У нас есть бомбы</span><span class="track-dots">............................................</span><span class="track-time">03:35</span></li>
-                            <li class="player-item" data-src="track4.mp3" data-cover="cover4.jpg"><span class="track-name">Овод</span><span class="track-dots">............................................</span><span class="track-time">03:40</span></li>
-                            <li class="player-item" data-src="Lisa.wav" data-cover="cover5.jpg"><span class="track-name">Лиза</span><span class="track-dots">............................................</span><span class="track-time">03:55</span></li>
-                            <li class="player-item" data-src="track6.mp3" data-cover="cover6.jpg"><span class="track-name">Железный кулак</span><span class="track-dots">............................................</span><span class="track-time">03:28</span></li>
-                            <li class="player-item" data-src="track7.mp3" data-cover="cover7.jpg"><span class="track-name">Пятница XIII</span><span class="track-dots">............................................</span><span class="track-time">03:14</span></li>
-                            <li class="player-item" data-src="track8.mp3" data-cover="cover8.jpg"><span class="track-name">Бантик</span><span class="track-dots">............................................</span><span class="track-time">04:11</span></li>
-                            <li class="player-item" data-src="track9.mp3" data-cover="cover9.jpg"><span class="track-name">Антигерой</span><span class="track-dots">............................................</span><span class="track-time">03:50</span></li>
-                            <li class="player-item" data-src="track10.mp3" data-cover="cover10.jpg"><span class="track-name">Здесь был праздник</span><span class="track-dots">............................................</span><span class="track-time">03:33</span></li>
-                            <li class="player-item" data-src="track11.mp3" data-cover="cover11.jpg"><span class="track-name">Траур</span><span class="track-dots">............................................</span><span class="track-time">04:39</span></li>
-                            <li class="player-item" data-src="track12.mp3" data-cover="cover12.jpg"><span class="track-name">Зомби</span><span class="track-dots">............................................</span><span class="track-time">03:35</span></li>
-                            <li class="player-item" data-src="track13.mp3" data-cover="cover13.jpg"><span class="track-name">Унесёт архангел</span><span class="track-dots">............................................</span><span class="track-time">03:28</span></li>
-                            <li class="player-item" data-src="track14.mp3" data-cover="cover14.jpg"><span class="track-name">Царство небесное</span><span class="track-dots">............................................</span><span class="track-time">03:04</span></li>
-                            <li class="player-item" data-src="track15.mp3" data-cover="cover15.jpg"><span class="track-name">Шипы и гвозди</span><span class="track-dots">............................................</span><span class="track-time">03:39</span></li>
-                            <li class="player-item" data-src="track16.mp3" data-cover="cover16.jpg"><span class="track-name">Из страшилки</span><span class="track-dots">............................................</span><span class="track-time">03:21</span></li>
-                            <li class="player-item" data-src="track17.mp3" data-cover="cover17.jpg"><span class="track-name">По частям</span><span class="track-dots">............................................</span><span class="track-time">04:06</span></li>
+                            <li class="player-item" data-src="Naga.wav"><span class="track-name">Нага</span><span class="track-dots">............................................</span><span class="track-time">03:59</span></li>
+                            <li class="player-item" data-src="track2.mp3"><span class="track-name">Матриарх</span><span class="track-dots">............................................</span><span class="track-time">03:13</span></li>
+                            <li class="player-item" data-src="track3.mp3"><span class="track-name">У нас есть бомбы</span><span class="track-dots">............................................</span><span class="track-time">03:35</span></li>
+                            <li class="player-item" data-src="track4.mp3"><span class="track-name">Овод</span><span class="track-dots">............................................</span><span class="track-time">03:40</span></li>
+                            <li class="player-item" data-src="Lisa.wav"><span class="track-name">Лиза</span><span class="track-dots">............................................</span><span class="track-time">03:55</span></li>
+                            <li class="player-item" data-src="track6.mp3"><span class="track-name">Железный кулак</span><span class="track-dots">............................................</span><span class="track-time">03:28</span></li>
+                            <li class="player-item" data-src="track7.mp3"><span class="track-name">Пятница XIII</span><span class="track-dots">............................................</span><span class="track-time">03:14</span></li>
+                            <li class="player-item" data-src="track8.mp3"><span class="track-name">Бантик</span><span class="track-dots">............................................</span><span class="track-time">04:11</span></li>
+                            <li class="player-item" data-src="track9.mp3"><span class="track-name">Антигерой</span><span class="track-dots">............................................</span><span class="track-time">03:50</span></li>
+                            <li class="player-item" data-src="track10.mp3"><span class="track-name">Здесь был праздник</span><span class="track-dots">............................................</span><span class="track-time">03:33</span></li>
+                            <li class="player-item" data-src="track11.mp3"><span class="track-name">Траур</span><span class="track-dots">............................................</span><span class="track-time">04:39</span></li>
+                            <li class="player-item" data-src="track12.mp3"><span class="track-name">Зомби</span><span class="track-dots">............................................</span><span class="track-time">03:35</span></li>
+                            <li class="player-item" data-src="track13.mp3"><span class="track-name">Унесёт архангел</span><span class="track-dots">............................................</span><span class="track-time">03:28</span></li>
+                            <li class="player-item" data-src="track14.mp3"><span class="track-name">Царство небесное</span><span class="track-dots">............................................</span><span class="track-time">03:04</span></li>
+                            <li class="player-item" data-src="track15.mp3"><span class="track-name">Шипы и гвозди</span><span class="track-dots">............................................</span><span class="track-time">03:39</span></li>
+                            <li class="player-item" data-src="track16.mp3"><span class="track-name">Из страшилки</span><span class="track-dots">............................................</span><span class="track-time">03:21</span></li>
+                            <li class="player-item" data-src="track17.mp3"><span class="track-name">По частям</span><span class="track-dots">............................................</span><span class="track-time">04:06</span></li>
                         </ul>
                     </div>
+                </div>
+                <div id="compact-track-info" style="display:none;width:calc(100% - 10px);margin:5px 5px 0;color:white;font-family:VCRFont,sans-serif;font-size:13px;overflow:hidden;white-space:nowrap;justify-content:space-between;">
+                    <span id="compact-track-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">—</span>
+                    <span id="compact-track-dur" style="flex-shrink:0;margin-left:8px;">0:00</span>
                 </div>
                 <div class="inner-block-3">
                     <div class="progress-bar"><div class="progress" id="progress"></div></div>
@@ -178,132 +152,97 @@
 
                 <!-- Fullscreen article overlay -->
                 <div id="article-fullscreen">
-                    <div id="article-fs-header" onclick="closeArticle()">
+                    <div id="article-fs-header">
                         <span id="article-fs-title"></span>
                         <span id="article-fs-date"></span>
                     </div>
                     <div id="article-fs-body"></div>
+                    <div id="article-fs-back">
+                        <span onclick="closeArticle()" style="color:white;font-family:VCRFont,sans-serif;font-size:13px;cursor:pointer;">[ НАЗАД ]</span>
+                    </div>
                 </div>
 
                 <input id="archive-search" type="text" placeholder="ВВЕДИТЕ СЛОВО ЧТОБЫ НАЧАТЬ ПОИСК В АРХИВЕ..." style="width:100%;background:transparent;border:none;border-bottom:3px solid white;outline:none;color:white;font-family:VCRFont,sans-serif;font-size:13px;padding:6px 10px;text-align:center;box-sizing:border-box;flex-shrink:0;">
+                <style>#archive-search::placeholder { color: white; opacity: 1; }</style>
 
                 <div class="no-scrollbar" id="articles-container" style="flex:1;min-height:0;overflow-y:auto;padding:5px 10px;scrollbar-width:none;-ms-overflow-style:none;">
 
-                    <div class="article" style="width:100%;border:3px solid white;margin-bottom:10px;box-sizing:border-box;"
-                         data-src="articles/stay-home.html"
-                         data-full="Lorem Ipsum - это текст-&quot;рыба&quot;, часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной &quot;рыбой&quot; для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов.&#10;&#10;С тех пор прошло больше пяти веков, но этот текст по-прежнему остаётся неизменным. Он был популяризирован в 1960-х годах с выходом листов Letraset, содержащих отрывки Lorem Ipsum, а в последнее время — благодаря программам компьютерной вёрстки, таким как Aldus PageMaker, в шаблонах которых используется Lorem Ipsum.&#10;&#10;Многие думают, что Lorem Ipsum — это случайный набор слов, но это не так. Он восходит к произведению Цицерона «О пределах добра и зла», написанному в 45 году до нашей эры.&#10;&#10;Lorem Ipsum происходит из разделов 1.10.32 и 1.10.33 книги «О пределах добра и зла». Этот трактат, написанный в 45 году до н.э., является трактатом по теории этики, очень популярным в эпоху Возрождения.&#10;&#10;Стандартный фрагмент Lorem Ipsum, используемый с 1500-х годов, воспроизведён ниже для тех, кто интересуется.">
-                        <div class="article-header" style="background:white;display:flex;justify-content:space-between;padding:2px 8px;cursor:pointer;">
-                            <span class="article-title" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Stay Home</span>
-                            <span class="article-date" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">12.04.2026</span>
-                        </div>
-                        <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов.</div>
+                    <div class="article" data-src="articles/stay-home.html" data-full="Lorem Ipsum - это текст-&quot;рыба&quot;, часто используемый в печати и вэб-дизайне.&#10;&#10;С тех пор прошло больше пяти веков, но этот текст по-прежнему остаётся неизменным.&#10;&#10;Многие думают, что Lorem Ipsum — это случайный набор слов, но это не так.">
+                        <div class="article-header"><span class="article-title">Stay Home</span><span class="article-date">12.04.2026</span></div>
+                        <div class="article-body">Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века.</div>
                     </div>
 
-                    <div class="article" style="width:100%;border:3px solid white;margin-bottom:10px;box-sizing:border-box;"
-                         data-full="Работа над новым материалом продолжается. Записано уже более десяти треков, часть из которых войдёт в финальный релиз. Дата выхода пока не объявлена.&#10;&#10;Звучание нового альбома заметно отличается от предыдущего. Мы экспериментировали с живыми барабанами, добавили больше синтезаторных слоёв и переосмыслили подход к сведению. Каждый трек — отдельная история, но вместе они складываются в единое полотно.&#10;&#10;Тексты на этот раз писались иначе — не за один присест, а постепенно, в течение нескольких месяцев. Некоторые строчки появились случайно, во время репетиций, другие вынашивались долго.&#10;&#10;Мы намеренно не торопимся. Лучше выпустить позже, но так, чтобы не было стыдно. Следите за обновлениями — скоро будет больше информации о дате релиза и первых синглах.">
-                        <div class="article-header" style="background:white;display:flex;justify-content:space-between;padding:2px 8px;cursor:pointer;">
-                            <span class="article-title" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Новый альбом</span>
-                            <span class="article-date" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">05.03.2026</span>
-                        </div>
-                        <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">Работа над новым материалом продолжается. Записано уже более десяти треков, часть из которых войдёт в финальный релиз. Дата выхода пока не объявлена.</div>
+                    <div class="article" data-full="Работа над новым материалом продолжается. Записано уже более десяти треков, часть из которых войдёт в финальный релиз. Дата выхода пока не объявлена.&#10;&#10;Звучание нового альбома заметно отличается от предыдущего. Мы экспериментировали с живыми барабанами, добавили больше синтезаторных слоёв.&#10;&#10;Мы намеренно не торопимся. Лучше выпустить позже, но так, чтобы не было стыдно.">
+                        <div class="article-header"><span class="article-title">Новый альбом</span><span class="article-date">05.03.2026</span></div>
+                        <div class="article-body">Работа над новым материалом продолжается. Записано уже более десяти треков, часть из которых войдёт в финальный релиз. Дата выхода пока не объявлена.</div>
                     </div>
 
-                    <div class="article" style="width:100%;border:3px solid white;margin-bottom:10px;box-sizing:border-box;"
-                         data-full="Выступление прошло в клубе «Точка». Зал был заполнен до отказа. Сыграли весь старый материал плюс три новых трека. Спасибо всем кто пришёл.&#10;&#10;Сет-лист в этот раз был длиннее обычного — почти полтора часа без перерыва. Начали с «Наги», закончили «Зомби» на бис. Публика держалась до последнего, и это было видно — никто не уходил.&#10;&#10;Звук в «Точке» всегда хороший, но в этот раз звукорежиссёр сделал особенно чисто. Бас чувствовался физически, синтезаторы не перекрывали вокал.&#10;&#10;После концерта долго общались с людьми у входа. Многие подходили, говорили что слушают давно, некоторые — что пришли впервые и теперь хотят ещё.&#10;&#10;Следующее выступление пока не анонсировано, но оно будет. Подписывайтесь, чтобы не пропустить.">
-                        <div class="article-header" style="background:white;display:flex;justify-content:space-between;padding:2px 8px;cursor:pointer;">
-                            <span class="article-title" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Концерт</span>
-                            <span class="article-date" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">18.02.2026</span>
-                        </div>
-                        <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">Выступление прошло в клубе «Точка». Зал был заполнен до отказа. Сыграли весь старый материал плюс три новых трека. Спасибо всем кто пришёл.</div>
+                    <div class="article" data-full="Выступление прошло в клубе «Точка». Зал был заполнен до отказа. Сыграли весь старый материал плюс три новых трека. Спасибо всем кто пришёл.&#10;&#10;Сет-лист в этот раз был длиннее обычного — почти полтора часа без перерыва.&#10;&#10;Следующее выступление пока не анонсировано, но оно будет.">
+                        <div class="article-header"><span class="article-title">Концерт</span><span class="article-date">18.02.2026</span></div>
+                        <div class="article-body">Выступление прошло в клубе «Точка». Зал был заполнен до отказа. Сыграли весь старый материал плюс три новых трека. Спасибо всем кто пришёл.</div>
                     </div>
 
-                    <div class="article" style="width:100%;border:3px solid white;margin-bottom:10px;box-sizing:border-box;"
-                         data-full="Большое интервью для журнала «Звук» опубликовано на их сайте. Говорили о процессе записи, текстах и планах на год.&#10;&#10;Разговор получился неожиданно откровенным. Обсуждали не только музыку, но и то, откуда берутся образы в текстах, как устроен творческий процесс изнутри, почему некоторые треки так и не выходят в свет.&#10;&#10;Отдельно говорили о влияниях — что слушали в детстве, что слушаем сейчас, и как это всё трансформируется во что-то своё.&#10;&#10;Журналист попросил назвать три альбома, которые изменили подход к написанию песен. Это оказалось сложнее, чем казалось — в итоге назвали пять.&#10;&#10;Интервью доступно на сайте журнала «Звук» в разделе «Разговоры». Там же — несколько фотографий со студии, которые мы раньше нигде не публиковали.">
-                        <div class="article-header" style="background:white;display:flex;justify-content:space-between;padding:2px 8px;cursor:pointer;">
-                            <span class="article-title" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">Интервью</span>
-                            <span class="article-date" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">01.01.2026</span>
-                        </div>
-                        <div class="article-body" style="padding:10px;color:white;font-family:VCRFont,sans-serif;font-size:15px;">Большое интервью для журнала «Звук» опубликовано на их сайте. Говорили о процессе записи, текстах и планах на год.</div>
+                    <div class="article" data-full="Большое интервью для журнала «Звук» опубликовано на их сайте. Говорили о процессе записи, текстах и планах на год.&#10;&#10;Разговор получился неожиданно откровенным. Обсуждали не только музыку, но и то, откуда берутся образы в текстах.&#10;&#10;Интервью доступно на сайте журнала «Звук» в разделе «Разговоры».">
+                        <div class="article-header"><span class="article-title">Интервью</span><span class="article-date">01.01.2026</span></div>
+                        <div class="article-body">Большое интервью для журнала «Звук» опубликовано на их сайте. Говорили о процессе записи, текстах и планах на год.</div>
                     </div>
 
                 </div>
             </div>
         </div>
 
-        <div class="bottom-bar" style="width:35vw;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:10px 0 3.5vh;flex-shrink:0;white-space:nowrap;">
-            <span id="theme-toggle" onclick="toggleTheme()" style="color:white;font-family:VCRFont,sans-serif;font-size:13px;cursor:pointer;">[ ПЕРЕКЛЮЧИТЬ РЕЖИМ ]</span>
-            <img id="theme-icon" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/4afc3f693afda411900582d1698b4bbef11f2e9d/brightness.svg" style="width:20px;height:20px;filter:brightness(0) invert(1);cursor:pointer;" onclick="toggleTheme()">
+        <div class="bottom-bar" style="width:35vw;margin:0 auto;display:flex;justify-content:center;align-items:center;gap:16px;padding:10px 0 3.5vh;flex-shrink:0;white-space:nowrap;">
+            <span id="theme-toggle" onclick="toggleTheme()" style="color:white;font-family:VCRFont,sans-serif;font-size:13px;cursor:pointer;">[ ПЕРЕКЛЮЧИТЬ РЕЖИМ <img id="theme-icon" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/d757f416ff0d602a3bee9b24982ca2b1d7cd1f7b/Night.svg" style="width:13px;height:13px;filter:brightness(0) invert(1);vertical-align:middle;margin-left:4px;"> ]</span>
+            <span id="compact-toggle" onclick="toggleCompact()" style="color:white;font-family:VCRFont,sans-serif;font-size:13px;cursor:pointer;">[ КОМПАКТНЫЙ РЕЖИМ ]</span>
         </div>
 
     </div>
 
     <script>
+        // Preloader
         const preloader = document.getElementById('preloader');
         const mainContent = document.getElementById('main-content');
         const introVideo = document.getElementById('intro-video');
-
-        function showContent() {
-            preloader.style.display = 'none';
-            mainContent.style.display = 'flex';
-        }
+        function showContent() { preloader.style.display = 'none'; mainContent.style.display = 'flex'; }
         introVideo.addEventListener('ended', showContent);
         setTimeout(showContent, 5000);
 
-        // Background video by time
+        // Theme
         const DARK = 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Dark.webm';
         const LIGHT = 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Light.webm';
         let isDark = new Date().getHours() >= 22 || new Date().getHours() < 5;
 
         function setTheme(dark) {
             isDark = dark;
-            const src = document.getElementById('bg-source');
-            const v = document.getElementById('background-video');
-            src.src = dark ? DARK : LIGHT;
-            v.load();
+            document.getElementById('bg-source').src = dark ? DARK : LIGHT;
+            document.getElementById('background-video').load();
             const titleColor = dark ? '#000' : '#0000cc';
-            document.querySelectorAll('.article-header span').forEach(t => t.style.color = titleColor);
-            document.getElementById('article-fs-title').style.color = titleColor;
-            document.getElementById('article-fs-date').style.color = titleColor;
-            document.getElementById('article-fs-header').style.background = dark ? 'white' : 'white';
+            document.querySelectorAll('.article-title, .article-date').forEach(t => t.style.color = titleColor);
             document.querySelector('.progress').style.background = dark ? '#000' : '#0000cc';
-            const pct70 = document.querySelector('#header-progress-fill')?.nextElementSibling;
-            if (pct70) pct70.style.color = dark ? '#000' : '#0000cc';
-            const icon = document.getElementById('theme-icon');
-            icon.style.transform = dark ? 'scaleX(-1)' : 'scaleX(1)';
+            const pct = document.querySelector('#header-progress-fill')?.nextElementSibling;
+            if (pct) pct.style.color = dark ? '#000' : '#0000cc';
+            document.getElementById('theme-icon').src = dark
+                ? 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/d757f416ff0d602a3bee9b24982ca2b1d7cd1f7b/Night.svg'
+                : 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/d757f416ff0d602a3bee9b24982ca2b1d7cd1f7b/Day.svg';
         }
 
         function toggleTheme() {
-            const newDark = !isDark;
             showNoise(null);
-            setTheme(newDark);
-
+            setTheme(!isDark);
             const v = document.getElementById('background-video');
-            const noiseStart = Date.now();
-
-            function waitAndHide() {
-                const elapsed = Date.now() - noiseStart;
-                const remaining = Math.max(0, 1000 - elapsed);
-                setTimeout(() => {
-                    cancelAnimationFrame(noiseAnim);
-                    noiseCanvas.style.display = 'none';
-                }, remaining);
+            const t0 = Date.now();
+            function hide() {
+                const rem = Math.max(0, 1000 - (Date.now() - t0));
+                setTimeout(() => { cancelAnimationFrame(noiseAnim); noiseCanvas.style.display = 'none'; }, rem);
             }
-
-            if (v.readyState >= 3) {
-                waitAndHide();
-            } else {
-                v.addEventListener('canplay', waitAndHide, { once: true });
-            }
-            // Синхронизируем тему с открытой статьёй
+            v.readyState >= 3 ? hide() : v.addEventListener('canplay', hide, { once: true });
             const iframe = document.getElementById('article-iframe');
-            if (iframe && iframe.contentWindow) {
-                iframe.contentWindow.postMessage({ type: 'setTheme', dark: isDark }, '*');
-            }
+            if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage({ type: 'setTheme', dark: isDark }, '*');
         }
 
         setTheme(isDark);
 
-        // Scroll by 4 tracks
+        // Track scroll
         const trackList = document.getElementById('track-list');
         const trackContainer = trackList.parentElement;
         trackContainer.addEventListener('wheel', function(e) {
@@ -317,7 +256,6 @@
         const progress = document.getElementById('progress');
         const currentTimeDisplay = document.getElementById('current-time');
         const durationDisplay = document.getElementById('duration');
-        const cover = document.getElementById('cover');
         const visualizerVideo = document.getElementById('visualizer-video');
 
         document.querySelectorAll('.player-item').forEach(track => {
@@ -325,22 +263,18 @@
                 const src = this.dataset.src;
                 if (audio.src.includes(src)) {
                     audio.paused ? audio.play() : audio.pause();
-                } else { audio.src = src; audio.play(); }
+                } else {
+                    audio.src = src;
+                    audio.play();
+                }
+                document.getElementById('compact-track-name').textContent = this.querySelector('.track-name').textContent;
+                document.getElementById('compact-track-dur').textContent = this.querySelector('.track-time').textContent;
             });
         });
 
-        audio.addEventListener('play', () => {
-            visualizerVideo.style.display = 'block';
-            visualizerVideo.play();
-        });
-        audio.addEventListener('pause', () => {
-            visualizerVideo.pause();
-        });
-        audio.addEventListener('ended', () => {
-            visualizerVideo.pause();
-            visualizerVideo.style.display = 'none';
-        });
-
+        audio.addEventListener('play', () => { visualizerVideo.style.display = 'block'; visualizerVideo.play(); });
+        audio.addEventListener('pause', () => { visualizerVideo.pause(); });
+        audio.addEventListener('ended', () => { visualizerVideo.pause(); visualizerVideo.style.display = 'none'; });
         audio.addEventListener('timeupdate', function () {
             const pct = (audio.currentTime / audio.duration) * 100;
             progress.style.width = `${pct}%`;
@@ -350,9 +284,7 @@
 
         function formatTime(s) {
             if (isNaN(s)) return '0:00';
-            const m = Math.floor(s / 60);
-            const sec = Math.floor(s % 60);
-            return `${m}:${sec < 10 ? '0' : ''}${sec}`;
+            return `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
         }
 
         // TV Noise
@@ -364,11 +296,10 @@
             noiseCanvas.width = window.innerWidth;
             noiseCanvas.height = window.innerHeight;
             const img = noiseCtx.createImageData(noiseCanvas.width, noiseCanvas.height);
-            const data = img.data;
-            for (let i = 0; i < data.length; i += 4) {
+            const d = img.data;
+            for (let i = 0; i < d.length; i += 4) {
                 const v = Math.random() * 255 | 0;
-                data[i] = data[i+1] = data[i+2] = v;
-                data[i+3] = 255;
+                d[i] = d[i+1] = d[i+2] = v; d[i+3] = 255;
             }
             noiseCtx.putImageData(img, 0, 0);
             noiseAnim = requestAnimationFrame(drawNoise);
@@ -378,39 +309,17 @@
             noiseCanvas.style.display = 'block';
             drawNoise();
             if (duration !== null) {
-                setTimeout(() => {
-                    cancelAnimationFrame(noiseAnim);
-                    noiseCanvas.style.display = 'none';
-                    if (callback) callback();
-                }, duration || 600);
+                setTimeout(() => { cancelAnimationFrame(noiseAnim); noiseCanvas.style.display = 'none'; if (callback) callback(); }, duration || 600);
             }
         }
-
-        // Strip inline styles from article-body so CSS classes take effect
-        document.querySelectorAll('.article-body').forEach(el => el.removeAttribute('style'));
-
-        // Load snippets from article files
-        document.querySelectorAll('.article[data-src]').forEach(article => {
-            const src = article.dataset.src;
-            const body = article.querySelector('.article-body');
-            if (!body || body.textContent.trim()) return; // уже есть текст
-            fetch(src)
-                .then(r => r.text())
-                .then(html => {
-                    const doc = new DOMParser().parseFromString(html, 'text/html');
-                    const firstP = doc.querySelector('p');
-                    if (firstP) body.textContent = firstP.textContent.trim();
-                })
-                .catch(() => {});
-        });
 
         // Archive search
         document.getElementById('archive-search').addEventListener('input', function () {
             const q = this.value.trim().toLowerCase();
-            document.querySelectorAll('.article').forEach(article => {
-                const title = article.querySelector('.article-title').textContent.toLowerCase();
-                const body = article.querySelector('.article-body').textContent.toLowerCase();
-                article.style.display = (!q || title.includes(q) || body.includes(q)) ? '' : 'none';
+            document.querySelectorAll('.article').forEach(a => {
+                const t = a.querySelector('.article-title').textContent.toLowerCase();
+                const b = a.querySelector('.article-body').textContent.toLowerCase();
+                a.style.display = (!q || t.includes(q) || b.includes(q)) ? '' : 'none';
             });
         });
 
@@ -422,17 +331,13 @@
         document.querySelectorAll('.article-header').forEach(header => {
             header.addEventListener('click', function () {
                 const article = this.closest('.article');
-                const title = this.querySelector('.article-title').textContent;
-                const date = this.querySelector('.article-date').textContent;
                 const src = article.dataset.src;
                 const fsBody = document.getElementById('article-fs-body');
-
-                document.getElementById('article-fs-title').textContent = title;
-                document.getElementById('article-fs-date').textContent = date;
+                document.getElementById('article-fs-title').textContent = this.querySelector('.article-title').textContent;
+                document.getElementById('article-fs-date').textContent = this.querySelector('.article-date').textContent;
                 articlesContainer.style.display = 'none';
                 archiveSearch.style.display = 'none';
                 articleFS.style.display = 'flex';
-
                 if (src) {
                     fsBody.style.padding = '0';
                     const iframe = document.createElement('iframe');
@@ -442,13 +347,10 @@
                     iframe.id = 'article-iframe';
                     fsBody.innerHTML = '';
                     fsBody.appendChild(iframe);
-                    // Передаём текущую тему в iframe после загрузки
-                    iframe.addEventListener('load', function() {
-                        iframe.contentWindow.postMessage({ type: 'setTheme', dark: isDark }, '*');
-                    });
+                    iframe.addEventListener('load', () => iframe.contentWindow.postMessage({ type: 'setTheme', dark: isDark }, '*'));
                 } else {
-                    const fullText = article.dataset.full || article.querySelector('.article-body').textContent.trim();
-                    fsBody.innerHTML = fullText.split('\n\n').map(p => `<p style="margin-bottom:1em;">${p.trim()}</p>`).join('');
+                    const text = article.dataset.full || article.querySelector('.article-body').textContent.trim();
+                    fsBody.innerHTML = text.split('\n\n').map(p => `<p style="margin-bottom:1em;padding:0 8px;color:white;font-family:VCRFont,sans-serif;font-size:13px;">${p.trim()}</p>`).join('');
                 }
             });
         });
@@ -457,6 +359,16 @@
             articleFS.style.display = 'none';
             articlesContainer.style.display = '';
             archiveSearch.style.display = '';
+        }
+
+        // Compact mode
+        let isCompact = false;
+        function toggleCompact() {
+            isCompact = !isCompact;
+            document.querySelector('.top-row').style.display = isCompact ? 'none' : '';
+            const ci = document.getElementById('compact-track-info');
+            ci.style.display = isCompact ? 'flex' : 'none';
+            document.getElementById('compact-toggle').textContent = isCompact ? '[ ПОЛНЫЙ РЕЖИМ ]' : '[ КОМПАКТНЫЙ РЕЖИМ ]';
         }
     </script>
 
