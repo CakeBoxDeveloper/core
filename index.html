@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[ О Н И К С ]</title>
+    <title>АРХИВ</title>
     <style>
         @font-face { font-family: 'VCRFont'; src: url('VCRFont.ttf') format('truetype'); }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -35,11 +35,12 @@
         .background-video { position:fixed; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-1; }
         .content { display:none; height:100vh; flex-direction:column; overflow:hidden; }
 
-        .outer-block { width:35vw; border:3px solid white; padding:10px; display:flex; flex-direction:column; align-items:center; margin:0 auto; }
+        .outer-block { width:35vw; border:3px solid white; padding:0; display:flex; flex-direction:column; align-items:center; margin:0 auto; overflow:hidden; }
         .top-row { display:flex; justify-content:space-between; width:100%; }
         .inner-block-1 { width:7vw; height:14.4vh; border:3px solid white; background-size:cover; background-position:center; margin:5px; flex-shrink:0; }
         .inner-block-2 { flex:1; height:14.4vh; border:3px solid white; overflow-y:scroll; margin:5px; scroll-snap-type:y mandatory; }
         .inner-block-3 { width:calc(100% - 10px); border:3px solid white; display:flex; flex-direction:column; margin:-2px 5px 5px; }
+        .inner-block-3.compact { width:100%; margin:0; border-left:none; border-right:none; border-bottom:none; }
         .progress-bar { width:100%; height:8px; background:white; position:relative; cursor:pointer; }
         .progress { height:calc(100% - 4px); margin:2px; background:#00f; width:0%; }
         .time-info { display:flex; justify-content:space-between; width:100%; color:white; font-size:0.9em; padding:2px 0; }
@@ -56,7 +57,7 @@
             flex-direction: column; z-index: 10; background: transparent;
         }
         #article-fs-header {
-            background: white; display: flex; justify-content: space-between;
+            background: white; display: flex; align-items: center;
             padding: 2px 8px; flex-shrink: 0;
         }
         #article-fs-title, #article-fs-date { font-family: VCRFont, sans-serif; font-size: 15px; color: #000; }
@@ -97,14 +98,19 @@
             <img class="header-img" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/9f5d3273509498fdb22b1c3e888dca08e4ac2558/HeaderSVG.svg" width="35%">
         </div>
 
-        <div class="progress-container" style="width:35%;margin:2vh auto 0;border:3px solid white;height:18px;position:relative;flex-shrink:0;">
-            <div id="header-progress-fill" style="height:100%;background:white;width:70%;"></div>
-            <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#000;font-family:VCRFont,sans-serif;font-size:15px;line-height:1;pointer-events:none;">70%</span>
+        <!-- Settings bar (replaces progress bar) -->
+        <div id="settings-bar" style="width:35vw;margin:2vh auto 0;background:white;border:3px solid white;display:flex;align-items:center;justify-content:space-between;padding:3px 8px;box-sizing:border-box;flex-shrink:0;">
+            <span id="settings-label" style="font-family:VCRFont,sans-serif;font-size:13px;color:#000;">НАСТРОЙКИ</span>
+            <span style="display:flex;gap:12px;align-items:center;">
+                <span id="theme-toggle" onclick="toggleTheme()" style="font-family:VCRFont,sans-serif;font-size:13px;color:#000;cursor:pointer;">[ НОЧЬ ]</span>
+                <span id="compact-toggle" onclick="toggleCompact()" style="font-family:VCRFont,sans-serif;font-size:13px;color:#000;cursor:pointer;">[ КОМПАКТНЫЙ РЕЖИМ ]</span>
+            </span>
         </div>
 
         <div style="margin-top:2vh;flex-shrink:0;">
             <div class="outer-block">
-                <div class="top-row">
+                <div style="padding:10px;width:100%;box-sizing:border-box;">
+                <div class="top-row" id="player-top-row">
                     <div class="inner-block-1" id="cover" style="position:relative;overflow:hidden;">
                         <video id="visualizer-video" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Outline2Player.webm" muted loop playsinline style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;"></video>
                     </div>
@@ -130,18 +136,17 @@
                         </ul>
                     </div>
                 </div>
-                <div id="compact-track-info" style="display:none;width:calc(100% - 10px);margin:5px 5px 0;color:white;font-family:VCRFont,sans-serif;font-size:13px;overflow:hidden;white-space:nowrap;justify-content:space-between;">
-                    <span id="compact-track-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">—</span>
-                    <span id="compact-track-dur" style="flex-shrink:0;margin-left:8px;">0:00</span>
-                </div>
-                <div class="inner-block-3">
-                    <div class="progress-bar"><div class="progress" id="progress"></div></div>
+                <div id="compact-track-info" style="display:none;"></div>
+                <div class="inner-block-3" id="player-timeline">
+                    <div class="progress-bar" style="margin-top:-2px;"><div class="progress" id="progress"></div></div>
                     <div class="time-info">
-                        <span id="current-time">0:00</span>
-                        <span id="duration">0:00</span>
+                        <span id="current-time" style="padding:0 6px;">0:00</span>
+                        <span id="compact-track-name" style="flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+                        <span id="duration" style="padding:0 6px;">0:00</span>
                     </div>
                 </div>
-            </div>
+                </div><!-- /player-body -->
+            </div><!-- /outer-block -->
         </div>
 
         <audio id="audio" style="display:none;"></audio>
@@ -153,17 +158,11 @@
                 <!-- Fullscreen article overlay -->
                 <div id="article-fullscreen">
                     <div id="article-fs-header">
-                        <span id="article-fs-title"></span>
-                        <span id="article-fs-date"></span>
+                        <span onclick="closeArticle()" style="color:#000;font-family:VCRFont,sans-serif;font-size:15px;cursor:pointer;flex-shrink:0;">[ НАЗАД ]</span>
+                        <span id="article-fs-title" style="margin-left:auto;"></span>
                     </div>
                     <div id="article-fs-body"></div>
-                    <div id="article-fs-back">
-                        <span onclick="closeArticle()" style="color:white;font-family:VCRFont,sans-serif;font-size:13px;cursor:pointer;">[ НАЗАД ]</span>
-                    </div>
                 </div>
-
-                <input id="archive-search" type="text" placeholder="ВВЕДИТЕ СЛОВО ЧТОБЫ НАЧАТЬ ПОИСК В АРХИВЕ..." style="width:100%;background:transparent;border:none;border-bottom:3px solid white;outline:none;color:white;font-family:VCRFont,sans-serif;font-size:13px;padding:6px 10px;text-align:center;box-sizing:border-box;flex-shrink:0;">
-                <style>#archive-search::placeholder { color: white; opacity: 1; }</style>
 
                 <div class="no-scrollbar" id="articles-container" style="flex:1;min-height:0;overflow-y:auto;padding:5px 10px;scrollbar-width:none;-ms-overflow-style:none;">
 
@@ -188,13 +187,12 @@
                     </div>
 
                 </div>
+                <input id="archive-search" type="text" placeholder="ВВЕДИТЕ СЛОВО ЧТОБЫ НАЧАТЬ ПОИСК В АРХИВЕ..." style="width:100%;background:transparent;border:none;border-top:3px solid white;outline:none;color:white;font-family:VCRFont,sans-serif;font-size:13px;padding:6px 10px;text-align:center;box-sizing:border-box;flex-shrink:0;">
+                <style>#archive-search::placeholder { color: white; opacity: 1; }</style>
             </div>
         </div>
 
-        <div class="bottom-bar" style="width:35vw;margin:0 auto;display:flex;justify-content:center;align-items:center;gap:16px;padding:10px 0 3.5vh;flex-shrink:0;white-space:nowrap;">
-            <span id="theme-toggle" onclick="toggleTheme()" style="color:white;font-family:VCRFont,sans-serif;font-size:13px;cursor:pointer;">[ ПЕРЕКЛЮЧИТЬ РЕЖИМ <img id="theme-icon" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/d757f416ff0d602a3bee9b24982ca2b1d7cd1f7b/Night.svg" style="width:13px;height:13px;filter:brightness(0) invert(1);vertical-align:middle;margin-left:4px;"> ]</span>
-            <span id="compact-toggle" onclick="toggleCompact()" style="color:white;font-family:VCRFont,sans-serif;font-size:13px;cursor:pointer;">[ КОМПАКТНЫЙ РЕЖИМ ]</span>
-        </div>
+        <div class="bottom-bar" style="width:35vw;margin:0 auto;padding:6px 0 3.5vh;flex-shrink:0;"></div>
 
     </div>
 
@@ -219,11 +217,12 @@
             const titleColor = dark ? '#000' : '#0000cc';
             document.querySelectorAll('.article-title, .article-date').forEach(t => t.style.color = titleColor);
             document.querySelector('.progress').style.background = dark ? '#000' : '#0000cc';
-            const pct = document.querySelector('#header-progress-fill')?.nextElementSibling;
-            if (pct) pct.style.color = dark ? '#000' : '#0000cc';
-            document.getElementById('theme-icon').src = dark
-                ? 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/d757f416ff0d602a3bee9b24982ca2b1d7cd1f7b/Night.svg'
-                : 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/d757f416ff0d602a3bee9b24982ca2b1d7cd1f7b/Day.svg';
+            const settingsColor = dark ? '#000' : '#0000cc';
+            const settingsBar = document.getElementById('settings-bar');
+            if (settingsBar) {
+                settingsBar.querySelectorAll('span').forEach(el => el.style.color = settingsColor);
+            }
+            document.getElementById('theme-toggle').textContent = dark ? '[ НОЧЬ ]' : '[ ДЕНЬ ]';
         }
 
         function toggleTheme() {
@@ -268,7 +267,6 @@
                     audio.play();
                 }
                 document.getElementById('compact-track-name').textContent = this.querySelector('.track-name').textContent;
-                document.getElementById('compact-track-dur').textContent = this.querySelector('.track-time').textContent;
             });
         });
 
@@ -334,7 +332,8 @@
                 const src = article.dataset.src;
                 const fsBody = document.getElementById('article-fs-body');
                 document.getElementById('article-fs-title').textContent = this.querySelector('.article-title').textContent;
-                document.getElementById('article-fs-date').textContent = this.querySelector('.article-date').textContent;
+                const dateEl = document.getElementById('article-fs-date');
+                if (dateEl) dateEl.textContent = this.querySelector('.article-date').textContent;
                 articlesContainer.style.display = 'none';
                 archiveSearch.style.display = 'none';
                 articleFS.style.display = 'flex';
@@ -365,11 +364,28 @@
         let isCompact = false;
         function toggleCompact() {
             isCompact = !isCompact;
-            document.querySelector('.top-row').style.display = isCompact ? 'none' : '';
-            const ci = document.getElementById('compact-track-info');
-            ci.style.display = isCompact ? 'flex' : 'none';
+            document.getElementById('player-top-row').style.display = isCompact ? 'none' : '';
+            document.getElementById('compact-track-name').style.display = isCompact ? '' : 'none';
             document.getElementById('compact-toggle').textContent = isCompact ? '[ ПОЛНЫЙ РЕЖИМ ]' : '[ КОМПАКТНЫЙ РЕЖИМ ]';
+            const playerBody = document.querySelector('.outer-block > div');
+            const timeline = document.querySelector('.inner-block-3');
+            if (isCompact) {
+                playerBody.style.padding = '0';
+                timeline.style.width = '100%';
+                timeline.style.margin = '0';
+                timeline.style.borderLeft = 'none';
+                timeline.style.borderRight = 'none';
+                timeline.style.borderBottom = 'none';
+            } else {
+                playerBody.style.padding = '10px';
+                timeline.style.width = 'calc(100% - 10px)';
+                timeline.style.margin = '-2px 5px 5px';
+                timeline.style.borderLeft = '';
+                timeline.style.borderRight = '';
+                timeline.style.borderBottom = '';
+            }
         }
+        document.getElementById('compact-track-name').style.display = 'none';
     </script>
 
 </body>
