@@ -6,7 +6,7 @@
     <title>АРХИВ</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <style>
-        @font-face { font-family: 'VCRFont'; src: url('VCRFont.ttf') format('truetype'); }
+        @font-face { font-family: 'VCRFont'; src: url('https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/VCR%20OSD%20Mono%20Cyr.ttf') format('truetype'); }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body, html { height: 100%; font-family: VCRFont, sans-serif; background: #000; overflow: hidden; }
         ::-webkit-scrollbar { width: 15px; height: 15px; }
@@ -14,9 +14,9 @@
         ::-webkit-scrollbar-thumb { background: white; border-radius: 0; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         /* 1. Поиск — иконка + текст по центру */
-        .search-wrap { flex-shrink:0; border-top:3px solid white; display:flex; align-items:center; justify-content:center; gap:6px; padding:6px 10px; overflow:hidden; }
+        .search-wrap { flex-shrink:0; border-top:3px solid white; display:flex; align-items:center; justify-content:center; gap:6px; padding:6px 10px; }
         .search-wrap img { width:14px; height:14px; filter:brightness(0) invert(1); flex-shrink:0; transform:scaleX(-1); }
-        #archive-search { background:transparent; border:none; outline:none; color:white; font-family:VCRFont,sans-serif; font-size:13px; padding:0; width:0; flex:1; min-width:0; }
+        #archive-search { background:transparent; border:none; outline:none; color:white; font-family:VCRFont,sans-serif; font-size:13px; padding:0; flex:1; min-width:0; }
         #archive-search::placeholder { color:white; opacity:1; }
 
         .article-body {
@@ -25,8 +25,11 @@
             line-height: 1.5em;
             color: white;
             font-family: VCRFont, sans-serif;
-            height: calc(1.5em * 8 + 16px);
             overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            line-clamp: 4;
+            -webkit-box-orient: vertical;
         }
         .article { width: 100%; border: 3px solid white; margin-bottom: 8px; box-sizing: border-box; }
         .article-header { background: white; display: flex; justify-content: space-between; padding: 3px 8px; cursor: pointer; }
@@ -172,7 +175,42 @@
 
                     <div class="article" data-telegraph="Skolko-nam-let-04-09">
                         <div class="article-header"><span class="article-title">У нас украли примерно 650 лет</span><span class="article-date">09.04.2025</span></div>
-                        <div class="article-body">Если верить официальной версии, то за период примерно с 1925 по 2025 год население планеты увеличилось с 2 млрд до 8...</div>
+                        <div class="article-body">Если верить официальной версии, то за период примерно с 1925 по 2025 год население планеты увеличилось с 2 млрд до 8. Уже на этом моменте кажется странным, что данных до 1820 года нет в открытом доступе. Возможна ли версия, которую предлагает ООН, в реальном мире?</div>
+                    </div>
+
+                    <div class="article" data-telegraph="Hitboks-04-11">
+                        <div class="article-header"><span class="article-title">Хитбокс</span><span class="article-date">11.04.2025</span></div>
+                        <div class="article-body">Давайте представим, что у человека есть хитбокс — своего рода невидимая область вокруг тела, определяющая взаимодействие с окружающим миром. Всё, что попадает в эту зону, так или иначе влияет на человека — физически, эмоционально, информационно.</div>
+                    </div>
+
+                    <div class="article" data-telegraph="Letayushchie-tarelki-04-16">
+                        <div class="article-header"><span class="article-title">Летающие тарелки</span><span class="article-date">16.04.2025</span></div>
+                        <div class="article-body">Видимая вселенная на данный момент имеет размер 93 млрд световых лет. Галактика за галактикой, звезда за звездой — и где-то среди всего этого мы. Вопрос не в том, есть ли там кто-то ещё. Вопрос в том, почему мы так уверены, что знаем ответ.</div>
+                    </div>
+
+                    <div class="article" data-telegraph="EHffekt-babochki-04-20-3">
+                        <div class="article-header"><span class="article-title">Эффект бабочки</span><span class="article-date">20.04.2025</span></div>
+                        <div class="article-body">«Взмах крыла бабочки на одном берегу океана может вызвать цунами на другом» — теория хаоса в действии. Каждое решение, каждый выбор, каждое случайное событие тянет за собой цепочку последствий, которые невозможно предсказать заранее.</div>
+                    </div>
+
+                    <div class="article" data-telegraph="YAchejka-04-22">
+                        <div class="article-header"><span class="article-title">Основной инстинкт</span><span class="article-date">22.04.2025</span></div>
+                        <div class="article-body">В апреле 1999 года вышел фантастический (на тот момент) фильм «Матрица». Люди находятся в симуляции и не подозревают об этом. Прошло 25 лет — и этот сценарий уже не кажется таким уж фантастическим. Что если базовый инстинкт — это не выживание, а подчинение системе?</div>
+                    </div>
+
+                    <div class="article" data-telegraph="Novaya-nadezhda-04-30-2">
+                        <div class="article-header"><span class="article-title">Новая надежда</span><span class="article-date">30.04.2025</span></div>
+                        <div class="article-body">Те, кто проектировали нашу реальность, придумали невероятно жестокую инструкцию к существованию. Родиться, не зная правил. Играть, не зная цели. Проигрывать, не понимая почему. Но иногда в этой системе появляются трещины — и сквозь них просачивается что-то настоящее.</div>
+                    </div>
+
+                    <div class="article" data-telegraph="Oshibka-prirody-05-06-2">
+                        <div class="article-header"><span class="article-title">Ошибка природы</span><span class="article-date">06.05.2025</span></div>
+                        <div class="article-body">Если, прогуливаясь тёплым весенним деньком по городу, свернуть в частный сектор — можно увидеть, как природа пробивается сквозь асфальт. Трава в трещинах, деревья, ломающие бордюры. Природа не делает ошибок — она просто продолжает делать своё дело.</div>
+                    </div>
+
+                    <div class="article" data-telegraph="S-golovoj-ne-druzhish-05-30">
+                        <div class="article-header"><span class="article-title">С головой не дружишь?</span><span class="article-date">30.05.2025</span></div>
+                        <div class="article-body">Каждый из тех, кто читает этот текст, слышал фразу «Ты что, с головой не дружишь?». Обычно её говорят в момент, когда человек делает что-то нестандартное. Но что если именно те, кто «не дружит с головой» — то есть не следует общепринятой логике — видят мир точнее остальных?</div>
                     </div>
 
                 </div>
@@ -408,7 +446,7 @@
                 if (tag === 'a') return `<span style="text-decoration:underline;color:white;">${children}</span>`;
                 if (tag === 'ul') return `<ul style="list-style:none;padding-left:4px;margin-bottom:1em;">${children}</ul>`;
                 if (tag === 'ol') return `<ol style="padding-left:18px;margin-bottom:1em;">${children}</ol>`;
-                if (tag === 'li') return `<li style="${s}font-size:13px;line-height:1.8em;padding-left:14px;position:relative;">— ${children}</li>`;
+                if (tag === 'li') return `<li style="${s}font-size:13px;line-height:1.8em;padding-left:14px;position:relative;">${children.replace(/^⌞\s*/,'')}</li>`;
                 if (tag === 'blockquote') return `<blockquote style="${s}font-size:13px;border-left:3px solid white;padding-left:10px;margin:12px 0;opacity:0.8;">${children}</blockquote>`;
                 return children;
             }).join('');
