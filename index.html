@@ -222,22 +222,21 @@
             document.body.style.background = dark ? '#000' : '#0000cc';
 
             const titleColor = dark ? '#000' : '#0000cc'; // текст на белом фоне (заголовки)
-            const accent = dark ? 'white' : '#0000cc';    // рамки
 
             document.querySelectorAll('.article-title, .article-date').forEach(t => t.style.color = titleColor);
-            document.querySelectorAll('.article').forEach(a => a.style.borderColor = accent);
-            document.querySelector('.progress').style.background = accent;
-            document.querySelectorAll('.inner-block-1, .inner-block-2, .inner-block-3, .outer-block').forEach(el => el.style.borderColor = accent);
+            document.querySelectorAll('.article').forEach(a => a.style.borderColor = 'white');
+            document.querySelector('.progress').style.background = 'white';
+            document.querySelectorAll('.inner-block-1, .inner-block-2, .inner-block-3, .outer-block').forEach(el => el.style.borderColor = 'white');
 
             const settingsBar = document.getElementById('settings-bar');
             if (settingsBar) {
-                settingsBar.style.borderColor = accent;
+                settingsBar.style.borderColor = 'white';
                 settingsBar.querySelectorAll('span').forEach(el => el.style.color = titleColor);
             }
             document.getElementById('theme-toggle').textContent = dark ? '[ НОЧЬ ]' : '[ ДЕНЬ ]';
 
             const archiveCont = document.querySelector('.archive-container');
-            if (archiveCont) archiveCont.style.borderColor = accent;
+            if (archiveCont) archiveCont.style.borderColor = 'white';
 
             const backBtn = document.querySelector('#article-fs-header span:first-child');
             if (backBtn) backBtn.style.color = titleColor;
