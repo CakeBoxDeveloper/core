@@ -13,19 +13,20 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: white; border-radius: 0; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        #archive-search::placeholder { color: white; opacity: 1; }
+        /* 1. Поиск — иконка + текст по центру */
+        .search-wrap { flex-shrink:0; border-top:3px solid white; display:flex; align-items:center; justify-content:center; gap:6px; padding:6px 10px; overflow:hidden; }
+        .search-wrap img { width:14px; height:14px; filter:brightness(0) invert(1); flex-shrink:0; transform:scaleX(-1); }
+        #archive-search { background:transparent; border:none; outline:none; color:white; font-family:VCRFont,sans-serif; font-size:13px; padding:0; width:0; flex:1; min-width:0; }
+        #archive-search::placeholder { color:white; opacity:1; }
 
         .article-body {
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 4;
-            line-clamp: 4;
-            -webkit-box-orient: vertical;
             font-size: 13px;
             padding: 8px;
             line-height: 1.5em;
             color: white;
             font-family: VCRFont, sans-serif;
+            height: calc(1.5em * 8 + 16px);
+            overflow: hidden;
         }
         .article { width: 100%; border: 3px solid white; margin-bottom: 8px; box-sizing: border-box; }
         .article-header { background: white; display: flex; justify-content: space-between; padding: 3px 8px; cursor: pointer; }
@@ -63,12 +64,12 @@
             padding: 2px 8px; flex-shrink: 0;
         }
         #article-fs-title, #article-fs-date { font-family: VCRFont, sans-serif; font-size: 15px; color: #000; text-transform: uppercase; }
-        #article-fs-body { flex: 1; overflow-y: scroll; padding: 0; scrollbar-width: none; }
+        #article-fs-header span { font-family: VCRFont, sans-serif; font-size: 15px; color: #000; }
+        #article-fs-body { flex: 1; overflow-y: scroll; padding: 0; }
         #article-fs-body::-webkit-scrollbar { width: 15px; }
         #article-fs-body::-webkit-scrollbar-track { background: transparent; }
         #article-fs-body::-webkit-scrollbar-thumb { background: white; border-radius: 0; }
         #article-fs-body::-webkit-scrollbar-button { display: none; }
-        #article-fs-back { padding: 4px 8px; flex-shrink: 0; }
 
         @media (max-width: 768px) {
             .outer-block { width: 90vw; }
@@ -114,8 +115,8 @@
             <div class="outer-block">
                 <div style="padding:10px;width:100%;box-sizing:border-box;">
                 <div class="top-row" id="player-top-row">
-                    <div class="inner-block-1" id="cover" style="position:relative;overflow:hidden;">
-                        <video id="visualizer-video" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Outline2Player.webm" muted loop playsinline style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;"></video>
+                    <div class="inner-block-1" id="cover" style="position:relative;overflow:hidden;cursor:pointer;" onclick="if(audio.src){audio.paused?audio.play():audio.pause();}">
+                        <video id="visualizer-video" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Outline2Player.webm" muted loop playsinline style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;"></video>
                     </div>
                     <div class="inner-block-2">
                         <ul class="track-list" id="track-list">
@@ -161,7 +162,7 @@
                 <!-- Fullscreen article overlay -->
                 <div id="article-fullscreen">
                     <div id="article-fs-header">
-                        <span onclick="closeArticle()" style="color:#000;font-family:VCRFont,sans-serif;font-size:11px;cursor:pointer;flex-shrink:0;">[ НАЗАД ]</span>
+                        <span onclick="closeArticle()" style="color:#000;cursor:pointer;flex-shrink:0;">[ НАЗАД ]</span>
                         <span id="article-fs-title" style="margin-left:auto;"></span>
                     </div>
                     <div id="article-fs-body"></div>
@@ -175,9 +176,9 @@
                     </div>
 
                 </div>
-                <div style="position:relative;flex-shrink:0;border-top:3px solid white;">
-                    <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/9b0e2cb32c28f2e168279b57f55443453aba6491/search.svg" style="position:absolute;left:8px;top:50%;transform:translateY(-50%) scaleX(-1);width:14px;height:14px;filter:brightness(0) invert(1);pointer-events:none;z-index:1;">
-                    <input id="archive-search" type="text" placeholder="ВВЕДИТЕ СЛОВО ЧТОБЫ НАЧАТЬ ПОИСК В АРХИВЕ..." style="width:100%;background:transparent;border:none;outline:none;color:white;font-family:VCRFont,sans-serif;font-size:13px;padding:6px 10px 6px 30px;text-align:left;box-sizing:border-box;">
+                <div class="search-wrap">
+                    <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/9b0e2cb32c28f2e168279b57f55443453aba6491/search.svg">
+                    <input id="archive-search" type="text" placeholder="ВВЕДИТЕ СЛОВО ЧТОБЫ НАЧАТЬ ПОИСК В АРХИВЕ...">
                 </div>
                 <style id="search-placeholder-style"></style>
             </div>
@@ -211,7 +212,7 @@
 
             document.querySelectorAll('.article-title, .article-date').forEach(t => t.style.color = titleColor);
             document.querySelectorAll('.article').forEach(a => a.style.borderColor = 'white');
-            document.querySelector('.progress').style.background = 'white';
+            document.querySelector('.progress').style.background = '#00f';
             document.querySelectorAll('.inner-block-1, .inner-block-2, .inner-block-3, .outer-block').forEach(el => el.style.borderColor = 'white');
 
             const settingsBar = document.getElementById('settings-bar');
