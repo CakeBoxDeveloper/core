@@ -62,11 +62,12 @@
             background: white; display: flex; align-items: center;
             padding: 2px 8px; flex-shrink: 0;
         }
-        #article-fs-title, #article-fs-date { font-family: VCRFont, sans-serif; font-size: 15px; color: #000; }
-        #article-fs-body { flex: 1; overflow-y: auto; padding: 0; scrollbar-width: auto; scrollbar-color: white transparent; }
+        #article-fs-title, #article-fs-date { font-family: VCRFont, sans-serif; font-size: 15px; color: #000; text-transform: uppercase; }
+        #article-fs-body { flex: 1; overflow-y: scroll; padding: 0; scrollbar-width: none; }
         #article-fs-body::-webkit-scrollbar { width: 15px; }
         #article-fs-body::-webkit-scrollbar-track { background: transparent; }
         #article-fs-body::-webkit-scrollbar-thumb { background: white; border-radius: 0; }
+        #article-fs-body::-webkit-scrollbar-button { display: none; }
         #article-fs-back { padding: 4px 8px; flex-shrink: 0; }
 
         @media (max-width: 768px) {
@@ -118,18 +119,18 @@
                     </div>
                     <div class="inner-block-2">
                         <ul class="track-list" id="track-list">
-                            <li class="player-item" data-src="Naga.wav"><span class="track-name">Нага</span><span class="track-dots">............................................</span><span class="track-time">03:59</span></li>
+                            <li class="player-item" data-src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/%D0%9D%D0%B0%D0%B3%D0%B0.mp3"><span class="track-name">Нага</span><span class="track-dots">............................................</span><span class="track-time">03:59</span></li>
                             <li class="player-item" data-src="track2.mp3"><span class="track-name">Матриарх</span><span class="track-dots">............................................</span><span class="track-time">03:13</span></li>
                             <li class="player-item" data-src="track3.mp3"><span class="track-name">У нас есть бомбы</span><span class="track-dots">............................................</span><span class="track-time">03:35</span></li>
-                            <li class="player-item" data-src="track4.mp3"><span class="track-name">Овод</span><span class="track-dots">............................................</span><span class="track-time">03:40</span></li>
-                            <li class="player-item" data-src="Lisa.wav"><span class="track-name">Лиза</span><span class="track-dots">............................................</span><span class="track-time">03:55</span></li>
-                            <li class="player-item" data-src="track6.mp3"><span class="track-name">Железный кулак</span><span class="track-dots">............................................</span><span class="track-time">03:28</span></li>
+                            <li class="player-item" data-src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/%D0%9E%D0%B2%D0%BE%D0%B4.mp3"><span class="track-name">Овод</span><span class="track-dots">............................................</span><span class="track-time">03:40</span></li>
+                            <li class="player-item" data-src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/%D0%9B%D0%B8%D0%B7%D0%B0.mp3"><span class="track-name">Лиза</span><span class="track-dots">............................................</span><span class="track-time">03:55</span></li>
+                            <li class="player-item" data-src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/%D0%96%D0%B5%D0%BB%D0%B5%D0%B7%D0%BD%D1%8B%D0%B9%D0%9A%D1%83%D0%BB%D0%B0%D0%BA.mp3"><span class="track-name">Железный кулак</span><span class="track-dots">............................................</span><span class="track-time">03:28</span></li>
                             <li class="player-item" data-src="track7.mp3"><span class="track-name">Пятница XIII</span><span class="track-dots">............................................</span><span class="track-time">03:14</span></li>
                             <li class="player-item" data-src="track8.mp3"><span class="track-name">Бантик</span><span class="track-dots">............................................</span><span class="track-time">04:11</span></li>
                             <li class="player-item" data-src="track9.mp3"><span class="track-name">Антигерой</span><span class="track-dots">............................................</span><span class="track-time">03:50</span></li>
                             <li class="player-item" data-src="track10.mp3"><span class="track-name">Здесь был праздник</span><span class="track-dots">............................................</span><span class="track-time">03:33</span></li>
                             <li class="player-item" data-src="track11.mp3"><span class="track-name">Траур</span><span class="track-dots">............................................</span><span class="track-time">04:39</span></li>
-                            <li class="player-item" data-src="track12.mp3"><span class="track-name">Зомби</span><span class="track-dots">............................................</span><span class="track-time">03:35</span></li>
+                            <li class="player-item" data-src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/%D0%97%D0%BE%D0%BC%D0%B1%D0%B8.mp3"><span class="track-name">Зомби</span><span class="track-dots">............................................</span><span class="track-time">03:35</span></li>
                             <li class="player-item" data-src="track13.mp3"><span class="track-name">Унесёт архангел</span><span class="track-dots">............................................</span><span class="track-time">03:28</span></li>
                             <li class="player-item" data-src="track14.mp3"><span class="track-name">Царство небесное</span><span class="track-dots">............................................</span><span class="track-time">03:04</span></li>
                             <li class="player-item" data-src="track15.mp3"><span class="track-name">Шипы и гвозди</span><span class="track-dots">............................................</span><span class="track-time">03:39</span></li>
@@ -167,31 +168,11 @@
                 </div>
 
                 <div class="no-scrollbar" id="articles-container" style="flex:1;min-height:0;overflow-y:auto;padding:5px 10px;scrollbar-width:none;-ms-overflow-style:none;">
-
-                    <div class="article" data-full="Этот трек писался в три часа ночи, когда за окном шёл дождь и никуда не хотелось идти. Именно из этого состояния — тихого, почти неподвижного — и вырос весь материал. Не из боли, не из злости. Из тишины.&#10;&#10;[img]https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Planet.png[/img]&#10;&#10;[caption]обложка трека, апрель 2026[/caption]&#10;&#10;[h2]О тексте[/h2]&#10;&#10;Текст писался отдельно от музыки, что для нас нетипично. Обычно слова и звук идут вместе, но здесь сначала появились строчки — почти дневниковые, без попытки сделать их «песенными». Потом уже под них подстраивалась мелодия.&#10;&#10;Финальная версия текста отличается от первого наброска примерно на семьдесят процентов. Осталась только одна строфа из оригинала — та, что про свет в соседнем окне.&#10;&#10;[h2]Запись[/h2]&#10;&#10;Запись заняла два дня. Мастеринг отдали на сторону с чёткими инструкциями: не трогать динамику. Трек вышел без анонса — просто появился на всех платформах в полночь.">
-                        <div class="article-header"><span class="article-title">Stay Home</span><span class="article-date">12.04.2026</span></div>
-                        <div class="article-body">Этот трек писался в три часа ночи, когда за окном шёл дождь и никуда не хотелось идти.</div>
-                    </div>
-
-                    <div class="article" data-full="Работа над новым материалом продолжается. Записано уже более десяти треков, часть из которых войдёт в финальный релиз. Дата выхода пока не объявлена.&#10;&#10;Звучание нового альбома заметно отличается от предыдущего. Мы экспериментировали с живыми барабанами, добавили больше синтезаторных слоёв.&#10;&#10;Мы намеренно не торопимся. Лучше выпустить позже, но так, чтобы не было стыдно.">
-                        <div class="article-header"><span class="article-title">Новый альбом</span><span class="article-date">05.03.2026</span></div>
-                        <div class="article-body">Работа над новым материалом продолжается. Записано уже более десяти треков, часть из которых войдёт в финальный релиз. Дата выхода пока не объявлена.</div>
-                    </div>
-
-                    <div class="article" data-full="Выступление прошло в клубе «Точка». Зал был заполнен до отказа. Сыграли весь старый материал плюс три новых трека. Спасибо всем кто пришёл.&#10;&#10;Сет-лист в этот раз был длиннее обычного — почти полтора часа без перерыва.&#10;&#10;Следующее выступление пока не анонсировано, но оно будет.">
-                        <div class="article-header"><span class="article-title">Концерт</span><span class="article-date">18.02.2026</span></div>
-                        <div class="article-body">Выступление прошло в клубе «Точка». Зал был заполнен до отказа. Сыграли весь старый материал плюс три новых трека. Спасибо всем кто пришёл.</div>
-                    </div>
-
-                    <div class="article" data-full="Большое интервью для журнала «Звук» опубликовано на их сайте. Говорили о процессе записи, текстах и планах на год.&#10;&#10;Разговор получился неожиданно откровенным. Обсуждали не только музыку, но и то, откуда берутся образы в текстах.&#10;&#10;Интервью доступно на сайте журнала «Звук» в разделе «Разговоры».">
-                        <div class="article-header"><span class="article-title">Интервью</span><span class="article-date">01.01.2026</span></div>
-                        <div class="article-body">Большое интервью для журнала «Звук» опубликовано на их сайте. Говорили о процессе записи, текстах и планах на год.</div>
-                    </div>
-
+                    <!-- статьи скрыты -->
                 </div>
                 <div style="position:relative;flex-shrink:0;border-top:3px solid white;">
                     <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/9b0e2cb32c28f2e168279b57f55443453aba6491/search.svg" style="position:absolute;left:8px;top:50%;transform:translateY(-50%) scaleX(-1);width:14px;height:14px;filter:brightness(0) invert(1);pointer-events:none;z-index:1;">
-                    <input id="archive-search" type="text" placeholder="ВВЕДИТЕ СЛОВО ЧТОБЫ НАЧАТЬ ПОИСК В АРХИВЕ..." style="width:100%;background:transparent;border:none;outline:none;color:white;font-family:VCRFont,sans-serif;font-size:13px;padding:6px 10px;text-align:center;box-sizing:border-box;">
+                    <input id="archive-search" type="text" placeholder="ВВЕДИТЕ СЛОВО ЧТОБЫ НАЧАТЬ ПОИСК В АРХИВЕ..." style="width:100%;background:transparent;border:none;outline:none;color:white;font-family:VCRFont,sans-serif;font-size:13px;padding:6px 10px 6px 30px;text-align:left;box-sizing:border-box;">
                 </div>
                 <style id="search-placeholder-style"></style>
             </div>
