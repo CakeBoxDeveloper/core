@@ -8,7 +8,7 @@
     <style>
         @font-face { font-family: 'VCRFont'; src: url('https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/VCR%20OSD%20Mono%20Cyr.ttf') format('truetype'); }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body, html { height: 100%; font-family: VCRFont, sans-serif; background: #000; overflow: hidden; }
+        body, html { height: 100%; font-family: VCRFont, sans-serif; overflow: hidden; }
         ::-webkit-scrollbar { width: 15px; height: 15px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: white; border-radius: 0; }
@@ -48,8 +48,8 @@
         .inner-block-2 { flex:1; height:14.4vh; border:3px solid white; overflow-y:scroll; margin:5px; scroll-snap-type:y mandatory; }
         .inner-block-3 { width:calc(100% - 10px); border:3px solid white; display:flex; flex-direction:column; margin:-2px 5px 5px; }
         .inner-block-3.compact { width:100%; margin:0; border-left:none; border-right:none; border-bottom:none; }
-        .progress-bar { width:100%; height:8px; background:white; position:relative; cursor:pointer; }
-        .progress { height:calc(100% - 4px); margin:2px; background:#00f; width:0%; }
+        .progress-bar { width:100%; height:8px; background:white; position:relative; cursor:pointer; margin:1px 0; }
+        .progress { height:60%; margin:auto; position:absolute; top:0; bottom:0; left:0; background:#000; width:0%; }
         .time-info { display:flex; justify-content:space-between; width:100%; color:white; font-size:0.9em; padding:2px 0; }
 
         .track-list { padding:0; margin:0; width:100%; list-style:none; }
@@ -83,6 +83,13 @@
             .header-img { width: 90% !important; }
             .progress-container { width: 90% !important; }
             .bottom-bar { width: 90vw !important; }
+            #settings-bar { width: 90vw !important; flex-wrap: wrap; gap: 4px; }
+            #settings-bar span { font-size: 12px !important; white-space: nowrap; }
+            .content { width: 100vw; }
+            #archive-search { font-size: 11px !important; }
+            .search-wrap { padding: 5px 6px; gap: 4px; }
+            .article-title, .article-date { font-size: 11px; }
+            .article-body { font-size: 11px; }
         }
     </style>
 </head>
@@ -111,7 +118,7 @@
             <span id="settings-label" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">НАСТРОЙКИ</span>
             <span style="display:flex;gap:12px;align-items:center;">
                 <span id="theme-toggle" onclick="toggleTheme()" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;cursor:pointer;">[ НОЧЬ ]</span>
-                <span id="compact-toggle" onclick="toggleCompact()" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;cursor:pointer;">[ КОМПАКТНЫЙ РЕЖИМ ]</span>
+                <span id="compact-toggle" onclick="toggleCompact()" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;cursor:pointer;">[ СВЕРНУТЬ ]</span>
             </span>
         </div>
 
@@ -196,7 +203,7 @@
 
                     <div class="article" data-telegraph="YAchejka-04-22">
                         <div class="article-header"><span class="article-title">Основной инстинкт</span><span class="article-date">22.04.2025</span></div>
-                        <div class="article-body">В апреле 1999 года вышел фантастический (на тот момент) фильм «Матрица». Люди находятся в симуляции и не подозревают об этом. Прошло 25 лет — и этот сценарий уже не кажется таким уж фантастическим. Что если базовый инстинкт — это не выживание, а подчинение системе?</div>
+                        <div class="article-body">В апреле 1999 года вышел фантастический фильм «Матрица». Люди находятся в симуляции и не подозревают об этом. Прошло 25 лет — и этот вопрос звучит уже не так фантастически.</div>
                     </div>
 
                     <div class="article" data-telegraph="Novaya-nadezhda-04-30-2">
@@ -245,13 +252,12 @@
             isDark = dark;
             document.getElementById('bg-source').src = dark ? DARK : LIGHT;
             document.getElementById('background-video').load();
-            document.body.style.background = dark ? '#000' : '#0000cc';
 
             const titleColor = dark ? '#000' : '#0000cc'; // текст на белом фоне (заголовки)
 
             document.querySelectorAll('.article-title, .article-date').forEach(t => t.style.color = titleColor);
             document.querySelectorAll('.article').forEach(a => a.style.borderColor = 'white');
-            document.querySelector('.progress').style.background = '#00f';
+            document.querySelector('.progress').style.background = dark ? '#000' : '#0000cc';
             document.querySelectorAll('.inner-block-1, .inner-block-2, .inner-block-3, .outer-block').forEach(el => el.style.borderColor = 'white');
 
             const settingsBar = document.getElementById('settings-bar');
@@ -434,12 +440,15 @@
             return nodes.map(node => {
                 if (typeof node === 'string') return node;
                 const tag = node.tag;
+                // strip color from attrs to avoid black text
+                const attrs = node.attrs ? Object.assign({}, node.attrs) : {};
+                delete attrs.style;
                 const children = node.children ? renderTelegraphNodes(node.children) : '';
                 const s = 'color:white;font-family:VCRFont,sans-serif;';
                 if (tag === 'p') return `<p style="${s}font-size:13px;line-height:1.8em;margin-bottom:1em;">${children}</p>`;
                 if (tag === 'h3' || tag === 'h4') return `<p style="${s}font-size:14px;font-weight:bold;margin:16px 0 8px;">${children}</p>`;
-                if (tag === 'strong' || tag === 'b') return `<strong>${children}</strong>`;
-                if (tag === 'em' || tag === 'i') return `<em>${children}</em>`;
+                if (tag === 'strong' || tag === 'b') return `<strong style="color:white;">${children}</strong>`;
+                if (tag === 'em' || tag === 'i') return `<em style="color:white;">${children}</em>`;
                 if (tag === 'br') return '<br>';
                 if (tag === 'img') return `<img src="${node.attrs && node.attrs.src || ''}" style="width:70%;border:1.5px solid white;display:block;margin:12px 0 4px;">`;
                 if (tag === 'figure') return `<div style="margin:12px 0;">${children}</div>`;
@@ -465,7 +474,7 @@
             isCompact = !isCompact;
             document.getElementById('player-top-row').style.display = isCompact ? 'none' : '';
             document.getElementById('compact-track-name').style.display = isCompact ? '' : 'none';
-            document.getElementById('compact-toggle').textContent = isCompact ? '[ ПОЛНЫЙ РЕЖИМ ]' : '[ КОМПАКТНЫЙ РЕЖИМ ]';
+            document.getElementById('compact-toggle').textContent = isCompact ? '[ РАЗВЕРНУТЬ ]' : '[ СВЕРНУТЬ ]';
             const playerBody = document.querySelector('.outer-block > div');
             const timeline = document.querySelector('.inner-block-3');
             if (isCompact) {
