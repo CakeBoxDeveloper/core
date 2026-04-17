@@ -4,14 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>АРХИВ</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <style>
         @font-face { font-family: 'VCRFont'; src: url('VCRFont.ttf') format('truetype'); }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body, html { height: 100%; font-family: VCRFont, sans-serif; background: transparent; overflow: hidden; }
+        body, html { height: 100%; font-family: VCRFont, sans-serif; background: #000; overflow: hidden; }
         ::-webkit-scrollbar { width: 15px; height: 15px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: white; border-radius: 0; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        #archive-search::placeholder { color: white; opacity: 1; }
 
         .article-body {
             overflow: hidden;
@@ -28,7 +30,7 @@
         .article { width: 100%; border: 3px solid white; margin-bottom: 8px; box-sizing: border-box; }
         .article-header { background: white; display: flex; justify-content: space-between; padding: 3px 8px; cursor: pointer; }
         .article-header:hover { opacity: 0.85; }
-        .article-title, .article-date { font-family: VCRFont, sans-serif; font-size: 13px; color: #000; }
+        .article-title, .article-date { font-family: VCRFont, sans-serif; font-size: 13px; color: #000; text-transform: uppercase; }
 
         .video-container { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; display:flex; justify-content:center; align-items:center; z-index:9999; }
         .video-container video { width:100%; height:100%; object-fit:cover; }
@@ -61,8 +63,8 @@
             padding: 2px 8px; flex-shrink: 0;
         }
         #article-fs-title, #article-fs-date { font-family: VCRFont, sans-serif; font-size: 15px; color: #000; }
-        #article-fs-body { flex: 1; overflow-y: auto; padding: 0; scrollbar-width: thin; scrollbar-color: white transparent; }
-        #article-fs-body::-webkit-scrollbar { width: 8px; }
+        #article-fs-body { flex: 1; overflow-y: auto; padding: 0; scrollbar-width: auto; scrollbar-color: white transparent; }
+        #article-fs-body::-webkit-scrollbar { width: 15px; }
         #article-fs-body::-webkit-scrollbar-track { background: transparent; }
         #article-fs-body::-webkit-scrollbar-thumb { background: white; border-radius: 0; }
         #article-fs-back { padding: 4px 8px; flex-shrink: 0; }
@@ -100,10 +102,10 @@
 
         <!-- Settings bar (replaces progress bar) -->
         <div id="settings-bar" style="width:35vw;margin:2vh auto 0;background:white;border:3px solid white;display:flex;align-items:center;justify-content:space-between;padding:3px 8px;box-sizing:border-box;flex-shrink:0;">
-            <span id="settings-label" style="font-family:VCRFont,sans-serif;font-size:13px;color:#000;">НАСТРОЙКИ</span>
+            <span id="settings-label" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">НАСТРОЙКИ</span>
             <span style="display:flex;gap:12px;align-items:center;">
-                <span id="theme-toggle" onclick="toggleTheme()" style="font-family:VCRFont,sans-serif;font-size:13px;color:#000;cursor:pointer;">[ НОЧЬ ]</span>
-                <span id="compact-toggle" onclick="toggleCompact()" style="font-family:VCRFont,sans-serif;font-size:13px;color:#000;cursor:pointer;">[ КОМПАКТНЫЙ РЕЖИМ ]</span>
+                <span id="theme-toggle" onclick="toggleTheme()" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;cursor:pointer;">[ НОЧЬ ]</span>
+                <span id="compact-toggle" onclick="toggleCompact()" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;cursor:pointer;">[ КОМПАКТНЫЙ РЕЖИМ ]</span>
             </span>
         </div>
 
@@ -158,7 +160,7 @@
                 <!-- Fullscreen article overlay -->
                 <div id="article-fullscreen">
                     <div id="article-fs-header">
-                        <span onclick="closeArticle()" style="color:#000;font-family:VCRFont,sans-serif;font-size:15px;cursor:pointer;flex-shrink:0;">[ НАЗАД ]</span>
+                        <span onclick="closeArticle()" style="color:#000;font-family:VCRFont,sans-serif;font-size:11px;cursor:pointer;flex-shrink:0;">[ НАЗАД ]</span>
                         <span id="article-fs-title" style="margin-left:auto;"></span>
                     </div>
                     <div id="article-fs-body"></div>
@@ -166,9 +168,9 @@
 
                 <div class="no-scrollbar" id="articles-container" style="flex:1;min-height:0;overflow-y:auto;padding:5px 10px;scrollbar-width:none;-ms-overflow-style:none;">
 
-                    <div class="article" data-src="articles/stay-home.html" data-full="Lorem Ipsum - это текст-&quot;рыба&quot;, часто используемый в печати и вэб-дизайне.&#10;&#10;С тех пор прошло больше пяти веков, но этот текст по-прежнему остаётся неизменным.&#10;&#10;Многие думают, что Lorem Ipsum — это случайный набор слов, но это не так.">
+                    <div class="article" data-full="Этот трек писался в три часа ночи, когда за окном шёл дождь и никуда не хотелось идти. Именно из этого состояния — тихого, почти неподвижного — и вырос весь материал. Не из боли, не из злости. Из тишины.&#10;&#10;[img]https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Planet.png[/img]&#10;&#10;[caption]обложка трека, апрель 2026[/caption]&#10;&#10;[h2]О тексте[/h2]&#10;&#10;Текст писался отдельно от музыки, что для нас нетипично. Обычно слова и звук идут вместе, но здесь сначала появились строчки — почти дневниковые, без попытки сделать их «песенными». Потом уже под них подстраивалась мелодия.&#10;&#10;Финальная версия текста отличается от первого наброска примерно на семьдесят процентов. Осталась только одна строфа из оригинала — та, что про свет в соседнем окне.&#10;&#10;[h2]Запись[/h2]&#10;&#10;Запись заняла два дня. Мастеринг отдали на сторону с чёткими инструкциями: не трогать динамику. Трек вышел без анонса — просто появился на всех платформах в полночь.">
                         <div class="article-header"><span class="article-title">Stay Home</span><span class="article-date">12.04.2026</span></div>
-                        <div class="article-body">Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века.</div>
+                        <div class="article-body">Этот трек писался в три часа ночи, когда за окном шёл дождь и никуда не хотелось идти.</div>
                     </div>
 
                     <div class="article" data-full="Работа над новым материалом продолжается. Записано уже более десяти треков, часть из которых войдёт в финальный релиз. Дата выхода пока не объявлена.&#10;&#10;Звучание нового альбома заметно отличается от предыдущего. Мы экспериментировали с живыми барабанами, добавили больше синтезаторных слоёв.&#10;&#10;Мы намеренно не торопимся. Лучше выпустить позже, но так, чтобы не было стыдно.">
@@ -187,8 +189,11 @@
                     </div>
 
                 </div>
-                <input id="archive-search" type="text" placeholder="ВВЕДИТЕ СЛОВО ЧТОБЫ НАЧАТЬ ПОИСК В АРХИВЕ..." style="width:100%;background:transparent;border:none;border-top:3px solid white;outline:none;color:white;font-family:VCRFont,sans-serif;font-size:13px;padding:6px 10px;text-align:center;box-sizing:border-box;flex-shrink:0;">
-                <style>#archive-search::placeholder { color: white; opacity: 1; }</style>
+                <div style="position:relative;flex-shrink:0;border-top:3px solid white;">
+                    <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/9b0e2cb32c28f2e168279b57f55443453aba6491/search.svg" style="position:absolute;left:8px;top:50%;transform:translateY(-50%) scaleX(-1);width:14px;height:14px;filter:brightness(0) invert(1);pointer-events:none;z-index:1;">
+                    <input id="archive-search" type="text" placeholder="ВВЕДИТЕ СЛОВО ЧТОБЫ НАЧАТЬ ПОИСК В АРХИВЕ..." style="width:100%;background:transparent;border:none;outline:none;color:white;font-family:VCRFont,sans-serif;font-size:13px;padding:6px 10px;text-align:center;box-sizing:border-box;">
+                </div>
+                <style id="search-placeholder-style"></style>
             </div>
         </div>
 
@@ -214,15 +219,30 @@
             isDark = dark;
             document.getElementById('bg-source').src = dark ? DARK : LIGHT;
             document.getElementById('background-video').load();
-            const titleColor = dark ? '#000' : '#0000cc';
+            document.body.style.background = dark ? '#000' : '#0000cc';
+
+            const titleColor = dark ? '#000' : '#0000cc'; // текст на белом фоне (заголовки)
+            const accent = dark ? 'white' : '#0000cc';    // рамки
+
             document.querySelectorAll('.article-title, .article-date').forEach(t => t.style.color = titleColor);
-            document.querySelector('.progress').style.background = dark ? '#000' : '#0000cc';
-            const settingsColor = dark ? '#000' : '#0000cc';
+            document.querySelectorAll('.article').forEach(a => a.style.borderColor = accent);
+            document.querySelector('.progress').style.background = accent;
+            document.querySelectorAll('.inner-block-1, .inner-block-2, .inner-block-3, .outer-block').forEach(el => el.style.borderColor = accent);
+
             const settingsBar = document.getElementById('settings-bar');
             if (settingsBar) {
-                settingsBar.querySelectorAll('span').forEach(el => el.style.color = settingsColor);
+                settingsBar.style.borderColor = accent;
+                settingsBar.querySelectorAll('span').forEach(el => el.style.color = titleColor);
             }
             document.getElementById('theme-toggle').textContent = dark ? '[ НОЧЬ ]' : '[ ДЕНЬ ]';
+
+            const archiveCont = document.querySelector('.archive-container');
+            if (archiveCont) archiveCont.style.borderColor = accent;
+
+            const backBtn = document.querySelector('#article-fs-header span:first-child');
+            if (backBtn) backBtn.style.color = titleColor;
+            const fsTitle = document.getElementById('article-fs-title');
+            if (fsTitle) fsTitle.style.color = titleColor;
         }
 
         function toggleTheme() {
@@ -270,9 +290,15 @@
             });
         });
 
-        audio.addEventListener('play', () => { visualizerVideo.style.display = 'block'; visualizerVideo.play(); });
+        audio.addEventListener('play', () => {
+            visualizerVideo.style.display = 'block';
+            visualizerVideo.play();
+        });
         audio.addEventListener('pause', () => { visualizerVideo.pause(); });
-        audio.addEventListener('ended', () => { visualizerVideo.pause(); visualizerVideo.style.display = 'none'; });
+        audio.addEventListener('ended', () => {
+            visualizerVideo.pause();
+            visualizerVideo.style.display = 'none';
+        });
         audio.addEventListener('timeupdate', function () {
             const pct = (audio.currentTime / audio.duration) * 100;
             progress.style.width = `${pct}%`;
@@ -329,30 +355,43 @@
         document.querySelectorAll('.article-header').forEach(header => {
             header.addEventListener('click', function () {
                 const article = this.closest('.article');
-                const src = article.dataset.src;
                 const fsBody = document.getElementById('article-fs-body');
                 document.getElementById('article-fs-title').textContent = this.querySelector('.article-title').textContent;
                 const dateEl = document.getElementById('article-fs-date');
                 if (dateEl) dateEl.textContent = this.querySelector('.article-date').textContent;
+                // Apply current theme color
+                const themeColor = isDark ? '#000' : '#0000cc';
+                const fsTitle = document.getElementById('article-fs-title');
+                if (fsTitle) fsTitle.style.color = themeColor;
+                const backBtn = document.querySelector('#article-fs-header span:first-child');
+                if (backBtn) backBtn.style.color = themeColor;
                 articlesContainer.style.display = 'none';
                 archiveSearch.style.display = 'none';
                 articleFS.style.display = 'flex';
-                if (src) {
-                    fsBody.style.padding = '0';
-                    const iframe = document.createElement('iframe');
-                    iframe.src = src;
-                    iframe.style.cssText = 'width:100%;height:100%;border:none;display:block;background:transparent;';
-                    iframe.setAttribute('allowtransparency', 'true');
-                    iframe.id = 'article-iframe';
-                    fsBody.innerHTML = '';
-                    fsBody.appendChild(iframe);
-                    iframe.addEventListener('load', () => iframe.contentWindow.postMessage({ type: 'setTheme', dark: isDark }, '*'));
-                } else {
-                    const text = article.dataset.full || article.querySelector('.article-body').textContent.trim();
-                    fsBody.innerHTML = text.split('\n\n').map(p => `<p style="margin-bottom:1em;padding:0 8px;color:white;font-family:VCRFont,sans-serif;font-size:13px;">${p.trim()}</p>`).join('');
-                }
+
+                const text = article.dataset.full || article.querySelector('.article-body').textContent.trim();
+                fsBody.style.padding = '8px';
+                fsBody.innerHTML = renderArticle(text);
             });
         });
+
+        function renderArticle(text) {
+            const fg = 'white';
+            return text.split('\n\n').map(block => {
+                block = block.trim();
+                if (!block) return '';
+                // [img]url[/img]
+                const imgMatch = block.match(/^\[img\](.*?)\[\/img\]$/);
+                if (imgMatch) return `<img src="${imgMatch[1]}" style="width:70%;border:1.5px solid white;display:block;margin:12px 0 4px;">`;
+                // [caption]text[/caption]
+                const capMatch = block.match(/^\[caption\](.*?)\[\/caption\]$/);
+                if (capMatch) return `<p style="font-size:11px;color:white;opacity:0.7;margin-bottom:12px;font-family:VCRFont,sans-serif;">${capMatch[1]}</p>`;
+                // [h2]text[/h2]
+                const h2Match = block.match(/^\[h2\](.*?)\[\/h2\]$/);
+                if (h2Match) return `<p style="font-size:14px;font-weight:bold;color:white;margin:16px 0 8px;font-family:VCRFont,sans-serif;">${h2Match[1]}</p>`;
+                return `<p style="margin-bottom:1em;color:white;font-family:VCRFont,sans-serif;font-size:13px;line-height:1.8em;">${block}</p>`;
+            }).join('');
+        }
 
         function closeArticle() {
             articleFS.style.display = 'none';
