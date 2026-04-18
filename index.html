@@ -70,18 +70,17 @@
             flex-direction: column; z-index: 10; background: transparent;
         }
         #article-fs-header {
-            background: white; display: flex; align-items: center;
+            background: white; display: flex; align-items: center; justify-content: space-between;
             padding: 2px 8px; flex-shrink: 0; overflow: hidden;
         }
         #article-fs-title, #article-fs-date { font-family: VCRFont, sans-serif; font-size: 15px; color: #000; text-transform: uppercase; }
         #article-fs-header span { font-family: VCRFont, sans-serif; font-size: 15px; color: #000; white-space: nowrap; }
         #article-fs-title {
-            flex: 1; min-width: 0;
-            white-space: nowrap;
-            display: block;
+            min-width: 0;
+            white-space: nowrap; overflow: hidden;
         }
         #article-fs-title-wrap {
-            flex: 1; min-width: 0; overflow: hidden;
+            flex: 1; min-width: 0; overflow: hidden; text-align: right;
         }
         #article-fs-title.marquee { animation: fs-marquee 5s linear infinite alternate; }
         @keyframes fs-marquee {
@@ -195,7 +194,7 @@
                 <div id="article-fullscreen">
                     <div id="article-fs-header">
                         <span onclick="closeArticle()" style="color:#000;cursor:pointer;flex-shrink:0;">[ НАЗАД ]</span>
-                        <div id="article-fs-title-wrap" style="margin-left:8px;">
+                        <div id="article-fs-title-wrap">
                             <span id="article-fs-title"></span>
                         </div>
                     </div>
