@@ -54,8 +54,14 @@
 
         .track-list { padding:0; margin:0; width:100%; list-style:none; }
         .track-list li { cursor:pointer; padding:3px 6px; color:white; display:flex; scroll-snap-align:start; white-space:nowrap; overflow:hidden; }
-        .track-list li .track-name { flex-shrink:0; }
-        .track-list li .track-dots { flex:1; overflow:hidden; text-align:right; letter-spacing:1px; min-width:0; }
+        .track-list li .track-name-wrap { flex-shrink:0; overflow:hidden; max-width:60%; }
+        .track-list li .track-name { display:inline-block; white-space:nowrap; }
+        .track-list li .track-name.marquee { animation: marquee-lr 4s linear infinite alternate; }
+        @keyframes marquee-lr {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(var(--marquee-dist, -50%)); }
+        }
+        .track-list li .track-dots { flex:1; overflow:hidden; text-align:left; letter-spacing:1px; min-width:0; }
         .track-list li .track-time { flex-shrink:0; margin-left:4px; }
         .track-list li:hover { background:rgba(255,255,255,0.2); }
 
@@ -65,10 +71,23 @@
         }
         #article-fs-header {
             background: white; display: flex; align-items: center;
-            padding: 2px 8px; flex-shrink: 0;
+            padding: 2px 8px; flex-shrink: 0; overflow: hidden;
         }
         #article-fs-title, #article-fs-date { font-family: VCRFont, sans-serif; font-size: 15px; color: #000; text-transform: uppercase; }
-        #article-fs-header span { font-family: VCRFont, sans-serif; font-size: 15px; color: #000; }
+        #article-fs-header span { font-family: VCRFont, sans-serif; font-size: 15px; color: #000; white-space: nowrap; }
+        #article-fs-title {
+            flex: 1; min-width: 0;
+            white-space: nowrap;
+            display: block;
+        }
+        #article-fs-title-wrap {
+            flex: 1; min-width: 0; overflow: hidden;
+        }
+        #article-fs-title.marquee { animation: fs-marquee 5s linear infinite alternate; }
+        @keyframes fs-marquee {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(var(--fs-marquee-dist, 0px)); }
+        }
         #article-fs-body { flex: 1; overflow-y: scroll; padding: 0; }
         #article-fs-body::-webkit-scrollbar { width: 15px; }
         #article-fs-body::-webkit-scrollbar-track { background: transparent; }
@@ -90,6 +109,7 @@
             .search-wrap { padding: 5px 6px; gap: 4px; }
             .article-title, .article-date { font-size: 11px; }
             .article-body { font-size: 11px; }
+            .track-list li .track-dots { display: none; }
         }
     </style>
 </head>
@@ -127,6 +147,7 @@
                 <div style="padding:10px;width:100%;box-sizing:border-box;">
                 <div class="top-row" id="player-top-row">
                     <div class="inner-block-1" id="cover" style="position:relative;overflow:hidden;cursor:pointer;" onclick="if(audio.src){audio.paused?audio.play():audio.pause();}">
+                        <video id="frame-video" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Frame.webm" autoplay muted loop playsinline style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;"></video>
                         <video id="visualizer-video" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Outline2Player.webm" muted loop playsinline style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;"></video>
                     </div>
                     <div class="inner-block-2">
@@ -174,7 +195,9 @@
                 <div id="article-fullscreen">
                     <div id="article-fs-header">
                         <span onclick="closeArticle()" style="color:#000;cursor:pointer;flex-shrink:0;">[ НАЗАД ]</span>
-                        <span id="article-fs-title" style="margin-left:auto;"></span>
+                        <div id="article-fs-title-wrap" style="margin-left:8px;">
+                            <span id="article-fs-title"></span>
+                        </div>
                     </div>
                     <div id="article-fs-body"></div>
                 </div>
@@ -307,6 +330,7 @@
         const currentTimeDisplay = document.getElementById('current-time');
         const durationDisplay = document.getElementById('duration');
         const visualizerVideo = document.getElementById('visualizer-video');
+        const frameVideo = document.getElementById('frame-video');
 
         document.querySelectorAll('.player-item').forEach(track => {
             track.addEventListener('click', function () {
@@ -322,10 +346,13 @@
         });
 
         audio.addEventListener('play', () => {
+            frameVideo.style.display = 'none';
             visualizerVideo.style.display = 'block';
             visualizerVideo.play();
         });
-        audio.addEventListener('pause', () => { visualizerVideo.pause(); });
+        audio.addEventListener('pause', () => {
+            visualizerVideo.pause();
+        });
         audio.addEventListener('ended', () => {
             visualizerVideo.pause();
             visualizerVideo.style.display = 'none';
@@ -341,6 +368,31 @@
             if (isNaN(s)) return '0:00';
             return `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
         }
+
+        // Marquee for track names on mobile
+        function initMarquee() {
+            document.querySelectorAll('.track-list li').forEach(li => {
+                const nameSpan = li.querySelector('.track-name');
+                if (!nameSpan) return;
+                // wrap if not already wrapped
+                if (!nameSpan.parentElement.classList.contains('track-name-wrap')) {
+                    const wrap = document.createElement('span');
+                    wrap.className = 'track-name-wrap';
+                    nameSpan.parentNode.insertBefore(wrap, nameSpan);
+                    wrap.appendChild(nameSpan);
+                }
+                const wrap = nameSpan.parentElement;
+                const overflow = nameSpan.scrollWidth - wrap.clientWidth;
+                if (overflow > 2) {
+                    nameSpan.style.setProperty('--marquee-dist', `-${overflow}px`);
+                    nameSpan.classList.add('marquee');
+                } else {
+                    nameSpan.classList.remove('marquee');
+                }
+            });
+        }
+        window.addEventListener('load', initMarquee);
+        window.addEventListener('resize', initMarquee);
 
         // TV Noise
         const noiseCanvas = document.getElementById('tv-noise');
@@ -388,7 +440,16 @@
                 const article = this.closest('.article');
                 const fsBody = document.getElementById('article-fs-body');
                 const titleText = this.querySelector('.article-title').textContent;
-                document.getElementById('article-fs-title').textContent = titleText;
+                const fsTitleEl = document.getElementById('article-fs-title');
+                fsTitleEl.textContent = titleText;
+                fsTitleEl.classList.remove('marquee');
+                requestAnimationFrame(() => {
+                    const overflow = fsTitleEl.scrollWidth - fsTitleEl.clientWidth;
+                    if (overflow > 2) {
+                        fsTitleEl.style.setProperty('--fs-marquee-dist', `-${overflow}px`);
+                        fsTitleEl.classList.add('marquee');
+                    }
+                });
                 const dateEl = document.getElementById('article-fs-date');
                 if (dateEl) dateEl.textContent = this.querySelector('.article-date').textContent;
                 const themeColor = isDark ? '#000' : '#0000cc';
@@ -456,7 +517,7 @@
                 if (tag === 'a') return `<span style="text-decoration:underline;color:white;">${children}</span>`;
                 if (tag === 'ul') return `<ul style="list-style:none;padding-left:4px;margin-bottom:1em;">${children}</ul>`;
                 if (tag === 'ol') return `<ol style="padding-left:18px;margin-bottom:1em;">${children}</ol>`;
-                if (tag === 'li') return `<li style="${s}font-size:13px;line-height:1.8em;padding-left:14px;position:relative;">${children.replace(/^⌞\s*/,'')}</li>`;
+                if (tag === 'li') return `<li style="${s}font-size:13px;line-height:1.8em;padding-left:14px;position:relative;">${children}</li>`;
                 if (tag === 'blockquote') return `<blockquote style="${s}font-size:13px;border-left:3px solid white;padding-left:10px;margin:12px 0;opacity:0.8;">${children}</blockquote>`;
                 return children;
             }).join('');
