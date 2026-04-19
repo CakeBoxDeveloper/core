@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>АРХИВ</title>
-    <link rel="icon" type="image/svg+xml" href="https://raw.githubusercontent.com/CakeBoxDeveloper/core/664ce9e50e7a1be232035108c0bf39e66a93e79e/folder-type.svg">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <style>
         @font-face { font-family: 'VCRFont'; src: url('https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/VCR%20OSD%20Mono%20Cyr.ttf') format('truetype'); }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -70,7 +70,7 @@
         #article-fs-title, #article-fs-back { font-family: VCRFont, sans-serif; font-size: 13px; color: #000; text-transform: uppercase; }
         #article-fs-header span { font-family: VCRFont, sans-serif; font-size: 13px; color: #000; white-space: nowrap; }
         #article-fs-title {
-            width: 35%;
+            width: 50%;
             flex-shrink: 0;
             overflow: hidden;
             white-space: nowrap;
@@ -613,7 +613,7 @@
             document.getElementById('compact-toggle').textContent = isCompact ? '[ РАЗВЕРНУТЬ ]' : '[ СВЕРНУТЬ ]';
             const playerBody = document.querySelector('.outer-block > div');
             const timeline = document.querySelector('.inner-block-3');
-            if (isCompact) { 
+            if (isCompact) {
                 playerBody.style.padding = '0';
                 timeline.style.width = '100%';
                 timeline.style.margin = '0';
