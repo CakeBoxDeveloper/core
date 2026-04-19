@@ -112,7 +112,7 @@
 
     <div class="video-container" id="preloader">
         <video id="intro-video" autoplay muted playsinline>
-            <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Preloader.webm" type="video/webm">
+        <source id="preloader-source" src="" type="video/webm">
         </video>
     </div>
 
@@ -237,6 +237,7 @@
 
                 </div>
                 <div class="search-wrap">
+                    <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/9b0e2cb32c28f2e168279b57f55443453aba6491/search.svg">
                     <input id="archive-search" type="text" placeholder="ВВЕДИТЕ СЛОВО ЧТОБЫ НАЧАТЬ ПОИСК В АРХИВЕ...">
                 </div>
                 <style id="search-placeholder-style"></style>
@@ -259,7 +260,16 @@
         // Theme
         const DARK = 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Dark.webm';
         const LIGHT = 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Light.webm';
-        let isDark = new Date().getHours() >= 22 || new Date().getHours() < 5;
+        const PRELOADER_DARK = 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Preloader.webm';
+        const PRELOADER_LIGHT = 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/PreloaderLight.webm';
+        const h = new Date().getHours();
+        let isDark = h >= 20 || h < 5;
+
+        // Set preloader based on time
+        const preloaderSource = document.getElementById('preloader-source');
+        preloaderSource.src = isDark ? PRELOADER_DARK : PRELOADER_LIGHT;
+        introVideo.load();
+        introVideo.play();
 
         function setTheme(dark) {
             isDark = dark;
@@ -445,15 +455,35 @@
 
                 const telegraphPath = article.dataset.telegraph;
                 if (telegraphPath) {
-                    fsBody.innerHTML = '<p style="color:white;font-family:VCRFont,sans-serif;font-size:13px;">Загрузка...</p>';
+                    fsBody.innerHTML = '<canvas id="loading-noise" style="width:100%;height:100%;display:block;"></canvas>';
+                    const lc = document.getElementById('loading-noise');
+                    lc.width = lc.offsetWidth || 300;
+                    lc.height = lc.offsetHeight || 200;
+                    const lctx = lc.getContext('2d');
+                    let lAnim;
+                    function drawLoadingNoise() {
+                        lc.width = fsBody.clientWidth;
+                        lc.height = fsBody.clientHeight;
+                        const img = lctx.createImageData(lc.width, lc.height);
+                        for (let i = 0; i < img.data.length; i += 4) {
+                            const v = Math.random() * 255 | 0;
+                            img.data[i] = img.data[i+1] = img.data[i+2] = v;
+                            img.data[i+3] = 255;
+                        }
+                        lctx.putImageData(img, 0, 0);
+                        lAnim = requestAnimationFrame(drawLoadingNoise);
+                    }
+                    drawLoadingNoise();
                     fetch(`https://api.telegra.ph/getPage/${telegraphPath}?return_content=true`)
                         .then(r => r.json())
                         .then(data => {
+                            cancelAnimationFrame(lAnim);
                             if (data.ok) {
                                 fsBody.innerHTML = renderTelegraphNodes(data.result.content);
                             }
                         })
                         .catch(() => {
+                            cancelAnimationFrame(lAnim);
                             fsBody.innerHTML = '<p style="color:white;font-family:VCRFont,sans-serif;font-size:13px;">Ошибка загрузки.</p>';
                         });
                 } else {
