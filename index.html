@@ -237,7 +237,6 @@
 
                 </div>
                 <div class="search-wrap">
-                    <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/9b0e2cb32c28f2e168279b57f55443453aba6491/search.svg">
                     <input id="archive-search" type="text" placeholder="ВВЕДИТЕ СЛОВО ЧТОБЫ НАЧАТЬ ПОИСК В АРХИВЕ...">
                 </div>
                 <style id="search-placeholder-style"></style>
@@ -425,6 +424,7 @@
         const articleFS = document.getElementById('article-fullscreen');
         const articlesContainer = document.getElementById('articles-container');
         const archiveSearch = document.getElementById('archive-search');
+        const searchWrap = document.querySelector('.search-wrap');
 
         document.querySelectorAll('.article-header').forEach(header => {
             header.addEventListener('click', function () {
@@ -439,7 +439,10 @@
                 if (backBtn) backBtn.style.color = themeColor;
                 articlesContainer.style.display = 'none';
                 archiveSearch.style.display = 'none';
+                searchWrap.style.display = 'none';
                 articleFS.style.display = 'flex';
+                visualizerVideo.style.visibility = 'hidden';
+                frameVideo.style.visibility = 'hidden';
                 fsBody.style.padding = '8px';
 
                 const telegraphPath = article.dataset.telegraph;
@@ -515,8 +518,11 @@
 
         function closeArticle() {
             articleFS.style.display = 'none';
+            visualizerVideo.style.visibility = '';
+            frameVideo.style.visibility = '';
             articlesContainer.style.display = '';
             archiveSearch.style.display = '';
+            searchWrap.style.display = '';
         }
 
         // Compact mode
@@ -527,7 +533,7 @@
             document.getElementById('compact-track-name').style.display = isCompact ? '' : 'none';
             document.getElementById('compact-toggle').textContent = isCompact ? '[ РАЗВЕРНУТЬ ]' : '[ СВЕРНУТЬ ]';
             const playerBody = document.querySelector('.outer-block > div');
-            const timeline = document.querySelector('.inner-block-3'); 
+            const timeline = document.querySelector('.inner-block-3');
             if (isCompact) {
                 playerBody.style.padding = '0';
                 timeline.style.width = '100%';
