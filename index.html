@@ -493,8 +493,8 @@
                 if (tag === 'strong' || tag === 'b') return `<strong style="${s}font-size:13px;">${children}</strong>`;
                 if (tag === 'em' || tag === 'i') return `<em style="color:white;">${children}</em>`;
                 if (tag === 'br') return '<br>';
-                if (tag === 'img') return '';
-                if (tag === 'figure') return '';
+                if (tag === 'img') return `<img src="${node.attrs && node.attrs.src || ''}" style="width:100%;display:block;margin:12px 0;">`;
+                if (tag === 'figure') return `<div style="margin:12px 0;">${children}</div>`;
                 if (tag === 'figcaption') return '';
                 if (tag === 'iframe') return '';
                 if (tag === 'video') return '';
