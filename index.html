@@ -441,8 +441,6 @@
                 archiveSearch.style.display = 'none';
                 searchWrap.style.display = 'none';
                 articleFS.style.display = 'flex';
-                visualizerVideo.style.visibility = 'hidden';
-                frameVideo.style.visibility = 'hidden';
                 fsBody.style.padding = '8px';
 
                 const telegraphPath = article.dataset.telegraph;
@@ -518,8 +516,6 @@
 
         function closeArticle() {
             articleFS.style.display = 'none';
-            visualizerVideo.style.visibility = '';
-            frameVideo.style.visibility = '';
             articlesContainer.style.display = '';
             archiveSearch.style.display = '';
             searchWrap.style.display = '';
