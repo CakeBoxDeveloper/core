@@ -67,7 +67,7 @@
 
         #article-fullscreen {
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            flex-direction: column; z-index: 10; background: #0000cc;
+            flex-direction: column; z-index: 10; background: transparent;
         }
         #article-fs-header {
             background: white; display: flex; align-items: center; justify-content: space-between;
@@ -140,7 +140,7 @@
                 <div style="padding:10px;width:100%;box-sizing:border-box;">
                 <div class="top-row" id="player-top-row">
                     <div class="inner-block-1" id="cover" style="position:relative;overflow:hidden;cursor:pointer;" onclick="if(audio.src){audio.paused?audio.play():audio.pause();}">
-                        <video id="frame-video" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Frame.webm" autoplay muted loop playsinline style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;"></video>
+                        <video id="frame-video" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Heart.webm" autoplay muted loop playsinline style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;"></video>
                         <video id="visualizer-video" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Outline2Player.webm" muted loop playsinline style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;"></video>
                     </div>
                     <div class="inner-block-2">
@@ -288,8 +288,6 @@
             if (backBtn) backBtn.style.color = titleColor;
             const fsTitle = document.getElementById('article-fs-title');
             if (fsTitle) fsTitle.style.color = titleColor;
-            const articleFS = document.getElementById('article-fullscreen');
-            if (articleFS) articleFS.style.background = dark ? '#000' : '#0000cc';
         }
 
         function toggleTheme() {
@@ -494,11 +492,14 @@
                 if (tag === 'strong' || tag === 'b') return `<strong style="${s}font-size:13px;">${children}</strong>`;
                 if (tag === 'em' || tag === 'i') return `<em style="${s}font-size:13px;">${children}</em>`;
                 if (tag === 'br') return '<br>';
-                if (tag === 'img') return `<img src="${node.attrs && node.attrs.src || ''}" style="width:50%;display:block;margin:12px 0;filter:grayscale(1);">`;
+                if (tag === 'img') return `<img src="${node.attrs && node.attrs.src || ''}" style="width:70%;display:block;margin:12px auto;filter:grayscale(1);">`;
                 if (tag === 'figure') {
                     const imgNode = (node.children || []).find(c => c.tag === 'img');
-                    if (imgNode) return `<img src="${imgNode.attrs && imgNode.attrs.src || ''}" style="width:50%;display:block;margin:12px 0;filter:grayscale(1);">`;
-                    return '';
+                    const capNode = (node.children || []).find(c => c.tag === 'figcaption');
+                    const capText = capNode ? renderTelegraphNodes(capNode.children || []) : '';
+                    const imgSrc = imgNode ? (imgNode.attrs && imgNode.attrs.src || '') : '';
+                    if (!imgSrc) return '';
+                    return `<div style="margin:12px 0;text-align:center;"><img src="${imgSrc}" style="width:70%;display:inline-block;filter:grayscale(1);">${capText ? `<p style="color:white;font-family:VCRFont,sans-serif;font-size:11px;margin-top:4px;opacity:0.7;">${capText}</p>` : ''}</div>`;
                 }
                 if (tag === 'figcaption') return '';
                 if (tag === 'iframe') return '';
