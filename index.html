@@ -80,8 +80,8 @@
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;
         }
         #article-fs-back { cursor: pointer; flex-shrink: 0; white-space: nowrap; }
-        #article-fs-body { flex: 1; overflow-y: scroll; padding: 0; font-size: 13px; font-family: VCRFont, sans-serif; }
-        #article-fs-body * { font-size: inherit; font-family: VCRFont, sans-serif; }
+        #article-fs-body { flex: 1; overflow-y: scroll; padding: 0; font-size: 13px; font-family: VCRFont, sans-serif; color: white; }
+        #article-fs-body * { font-size: inherit; font-family: VCRFont, sans-serif; color: white; }
         #article-fs-body::-webkit-scrollbar { width: 15px; }
         #article-fs-body::-webkit-scrollbar-track { background: transparent; }
         #article-fs-body::-webkit-scrollbar-thumb { background: white; border-radius: 0; }
@@ -486,15 +486,20 @@
                 // strip color from attrs to avoid black text
                 const attrs = node.attrs ? Object.assign({}, node.attrs) : {};
                 delete attrs.style;
+                if (tag === 'figcaption' || tag === 'iframe' || tag === 'video') return '';
                 const children = node.children ? renderTelegraphNodes(node.children) : '';
                 const s = 'color:white;font-family:VCRFont,sans-serif;';
                 if (tag === 'p') return `<p style="${s}font-size:13px;line-height:1.8em;margin-bottom:1em;">${children}</p>`;
                 if (tag === 'h3' || tag === 'h4') return `<p style="${s}font-size:14px;font-weight:bold;margin:16px 0 8px;">${children}</p>`;
                 if (tag === 'strong' || tag === 'b') return `<strong style="${s}font-size:13px;">${children}</strong>`;
-                if (tag === 'em' || tag === 'i') return `<em style="color:white;">${children}</em>`;
+                if (tag === 'em' || tag === 'i') return `<em style="${s}font-size:13px;">${children}</em>`;
                 if (tag === 'br') return '<br>';
-                if (tag === 'img') return `<img src="${node.attrs && node.attrs.src || ''}" style="width:100%;display:block;margin:12px 0;">`;
-                if (tag === 'figure') return `<div style="margin:12px 0;">${children}</div>`;
+                if (tag === 'img') return `<img src="${node.attrs && node.attrs.src || ''}" style="width:50%;display:block;margin:12px 0;filter:grayscale(1);">`;
+                if (tag === 'figure') {
+                    const imgNode = (node.children || []).find(c => c.tag === 'img');
+                    if (imgNode) return `<img src="${imgNode.attrs && imgNode.attrs.src || ''}" style="width:50%;display:block;margin:12px 0;filter:grayscale(1);">`;
+                    return '';
+                }
                 if (tag === 'figcaption') return '';
                 if (tag === 'iframe') return '';
                 if (tag === 'video') return '';
@@ -502,7 +507,7 @@
                 if (tag === 'ul') return `<ul style="list-style:none;padding-left:4px;margin-bottom:1em;">${children}</ul>`;
                 if (tag === 'ol') return `<ol style="padding-left:18px;margin-bottom:1em;">${children}</ol>`;
                 if (tag === 'li') return `<li style="${s}font-size:13px;line-height:1.8em;padding-left:14px;position:relative;">${children}</li>`;
-                if (tag === 'blockquote') return `<blockquote style="${s}font-size:13px;border-left:3px solid white;padding-left:10px;margin:12px 0;opacity:0.8;">${children}</blockquote>`;
+                if (tag === 'blockquote') return `<blockquote style="${s}font-size:13px;border-left:3px solid white;padding-left:10px;margin:12px 0;">${children}</blockquote>`;
                 return children;
             }).join('');
         }
