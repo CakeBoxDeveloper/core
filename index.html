@@ -67,27 +67,21 @@
 
         #article-fullscreen {
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            flex-direction: column; z-index: 10; background: transparent;
+            flex-direction: column; z-index: 10; background: #0000cc;
         }
         #article-fs-header {
             background: white; display: flex; align-items: center; justify-content: space-between;
             padding: 2px 8px; flex-shrink: 0; overflow: hidden;
         }
-        #article-fs-title, #article-fs-date { font-family: VCRFont, sans-serif; font-size: 15px; color: #000; text-transform: uppercase; }
+        #article-fs-title, #article-fs-back { font-family: VCRFont, sans-serif; font-size: 15px; color: #000; text-transform: uppercase; }
         #article-fs-header span { font-family: VCRFont, sans-serif; font-size: 15px; color: #000; white-space: nowrap; }
         #article-fs-title {
             min-width: 0;
-            white-space: nowrap; overflow: hidden;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;
         }
-        #article-fs-title-wrap {
-            flex: 1; min-width: 0; overflow: hidden; text-align: right;
-        }
-        #article-fs-title.marquee { animation: fs-marquee 5s linear infinite alternate; }
-        @keyframes fs-marquee {
-            0%   { transform: translateX(0); }
-            100% { transform: translateX(var(--fs-marquee-dist, 0px)); }
-        }
-        #article-fs-body { flex: 1; overflow-y: scroll; padding: 0; }
+        #article-fs-back { cursor: pointer; flex-shrink: 0; white-space: nowrap; }
+        #article-fs-body { flex: 1; overflow-y: scroll; padding: 0; font-size: 13px; font-family: VCRFont, sans-serif; }
+        #article-fs-body * { font-size: inherit; font-family: VCRFont, sans-serif; }
         #article-fs-body::-webkit-scrollbar { width: 15px; }
         #article-fs-body::-webkit-scrollbar-track { background: transparent; }
         #article-fs-body::-webkit-scrollbar-thumb { background: white; border-radius: 0; }
@@ -193,10 +187,8 @@
                 <!-- Fullscreen article overlay -->
                 <div id="article-fullscreen">
                     <div id="article-fs-header">
-                        <span onclick="closeArticle()" style="color:#000;cursor:pointer;flex-shrink:0;">[ НАЗАД ]</span>
-                        <div id="article-fs-title-wrap">
-                            <span id="article-fs-title"></span>
-                        </div>
+                        <span id="article-fs-title"></span>
+                        <span id="article-fs-back" onclick="closeArticle()" style="color:#000;cursor:pointer;flex-shrink:0;">[ НАЗАД ]</span>
                     </div>
                     <div id="article-fs-body"></div>
                 </div>
@@ -292,10 +284,12 @@
             const archiveCont = document.querySelector('.archive-container');
             if (archiveCont) archiveCont.style.borderColor = 'white';
 
-            const backBtn = document.querySelector('#article-fs-header span:first-child');
+            const backBtn = document.getElementById('article-fs-back');
             if (backBtn) backBtn.style.color = titleColor;
             const fsTitle = document.getElementById('article-fs-title');
             if (fsTitle) fsTitle.style.color = titleColor;
+            const articleFS = document.getElementById('article-fullscreen');
+            if (articleFS) articleFS.style.background = dark ? '#000' : '#0000cc';
         }
 
         function toggleTheme() {
@@ -441,20 +435,9 @@
                 const titleText = this.querySelector('.article-title').textContent;
                 const fsTitleEl = document.getElementById('article-fs-title');
                 fsTitleEl.textContent = titleText;
-                fsTitleEl.classList.remove('marquee');
-                requestAnimationFrame(() => {
-                    const overflow = fsTitleEl.scrollWidth - fsTitleEl.clientWidth;
-                    if (overflow > 2) {
-                        fsTitleEl.style.setProperty('--fs-marquee-dist', `-${overflow}px`);
-                        fsTitleEl.classList.add('marquee');
-                    }
-                });
-                const dateEl = document.getElementById('article-fs-date');
-                if (dateEl) dateEl.textContent = this.querySelector('.article-date').textContent;
                 const themeColor = isDark ? '#000' : '#0000cc';
-                const fsTitle = document.getElementById('article-fs-title');
-                if (fsTitle) fsTitle.style.color = themeColor;
-                const backBtn = document.querySelector('#article-fs-header span:first-child');
+                fsTitleEl.style.color = themeColor;
+                const backBtn = document.querySelector('#article-fs-header span:last-child');
                 if (backBtn) backBtn.style.color = themeColor;
                 articlesContainer.style.display = 'none';
                 archiveSearch.style.display = 'none';
@@ -507,12 +490,14 @@
                 const s = 'color:white;font-family:VCRFont,sans-serif;';
                 if (tag === 'p') return `<p style="${s}font-size:13px;line-height:1.8em;margin-bottom:1em;">${children}</p>`;
                 if (tag === 'h3' || tag === 'h4') return `<p style="${s}font-size:14px;font-weight:bold;margin:16px 0 8px;">${children}</p>`;
-                if (tag === 'strong' || tag === 'b') return `<strong style="color:white;">${children}</strong>`;
+                if (tag === 'strong' || tag === 'b') return `<strong style="${s}font-size:13px;">${children}</strong>`;
                 if (tag === 'em' || tag === 'i') return `<em style="color:white;">${children}</em>`;
                 if (tag === 'br') return '<br>';
-                if (tag === 'img') return `<img src="${node.attrs && node.attrs.src || ''}" style="width:70%;border:1.5px solid white;display:block;margin:12px 0 4px;">`;
-                if (tag === 'figure') return `<div style="margin:12px 0;">${children}</div>`;
-                if (tag === 'figcaption') return `<p style="${s}font-size:11px;opacity:0.7;margin-bottom:12px;">${children}</p>`;
+                if (tag === 'img') return '';
+                if (tag === 'figure') return '';
+                if (tag === 'figcaption') return '';
+                if (tag === 'iframe') return '';
+                if (tag === 'video') return '';
                 if (tag === 'a') return `<span style="text-decoration:underline;color:white;">${children}</span>`;
                 if (tag === 'ul') return `<ul style="list-style:none;padding-left:4px;margin-bottom:1em;">${children}</ul>`;
                 if (tag === 'ol') return `<ol style="padding-left:18px;margin-bottom:1em;">${children}</ol>`;
