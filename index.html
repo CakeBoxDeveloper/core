@@ -71,7 +71,7 @@
         }
         #article-fs-header {
             background: white; display: flex; align-items: center; justify-content: space-between;
-            padding: 2px 8px; flex-shrink: 0; overflow: hidden;
+            padding: 2px 8px; flex-shrink: 0; overflow: hidden; position: relative; z-index: 21;
         }
         #article-fs-title, #article-fs-back { font-family: VCRFont, sans-serif; font-size: 15px; color: #000; text-transform: uppercase; }
         #article-fs-header span { font-family: VCRFont, sans-serif; font-size: 15px; color: #000; white-space: nowrap; }
@@ -80,7 +80,7 @@
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;
         }
         #article-fs-back { cursor: pointer; flex-shrink: 0; white-space: nowrap; }
-        #article-fs-body { flex: 1; overflow-y: scroll; padding: 0; font-size: 13px; font-family: VCRFont, sans-serif; color: white; }
+        #article-fs-body { flex: 1; overflow-y: scroll; padding: 0; font-size: 13px; font-family: VCRFont, sans-serif; color: white; position: relative; }
         #article-fs-body * { font-size: inherit; font-family: VCRFont, sans-serif; color: white; }
         #article-fs-body::-webkit-scrollbar { width: 15px; }
         #article-fs-body::-webkit-scrollbar-track { background: transparent; }
@@ -451,19 +451,21 @@
                 archiveSearch.style.display = 'none';
                 searchWrap.style.display = 'none';
                 articleFS.style.display = 'flex';
-                fsBody.style.padding = '8px';
 
                 const telegraphPath = article.dataset.telegraph;
                 if (telegraphPath) {
-                    fsBody.innerHTML = '<canvas id="loading-noise" style="width:100%;height:100%;display:block;"></canvas>';
-                    const lc = document.getElementById('loading-noise');
-                    lc.width = lc.offsetWidth || 300;
-                    lc.height = lc.offsetHeight || 200;
+                    fsBody.style.padding = '0';
+                    fsBody.innerHTML = '';
+                    const lc = document.createElement('canvas');
+                    lc.id = 'loading-noise';
+                    lc.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;display:block;z-index:20;';
+                    articleFS.appendChild(lc);
                     const lctx = lc.getContext('2d');
                     let lAnim;
+                    const loadStart = Date.now();
                     function drawLoadingNoise() {
-                        lc.width = fsBody.clientWidth;
-                        lc.height = fsBody.clientHeight;
+                        lc.width = articleFS.clientWidth;
+                        lc.height = articleFS.clientHeight;
                         const img = lctx.createImageData(lc.width, lc.height);
                         for (let i = 0; i < img.data.length; i += 4) {
                             const v = Math.random() * 255 | 0;
@@ -474,19 +476,49 @@
                         lAnim = requestAnimationFrame(drawLoadingNoise);
                     }
                     drawLoadingNoise();
+
+                    function applyContent(html) {
+                        const elapsed = Date.now() - loadStart;
+                        const delay = Math.max(0, 1000 - elapsed);
+                        setTimeout(() => {
+                            fsBody.style.padding = '8px';
+                            fsBody.innerHTML = html;
+                            const imgs = Array.from(fsBody.querySelectorAll('img'));
+                            if (imgs.length === 0) {
+                                cancelAnimationFrame(lAnim);
+                                lc.remove();
+                                return;
+                            }
+                            let loaded = 0;
+                            const imgStart = Date.now();
+                            function onImgDone() {
+                                loaded++;
+                                if (loaded >= imgs.length) {
+                                    const imgElapsed = Date.now() - imgStart;
+                                    cancelAnimationFrame(lAnim);
+                                    lc.remove();
+                                }
+                            }
+                            imgs.forEach(img => {
+                                if (img.complete) { onImgDone(); }
+                                else {
+                                    img.addEventListener('load', onImgDone, { once: true });
+                                    img.addEventListener('error', onImgDone, { once: true });
+                                }
+                            });
+                        }, delay);
+                    }
+
                     fetch(`https://api.telegra.ph/getPage/${telegraphPath}?return_content=true`)
                         .then(r => r.json())
                         .then(data => {
-                            cancelAnimationFrame(lAnim);
-                            if (data.ok) {
-                                fsBody.innerHTML = renderTelegraphNodes(data.result.content);
-                            }
+                            applyContent(data.ok ? renderTelegraphNodes(data.result.content) : '<p style="color:white;font-family:VCRFont,sans-serif;font-size:13px;">Ошибка загрузки.</p>');
                         })
                         .catch(() => {
-                            cancelAnimationFrame(lAnim);
-                            fsBody.innerHTML = '<p style="color:white;font-family:VCRFont,sans-serif;font-size:13px;">Ошибка загрузки.</p>';
+                            applyContent('<p style="color:white;font-family:VCRFont,sans-serif;font-size:13px;">Ошибка загрузки.</p>');
                         });
                 } else {
+                    fsBody.style.padding = '8px';
                     const text = article.dataset.full || article.querySelector('.article-body').textContent.trim();
                     fsBody.innerHTML = renderArticle(text);
                 }
