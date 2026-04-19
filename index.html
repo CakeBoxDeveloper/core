@@ -551,7 +551,7 @@
                 block = block.trim();
                 if (!block) return '';
                 const imgMatch = block.match(/^\[img\](.*?)\[\/img\]$/);
-                if (imgMatch) return `<img src="${imgMatch[1]}" style="width:70%;border:1.5px solid white;display:block;margin:12px 0 4px;">`;
+                if (imgMatch) return `<img src="${imgMatch[1]}" style="width:100%;border:1.5px solid white;display:block;margin:12px 0 4px;">`;
                 const capMatch = block.match(/^\[caption\](.*?)\[\/caption\]$/);
                 if (capMatch) return `<p style="font-size:11px;color:white;opacity:0.7;margin-bottom:12px;font-family:VCRFont,sans-serif;">${capMatch[1]}</p>`;
                 const h2Match = block.match(/^\[h2\](.*?)\[\/h2\]$/);
@@ -576,14 +576,14 @@
                 if (tag === 'strong' || tag === 'b') return `<strong style="${s}font-size:13px;">${children}</strong>`;
                 if (tag === 'em' || tag === 'i') return `<em style="${s}font-size:13px;">${children}</em>`;
                 if (tag === 'br') return '<br>';
-                if (tag === 'img') return `<img src="${node.attrs && node.attrs.src || ''}" style="width:70%;display:block;margin:12px auto;filter:grayscale(1);">`;
+                if (tag === 'img') return `<img src="${node.attrs && node.attrs.src || ''}" style="width:100%;display:block;margin:12px 0;filter:grayscale(1);">`;
                 if (tag === 'figure') {
                     const imgNode = (node.children || []).find(c => c.tag === 'img');
                     const capNode = (node.children || []).find(c => c.tag === 'figcaption');
                     const capText = capNode ? renderTelegraphNodes(capNode.children || []) : '';
                     const imgSrc = imgNode ? (imgNode.attrs && imgNode.attrs.src || '') : '';
                     if (!imgSrc) return '';
-                    return `<div style="margin:12px 0;text-align:center;"><img src="${imgSrc}" style="width:70%;display:inline-block;filter:grayscale(1);">${capText ? `<p style="color:white;font-family:VCRFont,sans-serif;font-size:11px;margin-top:4px;opacity:0.7;">${capText}</p>` : ''}</div>`;
+                    return `<div style="margin:12px 0;"><img src="${imgSrc}" style="width:100%;display:block;filter:grayscale(1);">${capText ? `<p style="color:white;font-family:VCRFont,sans-serif;font-size:11px;margin-top:4px;opacity:0.7;">${capText}</p>` : ''}</div>`;
                 }
                 if (tag === 'figcaption') return '';
                 if (tag === 'iframe') return '';
