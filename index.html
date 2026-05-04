@@ -1,636 +1,2557 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>АРХИВ</title>
-    <link rel="icon" type="image/svg+xml" href="https://raw.githubusercontent.com/CakeBoxDeveloper/core/ca9abb7865ad344348408ebd61fa987661313d27/folder-type.svg">
-    <style>
-        @font-face { font-family: 'VCRFont'; src: url('https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/VCR%20OSD%20Mono%20Cyr.ttf') format('truetype'); }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body, html { height: 100%; font-family: VCRFont, sans-serif; overflow: hidden; }
-        ::-webkit-scrollbar { width: 15px; height: 15px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: white; border-radius: 0; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        /* 1. Поиск — иконка + текст по центру */
-        .search-wrap { flex-shrink:0; border-top:3px solid white; display:flex; align-items:center; justify-content:center; gap:6px; padding:6px 10px; }
-        .search-wrap img { width:14px; height:14px; filter:brightness(0) invert(1); flex-shrink:0; transform:scaleX(-1); }
-        #archive-search { background:transparent; border:none; outline:none; color:white; font-family:VCRFont,sans-serif; font-size:13px; padding:0; flex:1; min-width:0; }
-        #archive-search::placeholder { color:white; opacity:1; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Panacea</title>
+<link rel="icon" type="image/svg+xml" href="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/ea2696868cff6ba9b99ee5665a3571e74139a5f4/e_AzA-1.svg">
+<style>/* favicon color override via JS */</style>
+<style>
+@font-face {
+    font-family:'TiemposHeadline';
+    src:url('https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/main/Font/TiemposHeadline-Light.woff') format('woff'),
+        url('https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/main/Font/TiemposHeadline-Light.ttf') format('truetype');
+    font-weight:900;
+}
+@font-face {
+    font-family:'TiemposHeadline';
+    src:url('https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/main/Font/TiemposHeadline-Medium.woff') format('woff'),
+        url('https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/main/Font/TiemposHeadline-Medium.ttf') format('truetype');
+    font-weight:500;
+}
+@font-face {
+    font-family:'TiemposHeadline';
+    src:url('https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/main/Font/TiemposHeadline-Black.woff') format('woff'),
+        url('https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/main/Font/TiemposHeadline-Black.ttf') format('truetype');
+    font-weight:900;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;}
+input,textarea,select{-webkit-user-select:text;user-select:text;}
+html,body{width:100%;height:100%;background:#000;display:flex;justify-content:center;align-items:center;overflow:hidden;font-family:'Inter',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;}
 
-        .article-body {
-            font-size: 13px;
-            padding: 8px;
-            line-height: 1.5em;
-            color: white;
-            font-family: VCRFont, sans-serif;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 4;
-            line-clamp: 4;
-            -webkit-box-orient: vertical;
-            max-height: calc(1.5em * 4 + 16px);
-        }
-        .article { width: 100%; border: 3px solid white; margin-bottom: 8px; box-sizing: border-box; }
-        .article-header { background: white; display: flex; justify-content: space-between; padding: 3px 8px; cursor: pointer; }
-        .article-header:hover { opacity: 0.85; }
-        .article-title, .article-date { font-family: VCRFont, sans-serif; font-size: 13px; color: #000; text-transform: uppercase; }
+.bg{position:fixed;top:0;left:0;width:100%;height:100%;background-size:cover;background-repeat:no-repeat;background-position:center;background-color:#000;z-index:0;transition:opacity 0.5s ease;filter:blur(32px) brightness(0.4);transform:scale(1.1);}
+.bg-frame{position:fixed;top:0;left:0;width:100%;height:100%;background-size:contain;background-repeat:no-repeat;background-position:center;z-index:1;pointer-events:none;}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:999;opacity:0;pointer-events:none;transition:opacity 0.5s ease;}
+.overlay.on{opacity:1;pointer-events:all;}
 
-        .video-container { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; display:flex; justify-content:center; align-items:center; z-index:9999; }
-        .video-container video { width:100%; height:100%; object-fit:cover; }
-        .background-video { position:fixed; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-1; }
-        .content { display:none; height:100vh; flex-direction:column; overflow:hidden; }
+.screen{position:relative;z-index:10;display:none;justify-content:center;align-items:center;width:100%;height:100%;}
+.screen.active{display:flex;}
 
-        .outer-block { width:35vw; border:3px solid white; padding:0; display:flex; flex-direction:column; align-items:center; margin:0 auto; overflow:hidden; }
-        .top-row { display:flex; justify-content:space-between; width:100%; }
-        .inner-block-1 { width:7vw; height:14.4vh; border:3px solid white; background-size:cover; background-position:center; margin:5px; flex-shrink:0; }
-        .inner-block-2 { flex:1; height:14.4vh; border:3px solid white; overflow-y:scroll; margin:5px; scroll-snap-type:y mandatory; }
-        .inner-block-3 { width:calc(100% - 10px); border:3px solid white; display:flex; flex-direction:column; margin:-2px 5px 5px; }
-        .inner-block-3.compact { width:100%; margin:0; border-left:none; border-right:none; border-bottom:none; }
-        .progress-bar { width:100%; height:8px; background:white; position:relative; cursor:pointer; margin:1px 0; }
-        .progress { height:60%; margin:auto; position:absolute; top:0; bottom:0; left:0; background:#000; width:0%; }
-        .time-info { display:flex; justify-content:space-between; width:100%; color:white; font-size:0.9em; padding:2px 0; }
+/* Modal — для screen1 и screen1b */
+.modal{width:75%;max-width:380px;background:rgba(20,20,20,0.6);border:none;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.7);display:flex;flex-direction:column;overflow:hidden;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:28px 24px 24px;gap:20px;animation:fadeIn 0.6s ease-out forwards;}
+@keyframes fadeIn{from{opacity:0;filter:blur(8px);transform:translateY(12px);}to{opacity:1;filter:blur(0);transform:translateY(0);}}
+@keyframes shimmer{0%{left:-120%;}65%,100%{left:180%;}}
 
-        .track-list { padding:0; margin:0; width:100%; list-style:none; }
-        .track-list li { cursor:pointer; padding:3px 6px; color:white; display:flex; scroll-snap-align:start; overflow:hidden; align-items:baseline; }
-        .track-list li .track-name { flex-shrink:0; white-space:nowrap; }
-        .track-list li .track-dots { flex:1; overflow:hidden; text-align:left; letter-spacing:1px; min-width:0; white-space:nowrap; }
-        .track-list li .track-time { flex-shrink:0; margin-left:4px; white-space:nowrap; }
-        .track-list li:hover { background:rgba(255,255,255,0.2); }
+/* Carousel */
+.carousel-wrap{width:100%;height:100%;background:rgb(28,23,20);overflow:hidden;position:relative;}
+.c-slide{
+    position:absolute;top:50%;left:50%;
+    border-radius:12px;overflow:hidden;
+    background:rgb(42,36,32);background-size:cover;background-position:center;background-repeat:no-repeat;
+    cursor:pointer;
+    transform-origin:center center;
+    transition:transform 0.5s cubic-bezier(0.4,0,0.2,1),
+               opacity 0.5s ease,
+               filter 0.5s ease;
+}
+.c-slide.is-center{z-index:5;opacity:1;filter:none;cursor:default;}
+.c-slide.is-near{z-index:4;opacity:0.7;filter:blur(4px);}
+.c-slide.is-far{z-index:3;opacity:0.45;filter:blur(10px);}
+.c-slide-content{position:absolute;top:0;left:0;right:0;bottom:0;padding:24px;display:flex;flex-direction:column;gap:14px;}
+.c-slide-content *::-webkit-scrollbar{display:none;}
+/* Opaque beige text blocks — replaces backdrop-filter blocks */
+.tb{background:rgb(52,44,38);border-radius:8px;padding:10px 12px;}
+.tb-sm{background:rgb(52,44,38);border-radius:8px;padding:9px 11px;}
+.tb-prem{background:rgb(48,40,34);border-radius:8px;padding:9px 11px;border:1px solid rgba(210,190,165,0.15);}
+/* Fade mask at bottom of scrollable content */
+.c-slide-scroll{
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 48px, black calc(100% - 24px), transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 48px, black calc(100% - 24px), transparent 100%);
+}
+.c-slide-scroll.at-bottom{
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 48px, black 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 48px, black 100%);
+}
+.c-slide-scroll.at-top{
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black calc(100% - 24px), transparent 100%);
+    mask-image: linear-gradient(to bottom, black 0%, black calc(100% - 24px), transparent 100%);
+}
+.c-slide-scroll.at-top.at-bottom{
+    -webkit-mask-image: none;
+    mask-image: none;
+}
+@media(max-width:599px){.c-slide.is-far{opacity:0;pointer-events:none;}}
 
-        #article-fullscreen {
-            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            flex-direction: column; z-index: 10; background: transparent;
-        }
-        #article-fs-header {
-            background: white; display: flex; align-items: center; justify-content: space-between;
-            padding: 2px 8px; flex-shrink: 0; overflow: hidden; position: relative; z-index: 21;
-        }
-        #article-fs-title, #article-fs-back { font-family: VCRFont, sans-serif; font-size: 13px; color: #000; text-transform: uppercase; }
-        #article-fs-header span { font-family: VCRFont, sans-serif; font-size: 13px; color: #000; white-space: nowrap; }
-        #article-fs-title {
-            width: 80%;
-            flex-shrink: 0;
-            overflow: hidden;
-            white-space: nowrap;
-            position: relative;
-        }
-        #article-fs-title span {
-            display: inline-block;
-            white-space: nowrap;
-        }
-        #article-fs-title span.marquee {
-            animation: fs-marquee 4s linear infinite alternate;
-        }
-        @keyframes fs-marquee {
-            0%   { transform: translateX(0); }
-            100% { transform: translateX(var(--fs-marquee-dist, 0px)); }
-        }
-        #article-fs-back { cursor: pointer; flex-shrink: 0; white-space: nowrap; }
-        #article-fs-body { flex: 1; overflow-y: scroll; padding: 0; font-size: 13px; font-family: VCRFont, sans-serif; color: white; position: relative; }
-        #article-fs-body * { font-size: inherit; font-family: VCRFont, sans-serif; color: white; }
-        #article-fs-body::-webkit-scrollbar { width: 15px; }
-        #article-fs-body::-webkit-scrollbar-track { background: transparent; }
-        #article-fs-body::-webkit-scrollbar-thumb { background: white; border-radius: 0; }
-        #article-fs-body::-webkit-scrollbar-button { display: none; }
+/* S1 */
+.s1-title{color:rgba(210,190,165,1);font-size:36px;font-weight:900;font-family:'TiemposHeadline',serif;text-align:center;}
+.s1-sub{color:rgba(210,190,165,0.6);font-size:12px;text-align:center;line-height:1.6;}
+.auth-btn{width:100%;height:42px;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all 0.15s;font-family:'Inter',sans-serif;}
+.auth-google{background:rgba(255,255,255,0.92);color:#222;}
+.auth-google:hover{background:#fff;}
+.auth-apple{background:rgba(255,255,255,0.08);color:rgba(210,190,165,0.85);}
+.auth-apple:hover{background:rgba(255,255,255,0.13);}
+.auth-btn:active{transform:scale(0.98);}
+.s1-footer{text-align:center;color:rgba(210,190,165,0.3);font-size:10px;line-height:1.5;}
 
-        @media (max-width: 768px) {
-            .outer-block { width: 90vw; }
-            .inner-block-1 { width: 20vw; height: 12vh; }
-            .inner-block-2 { height: 12vh; }
-            .archive-container { width: 90vw !important; }
-            .header-img { width: 90% !important; }
-            .progress-container { width: 90% !important; }
-            .bottom-bar { width: 90vw !important; }
-            #settings-bar { width: 90vw !important; flex-wrap: wrap; gap: 4px; }
-            #settings-bar span { font-size: 12px !important; white-space: nowrap; }
-            .content { width: 100vw; }
-            #archive-search { font-size: 11px !important; }
-            .search-wrap { padding: 5px 6px; gap: 4px; }
-            .article-title, .article-date { font-size: 11px; }
-            .article-body { font-size: 11px; }
-            #article-fs-body { font-size: 11px; }
-            #article-fs-title, #article-fs-back { font-size: 11px; }
-            #article-fs-header span { font-size: 11px; }
-            .track-list li { font-size: 11px; }
-        }
-    </style>
+/* S1b Survey */
+.s1b-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.s1b-title{color:rgb(210,190,165);font-size:20px;font-weight:900;font-family:'TiemposHeadline',serif;}
+.s1b-icon{width:18px;height:18px;filter:invert(80%) sepia(20%) saturate(300%) hue-rotate(10deg) brightness(95%);}
+/* Stacked cards */
+#s1bStack{position:relative;width:90%;max-width:420px;height:90vh;}
+.s1b-card{
+    position:absolute;top:0;
+    width:100%;height:100%;
+    background:rgb(42,36,32);border-radius:12px;
+    display:flex;flex-direction:column;
+    padding:28px 24px 24px;gap:16px;box-sizing:border-box;
+    transition:transform 0.45s cubic-bezier(0.4,0,0.2,1),
+               box-shadow 0.45s ease,
+               opacity 0.45s ease;
+    will-change:transform;
+}
+/* S1b flip card */
+.s1b-face{
+    position:absolute;top:0;left:0;width:100%;height:100%;
+    border-radius:12px;
+    display:flex;flex-direction:column;
+    padding:28px 24px 24px;gap:16px;box-sizing:border-box;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    overflow:hidden;
+    cursor:pointer;
+}
+.s1b-face-front{background:rgb(42,36,32);}
+.s1b-face-back{background:rgb(220,205,185);transform:rotateY(180deg);}
+#s1bInner{transition:transform 0.55s cubic-bezier(0.4,0,0.2,1);}
+#s1bInner.flipped{transform:rotateY(180deg);}
+/* Interactive elements don't trigger flip */
+.s1b-face select,
+.s1b-face button,
+.s1b-face .fields{cursor:auto;}
+@media(max-width:599px){
+    #s1bFlip{width:92%;height:88vh;height:88dvh;}
+}
+@media(max-width:599px){
+    #s1bStack{width:100%;max-width:100%;height:100vh;}
+    .s1b-card{border-radius:0;}
+    .s1b-card.s1b-back{transform:translateX(-41%) scale(0.8);}
+}
+.fields{display:flex;flex-direction:column;gap:12px;flex:1;}
+.flabel{color:rgb(180,165,145);font-size:11px;letter-spacing:0.3px;margin-bottom:4px;}
+.fselect{width:100%;background:rgb(55,46,40);border:none;color:rgb(210,190,165);padding:10px 32px 10px 12px;border-radius:8px;font-size:12px;outline:none;font-family:'Inter',sans-serif;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(210,190,165,0.6)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;transition:background 0.15s;}
+.fselect:focus{background-color:rgb(65,54,47);}
+.fselect option{background:rgb(42,36,32);color:rgb(210,190,165);}
+.submit-btn{width:100%;height:42px;background:rgb(55,46,40);border:none;color:rgb(210,190,165);border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-family:'Inter',sans-serif;transition:all 0.15s;margin-top:auto;}
+.submit-btn:hover{background:rgb(65,54,47);}
+.submit-btn:active{transform:scale(0.98);}
+.submit-btn img{width:16px;height:16px;filter:invert(80%) sepia(20%) saturate(300%) hue-rotate(10deg) brightness(95%);}
+
+/* S2 Chat */
+.s2-wrap{width:100%;height:100vh;background:rgb(18,14,12);display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.s2-inner{width:90%;max-width:420px;height:90vh;display:flex;flex-direction:column;background:rgb(32,26,22);border-radius:12px;overflow:hidden;position:relative;}
+@media(max-width:599px){
+    .s2-wrap{background:rgb(32,26,22);}
+    .s2-inner{width:100%;max-width:100%;height:100vh;height:100dvh;border-radius:0;}
+    .bg{filter:none !important;transform:none !important;}
+    .bg-frame{display:none;}
+    #screen1 .modal,#screen1b .modal{width:100%;max-width:100%;border-radius:0;min-height:100vh;}
+    #s1bStack{width:100%;max-width:100%;height:100vh;height:100dvh;}
+    .s1b-card{border-radius:0;}
+    .s1b-card.s1b-back{transform:translateX(-41%) scale(0.8);}
+}
+.chat-header{padding:12px 16px;background:transparent;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:space-between;}
+.chat-header-left{display:flex;align-items:center;}
+.model-btn{background:rgba(255,255,255,0.08);border:none;color:rgba(210,190,165,0.85);font-size:13px;font-weight:500;cursor:pointer;padding:8px 16px;border-radius:8px;font-family:'Inter',sans-serif;transition:all 0.15s;}
+.model-btn:hover{background:rgba(255,255,255,0.12);color:rgba(210,190,165,1);}
+.dropdown{position:absolute;top:calc(100% + 4px);left:16px;background:rgb(42,36,32);border:1px solid rgba(210,190,165,0.12);border-radius:10px;min-width:220px;z-index:100;display:none;flex-direction:column;overflow:hidden;backdrop-filter:none;}
+.dropdown.show{display:flex;}
+.ditem{padding:10px 14px;background:none;border:none;cursor:pointer;text-align:left;font-family:'Inter',sans-serif;transition:all 0.15s;display:flex;align-items:center;gap:8px;}
+.ditem:hover{background:rgba(255,255,255,0.06);}
+.ditem.active{background:rgba(255,255,255,0.08);}
+.ditem-text{display:flex;flex-direction:column;gap:2px;flex:1;}
+.ditem-name{font-size:13px;font-weight:500;color:rgba(210,190,165,0.9);}
+.ditem.active .ditem-name{color:rgba(210,190,165,1);}
+.ditem-desc{font-size:11px;color:rgba(210,190,165,0.35);}
+.ditem.active .ditem-desc{color:rgba(210,190,165,0.45);}
+.ditem-check{font-size:12px;color:rgba(210,190,165,0.9);opacity:0;flex-shrink:0;width:8px;height:8px;border-radius:50%;background:rgba(210,190,165,0.9);display:inline-block;font-size:0;}
+.ditem.active .ditem-check{opacity:1;}
+.ditem-star{width:14px;height:14px;flex-shrink:0;filter:invert(82%) sepia(12%) saturate(250%) hue-rotate(5deg) brightness(100%);opacity:0.85;}
+.light .ditem-star{filter:invert(10%) sepia(10%) saturate(300%) brightness(15%);opacity:1;}
+.light .ditem.active .ditem-star{filter:invert(10%) sepia(10%) saturate(300%) brightness(15%);opacity:1;}
+body.is-premium .ditem-star{display:none !important;}
+
+/* Panacea Plus modal */
+.premium-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:600;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+.premium-overlay.show{display:flex;}
+.premium-modal{width:80%;max-width:340px;background:rgba(42,36,32,0.97);border-radius:12px;padding:28px 22px 22px;display:flex;flex-direction:column;gap:16px;animation:fadeIn 0.3s ease-out forwards;overflow:visible;}
+.premium-title{color:rgba(210,190,165,1);font-size:20px;font-weight:900;font-family:'TiemposHeadline',serif;text-align:center;line-height:1.3;}
+.premium-desc{color:rgba(210,190,165,0.65);font-size:12px;line-height:1.7;text-align:center;background:rgba(255,255,255,0.06);border-radius:8px;padding:10px 12px;}
+body.light .premium-desc{background:rgba(60,45,35,0.08);color:rgba(40,28,20,0.7);}
+.premium-features{display:flex;flex-direction:column;gap:8px;}
+.premium-feature{display:flex;align-items:flex-start;gap:10px;color:rgba(210,190,165,0.8);font-size:12px;line-height:1.5;}
+.premium-feature-icon{width:14px;height:14px;flex-shrink:0;margin-top:1px;filter:invert(80%) sepia(20%) saturate(300%) hue-rotate(10deg) brightness(95%);}
+.pf-marker{width:14px;height:14px;flex-shrink:0;margin-top:2px;filter:brightness(0) saturate(100%) invert(82%) sepia(15%) saturate(300%) hue-rotate(340deg) brightness(103%);opacity:1;}
+body.light .pf-marker{filter:brightness(0) saturate(100%) invert(10%) sepia(15%) saturate(500%) hue-rotate(340deg) brightness(40%);opacity:1;}
+.premium-btn{width:100%;height:42px;background:rgba(210,190,165,0.2);border:1px solid rgba(210,190,165,0.3);color:rgba(210,190,165,1);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;}
+.premium-btn:hover{background:rgba(210,190,165,0.3);}
+.premium-close{background:none;border:none;color:rgba(210,190,165,0.4);font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;text-align:center;transition:all 0.15s;}
+.premium-close:hover{color:rgba(210,190,165,0.7);}
+.bulb-btn{width:36px;height:36px;background:rgba(255,255,255,0.06);border:none;color:rgba(210,190,165,0.6);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;}
+.bulb-btn:hover{background:rgba(255,255,255,0.1);color:rgba(210,190,165,1);}
+.bulb-btn svg{width:16px;height:16px;}
+.chat-header-right{display:flex;gap:8px;align-items:center;}
+.chat-area{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 16px;display:flex;flex-direction:column;gap:10px;background:transparent;scrollbar-width:none;-webkit-mask-image:linear-gradient(to bottom,transparent 0px,black 48px,black calc(100% - 32px),transparent 100%);mask-image:linear-gradient(to bottom,transparent 0px,black 48px,black calc(100% - 32px),transparent 100%);}
+.chat-area.at-top{-webkit-mask-image:linear-gradient(to bottom,black 0px,black calc(100% - 32px),transparent 100%);mask-image:linear-gradient(to bottom,black 0px,black calc(100% - 32px),transparent 100%);}
+.chat-area.at-bottom{-webkit-mask-image:linear-gradient(to bottom,transparent 0px,black 48px,black 100%);mask-image:linear-gradient(to bottom,transparent 0px,black 48px,black 100%);}
+.chat-area.at-top.at-bottom{-webkit-mask-image:none;mask-image:none;}
+.chat-area::-webkit-scrollbar{display:none;}
+.message{display:flex;animation:msgIn 0.4s ease-out forwards;}
+@keyframes msgIn{from{opacity:0;filter:blur(8px);transform:translateY(6px);}to{opacity:1;filter:blur(0);transform:translateY(0);}}
+.message.user{justify-content:flex-end;}
+.bubble{max-width:80%;padding:8px 12px;border-radius:8px;font-size:12px;line-height:1.5;word-wrap:break-word;word-break:break-word;background:rgba(255,255,255,0.06);color:rgba(210,190,165,0.8);}
+.bubble-body{display:block;}
+.bubble-sig{display:block;margin:8px -12px 0;padding:6px 12px 0;border-top:1px solid rgba(210,190,165,0.15);font-size:11px;color:rgba(210,190,165,0.35);text-align:center;font-style:normal;}
+.light .bubble-sig{color:rgba(40,28,20,0.65);border-top-color:rgba(40,28,20,0.2);}
+
+/* TTS button — disabled
+.tts-btn{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:none;background:none;cursor:pointer;padding:0;border-radius:4px;opacity:0.4;transition:opacity 0.15s;vertical-align:middle;margin-left:6px;flex-shrink:0;}
+.tts-btn:hover{opacity:0.8;}
+.tts-btn.playing{opacity:1;}
+.tts-btn svg{width:14px;height:14px;}
+.tts-btn .tts-icon-play{display:block;}
+.tts-btn .tts-icon-stop{display:none;}
+.tts-btn.playing .tts-icon-play{display:none;}
+.tts-btn.playing .tts-icon-stop{display:block;}
+.bubble-footer{display:flex;align-items:center;justify-content:space-between;margin:6px -12px 0;padding:5px 12px 0;border-top:1px solid rgba(210,190,165,0.15);}
+.light .bubble-footer{border-top-color:rgba(40,28,20,0.2);}
+.bubble-footer .bubble-sig{margin:0;padding:0;border:none;flex:1;}
+.bubble-footer .tts-btn svg path,.bubble-footer .tts-btn svg rect{fill:rgba(210,190,165,0.6);}
+.light .bubble-footer .tts-btn svg path,.light .bubble-footer .tts-btn svg rect{fill:rgba(40,28,20,0.5);}
+*/
+
+/* Premium activated message */
+.premium-activated{display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 16px;background:rgba(255,255,255,0.06);border-radius:12px;text-align:center;width:192px;cursor:pointer;transition:background 0.15s;}
+.premium-activated:hover{background:rgba(255,255,255,0.1);}
+.premium-activated img{width:48px;height:48px;filter:invert(82%) sepia(12%) saturate(250%) hue-rotate(5deg) brightness(100%);}
+.light .premium-activated{background:rgba(60,45,35,0.1);}
+.light .premium-activated img{filter:brightness(0) saturate(100%) invert(10%) sepia(15%) saturate(500%) hue-rotate(340deg) brightness(40%);}
+.premium-activated-title{font-family:'TiemposHeadline',serif;font-weight:900;font-size:16px;color:rgba(210,190,165,1);}
+.light .premium-activated-title{color:rgb(40,28,20);}
+.premium-activated-desc{font-size:11px;color:rgba(210,190,165,0.6);line-height:1.5;}
+.light .premium-activated-desc{color:rgba(40,28,20,0.6);}
+
+/* Toast notification */
+@keyframes toastIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+@keyframes toastOut{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(4px);}}
+.toast{
+    position:absolute;bottom:60px;left:16px;right:16px;
+    display:flex;align-items:center;gap:10px;
+    padding:10px 14px;
+    background:rgba(42,36,32,0.97);
+    border:1px solid rgba(210,190,165,0.15);
+    border-radius:10px;
+    animation:toastIn 0.25s ease-out forwards;
+    cursor:pointer;
+    z-index:50;
+    overflow:hidden;
+}
+.toast::after{content:'';position:absolute;top:0;left:-120%;width:120%;height:100%;background:linear-gradient(105deg,transparent 20%,rgba(210,190,165,0.07) 50%,transparent 80%);animation:shimmer 3s ease-in-out infinite;}
+.toast.hiding{animation:toastOut 0.25s ease-in forwards;}
+.light .toast{background:rgba(215,200,180,0.97);border-color:rgba(60,45,35,0.2);}
+.light .toast::after{background:linear-gradient(105deg,transparent 20%,rgba(60,45,35,0.07) 50%,transparent 80%);}
+.toast-icon{width:20px;height:20px;flex-shrink:0;filter:invert(82%) sepia(12%) saturate(250%) hue-rotate(5deg) brightness(100%);}
+.light .toast-icon{filter:brightness(0) saturate(100%) invert(10%) sepia(15%) saturate(500%) hue-rotate(340deg) brightness(40%);}
+.toast-text{font-size:12px;color:rgba(210,190,165,0.9);font-family:'Inter',sans-serif;cursor:pointer;flex:1;}
+.light .toast-text{color:rgba(40,28,20,0.85);}
+.toast{cursor:pointer;}
+.light .ditem-check{background:rgb(40,28,20) !important;}
+.typing-bubble{display:flex;align-items:center;gap:4px;padding:10px 14px;background:rgba(255,255,255,0.06);border-radius:8px;width:fit-content;}
+.typing-bubble span{width:5px;height:5px;background:#d2bea5;border-radius:50%;animation:typing 1.2s infinite;}
+.typing-bubble span:nth-child(2){animation-delay:0.2s;}
+.typing-bubble span:nth-child(3){animation-delay:0.4s;}
+@keyframes typing{0%,60%,100%{opacity:0.3;transform:scale(1);}30%{opacity:1;transform:scale(1.2);}}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:rgba(210,190,165,0.3);text-align:center;font-size:12px;line-height:1.8;}
+.empty-state img{filter:invert(80%) sepia(20%) saturate(300%) hue-rotate(10deg) brightness(60%);opacity:0.5;}
+.input-area{padding:12px 16px;background:transparent;display:flex;gap:8px;flex-shrink:0;align-items:center;}
+.input-field{flex:1;background:rgba(255,255,255,0.06);border:none;color:rgba(210,190,165,0.85);padding:0 12px;border-radius:8px;font-size:12px;outline:none;transition:all 0.15s;font-family:'Inter',sans-serif;height:36px;line-height:36px;}
+.input-field::placeholder{color:rgba(210,190,165,0.3);}
+.input-field:focus{background:rgba(255,255,255,0.1);}
+.send-btn{width:36px;height:36px;background:rgba(255,255,255,0.06);border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;}
+.send-btn:hover{background:rgba(255,255,255,0.1);}
+.send-btn:active{transform:scale(0.95);}
+.send-btn img{width:16px;height:16px;filter:invert(80%) sepia(20%) saturate(300%) hue-rotate(10deg) brightness(60%);opacity:0.7;}
+
+/* Voice input button */
+.voice-btn{width:36px;height:36px;background:rgba(255,255,255,0.06);border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;position:relative;}
+.voice-btn:hover{background:rgba(255,255,255,0.1);}
+.voice-btn:active{transform:scale(0.95);}
+.voice-btn img{width:16px;height:16px;filter:invert(80%) sepia(20%) saturate(300%) hue-rotate(10deg) brightness(60%);opacity:0.7;}
+.light .voice-btn{background:rgba(60,45,35,0.1);}
+.light .voice-btn:hover{background:rgba(60,45,35,0.18);}
+.light .voice-btn img{filter:invert(15%) sepia(15%) saturate(200%) brightness(30%);opacity:0.75;}
+
+/* Voice recording animation */
+.voice-btn.recording{background:rgba(210,190,165,0.15);}
+.light .voice-btn.recording{background:rgba(40,28,20,0.15);}
+@keyframes voicePulse{
+    0%{transform:scale(1);opacity:0.6;}
+    100%{transform:scale(1.8);opacity:0;}
+}
+.voice-btn.recording::before,
+.voice-btn.recording::after{
+    content:'';
+    position:absolute;
+    inset:-4px;
+    border:2px solid #d2bea5;
+    border-radius:10px;
+    pointer-events:none;
+    animation:voicePulse 1.5s ease-out infinite;
+}
+.voice-btn.recording::after{
+    animation-delay:0.75s;
+}
+.light .voice-btn.recording::before,
+.light .voice-btn.recording::after{
+    border-color:#281c14;
+}
+
+/* Consilium message formatting */
+.consilium-body{display:flex;flex-direction:column;gap:10px;}
+.consilium-item{display:flex;flex-direction:column;gap:3px;}
+.consilium-name{font-size:12px;font-weight:600;opacity:1;}
+.consilium-text{font-size:12px;line-height:1.6;opacity:0.85;}
+
+/* Icon color token — dove beige, same for theme/menu/send */
+.icon-dove{width:16px;height:16px;filter:invert(80%) sepia(20%) saturate(300%) hue-rotate(10deg) brightness(60%);opacity:0.7;}
+.light .icon-dove{filter:invert(15%) sepia(15%) saturate(200%) brightness(30%);opacity:0.75;}
+/* menuBtn SVG same color as icon-dove */
+#menuBtn{color:rgba(210,190,165,0.6);}
+.light #menuBtn{color:rgba(40,28,20,0.55);}
+
+/* Transitions for theme switch */
+.s2-wrap,.s2-inner,.model-btn,.bubble,.input-field,.send-btn,.bulb-btn,.empty-state,.ditem-name,.ditem-desc,.dropdown,.end-modal,.premium-modal{transition:background 0.4s ease,color 0.4s ease,filter 0.4s ease;}
+
+/* Light theme */
+.light .s2-wrap{background:rgb(220,205,185);}
+.light .s2-inner{background:rgb(235,220,200);}
+.light .model-btn{background:rgba(60,45,35,0.25);color:rgb(40,28,20);font-weight:600;border:none;}
+.light .model-btn:hover{background:rgba(60,45,35,0.35);}
+.light .dropdown{background:rgb(230,215,195);border-color:rgba(60,45,35,0.2);}
+.light .ditem-name{color:rgba(40,28,20,0.85);}
+.light .ditem-desc{color:rgba(40,28,20,0.55);}
+.light .ditem:hover{background:rgba(60,45,35,0.08);}
+.light .ditem.active{background:rgba(60,45,35,0.12);}
+.light .ditem.active .ditem-name{color:rgb(40,28,20);}
+.light .ditem.active .ditem-desc{color:rgba(40,28,20,0.7);}
+.light .ditem-check{color:rgb(40,28,20);}
+.light .ditem-star{filter:invert(10%) sepia(10%) saturate(300%) brightness(15%);opacity:0.7;}
+.light .ditem.active .ditem-star{filter:invert(10%) sepia(10%) saturate(300%) brightness(15%);opacity:1;}
+.light .bubble{background:rgba(60,45,35,0.1);color:rgb(40,28,20);}
+.light .typing-bubble{background:rgba(60,45,35,0.1);}
+.light .typing-bubble span{background:#281c14;}
+.light .empty-state{color:rgba(40,28,20,0.4);}
+.light .empty-state img{filter:invert(15%) sepia(15%) saturate(200%) brightness(40%);opacity:0.5;}
+.light .input-field{background:rgba(60,45,35,0.1);color:rgb(40,28,20);}
+.light .input-field::placeholder{color:rgba(40,28,20,0.35);}
+.light .input-field:focus{background:rgba(60,45,35,0.15);}
+.light .send-btn{background:rgba(60,45,35,0.1);}
+.light .send-btn img{filter:invert(15%) sepia(15%) saturate(300%) hue-rotate(10deg) brightness(35%);opacity:0.7;}
+.light .bulb-btn{background:rgba(60,45,35,0.1);color:rgba(40,28,20,0.7);}
+.light .bulb-btn:hover{background:rgba(60,45,35,0.18);color:rgb(40,28,20);}
+.light .bulb-btn svg{stroke:rgba(40,28,20,0.7);}
+/* Модалки в светлой теме */
+body.light .end-modal{background:rgb(235,220,200);}
+body.light .end-title{color:rgb(40,28,20);}
+body.light .end-desc{color:rgba(40,28,20,0.6);}
+body.light .end-btn-menu{background:rgba(60,45,35,0.12);color:rgb(40,28,20);}
+body.light .end-btn-new{background:rgba(60,45,35,0.12);color:rgb(40,28,20);}
+body.light .premium-modal{background:rgb(235,220,200);}
+body.light .premium-title{color:rgb(40,28,20);}
+body.light .premium-desc{background:rgba(60,45,35,0.08);color:rgb(40,28,20);}
+body.light .premium-feature{color:rgb(40,28,20);}
+body.light .premium-modal .premium-btn{background:rgba(60,45,35,0.2);border-color:rgba(60,45,35,0.3);color:rgb(40,28,20);}
+body.light #screen2 .premium-btn{background:rgba(60,45,35,0.2);border-color:rgba(60,45,35,0.3);color:rgb(40,28,20);}
+body.light .premium-btn .shimmer-layer{background:linear-gradient(105deg,transparent 20%,rgba(60,45,35,0.12) 50%,transparent 80%);}
+body.light .premium-close{color:rgba(40,28,20,0.5);}
+body.light .premium-feature-icon{filter:invert(15%) sepia(15%) saturate(200%) brightness(40%);}
+/* New icon & markers in light theme */
+body.light .premium-modal img[src*="e_AzA"]{filter:invert(15%) sepia(15%) saturate(200%) brightness(20%);opacity:1;}
+body.light .end-summary-btn img{filter:invert(15%) sepia(15%) saturate(200%) brightness(20%) !important;opacity:1 !important;}
+body.light .bulb-btn img{filter:invert(15%) sepia(15%) saturate(200%) brightness(30%);opacity:0.8;}
+.light ~ .bg, .light ~ .bg-frame{display:none !important;}
+
+/* List markers in light theme */
+body.light span[style*="width:5px;height:5px;background:#d2bea5"]{background:#281c14 !important;}
+
+/* Loader screen */
+.loader-wrap{width:100%;height:100vh;background:rgb(28,23,20);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;}
+.loader-carousel-wrap{width:100%;flex:1;position:relative;overflow:hidden;}
+.lc-slide{
+    position:absolute;top:50%;left:50%;
+    border-radius:12px;overflow:hidden;
+    background:rgb(42,36,32);background-size:cover;background-position:center;background-repeat:no-repeat;
+    transform-origin:center center;
+    transition:transform 0.5s cubic-bezier(0.4,0,0.2,1),opacity 0.5s ease,filter 0.5s ease;
+    display:flex;align-items:flex-end;
+    isolation:isolate;
+}
+.lc-slide.lc-center{z-index:5;opacity:1;filter:none;}
+.lc-slide.lc-near{z-index:4;opacity:0.7;filter:blur(4px);}
+.lc-slide.lc-far{z-index:3;opacity:0.45;filter:blur(10px);}
+.lc-mask{position:absolute;bottom:-1px;left:-2px;right:-2px;height:calc(65% + 2px);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);-webkit-mask-image:linear-gradient(to top,black 0%,black 20%,transparent 100%);mask-image:linear-gradient(to top,black 0%,black 20%,transparent 100%);pointer-events:none;}
+.lc-quote{position:relative;z-index:2;color:rgba(210,190,165,0.95);font-size:14px;line-height:1.7;font-family:'Inter',-apple-system,sans-serif;font-weight:400;text-align:left;padding:20px 12px 24px;transition:opacity 0.4s ease;display:flex;flex-direction:column;gap:6px;width:100%;}
+.lc-quote-text{display:block;}
+.lc-quote-author{display:block;font-size:15px;font-weight:300;color:rgba(210,190,165,0.7);font-family:'TiemposHeadline',serif;text-align:right;}
+@media(max-width:599px){.lc-slide.lc-far{opacity:0;pointer-events:none;}}
+.loader-progress{width:90%;max-width:380px;display:flex;flex-direction:column;gap:12px;padding-bottom:32px;}
+.loader-stage{color:rgba(210,190,165,0.7);font-size:13px;text-align:center;min-height:20px;transition:opacity 0.3s ease;}
+.loader-bar{width:100%;height:4px;background:rgba(210,190,165,0.15);border-radius:2px;overflow:hidden;}
+.loader-bar-fill{height:100%;background:rgba(210,190,165,0.6);border-radius:2px;transition:width 0.4s ease;}
+
+/* End modal */
+.end-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+.end-overlay.show{display:flex;}
+.end-modal{width:75%;max-width:320px;background:rgba(42,36,32,0.95);border-radius:10px;padding:24px 20px;display:flex;flex-direction:column;gap:16px;animation:fadeIn 0.3s ease-out forwards;}
+.end-title{color:rgba(210,190,165,0.95);font-size:17px;font-weight:900;font-family:'TiemposHeadline',serif;line-height:1.3;text-align:center;}
+.end-desc{color:rgba(210,190,165,0.55);font-size:12px;line-height:1.6;text-align:center;}
+.end-btns{display:flex;gap:8px;}
+.end-btn{flex:1;height:38px;border:none;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;}
+.end-btn-menu{background:rgba(255,255,255,0.08);color:rgba(210,190,165,0.8);}
+.end-btn-menu:hover{background:rgba(255,255,255,0.12);}
+.end-btn-new{background:rgba(255,255,255,0.08);color:rgba(210,190,165,0.8);}
+.end-btn-new:hover{background:rgba(255,255,255,0.12);}
+.end-btn-delete{background:rgba(255,255,255,0.08);color:rgba(210,190,165,0.8);}
+.end-btn-delete:hover{background:rgba(255,255,255,0.12);}
+/* End summary button — more prominent */
+.end-summary-wrap{position:relative;width:100%;height:42px;flex-shrink:0;}
+.end-summary-btn{
+    position:absolute;inset:0;
+    width:100%;height:42px;
+    background:rgba(210,190,165,0.18);border:1px solid rgba(210,190,165,0.35);
+    color:rgba(210,190,165,0.9);border-radius:8px;
+    font-size:12px;font-weight:500;font-family:'Inter',sans-serif;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:7px;
+    transition:opacity 0.35s,filter 0.35s;
+}
+.end-summary-btn:hover{background:rgba(210,190,165,0.28);color:rgba(210,190,165,1);}
+.end-summary-btn.blurred{opacity:0;filter:blur(6px);pointer-events:none;}
+/* Inline premium notice — same size, overlays button */
+.end-inline-notice{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    background:rgba(42,36,32,0.97);
+    border:1px solid rgba(210,190,165,0.15);
+    border-radius:8px;
+    font-size:12px;color:rgba(210,190,165,0.85);font-family:'Inter',sans-serif;
+    opacity:0;filter:blur(6px);pointer-events:none;
+    transition:opacity 0.35s,filter 0.35s;
+    overflow:hidden;
+    cursor:pointer;
+}
+.end-inline-notice::after{content:'';position:absolute;top:0;left:-120%;width:120%;height:100%;background:linear-gradient(105deg,transparent 20%,rgba(210,190,165,0.08) 50%,transparent 80%);animation:shimmer 3s ease-in-out infinite;}
+.end-inline-notice.show{opacity:1;filter:blur(0);pointer-events:all;}
+.end-inline-notice img{width:16px;height:16px;flex-shrink:0;filter:invert(82%) sepia(12%) saturate(250%) hue-rotate(5deg) brightness(100%);}
+body.light .end-inline-notice{background:rgba(215,200,180,0.97);border-color:rgba(60,45,35,0.2);color:rgba(40,28,20,0.85);}
+body.light .end-inline-notice img{filter:brightness(0) saturate(100%) invert(10%) sepia(15%) saturate(500%) hue-rotate(340deg) brightness(40%);}
+/* Scroll icon — matches button text color */
+.end-summary-icon{width:15px;height:15px;filter:invert(80%) sepia(20%) saturate(300%) hue-rotate(10deg) brightness(90%);opacity:0.9;}
+body.light .end-summary-icon{filter:invert(15%) sepia(15%) saturate(200%) brightness(20%) !important;opacity:0.8 !important;}
+body.light .end-summary-btn{background:rgba(60,45,35,0.1);border-color:rgba(60,45,35,0.3);color:rgba(40,28,20,0.8);}
+body.light .end-summary-btn:hover{background:rgba(60,45,35,0.18);color:rgb(40,28,20);}
+</style>
 </head>
 <body>
+<div class="bg" id="bg"></div>
+<div class="bg-frame" id="bgFrame"></div>
+<div class="overlay" id="overlay"></div>
 
-    <canvas id="tv-noise" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:99998;opacity:1;"></canvas>
+<!-- SCREEN 1: Login -->
+<div class="screen active" id="screen1">
+<div class="carousel-wrap" id="carouselWrap">
 
-    <div class="video-container" id="preloader">
-        <video id="intro-video" autoplay muted playsinline>
-        <source id="preloader-source" src="" type="video/webm">
-        </video>
+    <!-- Slide 0: Login -->
+    <div class="c-slide" id="slide0">
+        <div style="position:absolute;bottom:-2px;left:-2px;right:-2px;height:calc(90% + 2px);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);-webkit-mask-image:linear-gradient(to top,black 0%,black 25%,transparent 100%);mask-image:linear-gradient(to top,black 0%,black 25%,transparent 100%);pointer-events:none;"></div>
+        <div style="position:absolute;bottom:-2px;left:-2px;right:-2px;height:calc(75% + 2px);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);-webkit-mask-image:linear-gradient(to top,black 0%,black 15%,transparent 100%);mask-image:linear-gradient(to top,black 0%,black 15%,transparent 100%);pointer-events:none;"></div>
+        <div style="position:absolute;bottom:-2px;left:-2px;right:-2px;height:calc(55% + 2px);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);-webkit-mask-image:linear-gradient(to top,black 0%,transparent 100%);mask-image:linear-gradient(to top,black 0%,transparent 100%);pointer-events:none;"></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:24px;display:flex;flex-direction:column;gap:20px;">
+            <div style="text-align:center;display:flex;flex-direction:column;gap:8px;">
+                <div class="s1-title" style="font-weight:300;">Panacea</div>
+                <div class="s1-sub">Познай себя через призму времени</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+                <button class="auth-btn auth-google" id="googleBtn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>Войти через Google</button>
+                <button class="auth-btn auth-apple" id="appleBtn"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>Войти через Apple</button>
+                <button class="auth-btn auth-apple" id="guestBtn">Продолжить как гость</button>
+            </div>
+            <div class="s1-footer">Продолжая, ты соглашаешься с условиями использования</div>
+        </div>
     </div>
 
-    <video id="background-video" class="background-video" autoplay muted loop playsinline>
-        <source id="bg-source" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Dark.webm" type="video/webm">
-    </video>
-
-    <div class="content" id="main-content">
-
-        <div style="margin-top:2vh;text-align:center;flex-shrink:0;">
-            <img class="header-img" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/9f5d3273509498fdb22b1c3e888dca08e4ac2558/HeaderSVG.svg" width="35%">
-        </div>
-
-        <!-- Settings bar (replaces progress bar) -->
-        <div id="settings-bar" style="width:35vw;margin:2vh auto 0;background:white;border:3px solid white;display:flex;align-items:center;justify-content:space-between;padding:3px 8px;box-sizing:border-box;flex-shrink:0;">
-            <span id="settings-label" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">НАСТРОЙКИ</span>
-            <span style="display:flex;gap:12px;align-items:center;">
-                <span id="theme-toggle" onclick="toggleTheme()" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;cursor:pointer;">[ НОЧЬ ]</span>
-                <span id="compact-toggle" onclick="toggleCompact()" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;cursor:pointer;">[ СВЕРНУТЬ ]</span>
-            </span>
-        </div>
-
-        <div style="margin-top:2vh;flex-shrink:0;">
-            <div class="outer-block">
-                <div style="padding:10px;width:100%;box-sizing:border-box;">
-                <div class="top-row" id="player-top-row">
-                    <div class="inner-block-1" id="cover" style="position:relative;overflow:hidden;cursor:pointer;" onclick="if(audio.src){audio.paused?audio.play():audio.pause();}">
-                        <video id="frame-video" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Heart.webm" autoplay muted loop playsinline style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;"></video>
-                        <video id="visualizer-video" src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Outline2Player.webm" muted loop playsinline style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;"></video>
-                    </div>
-                    <div class="inner-block-2">
-                        <ul class="track-list" id="track-list">
-                            <li class="player-item" data-src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/%D0%9D%D0%B0%D0%B3%D0%B0.mp3"><span class="track-name">Нага</span><span class="track-dots">............................................</span><span class="track-time">03:59</span></li>
-                            <li class="player-item" style="display:none" data-src="track2.mp3"><span class="track-name">Матриарх</span><span class="track-dots">............................................</span><span class="track-time">03:13</span></li>
-                            <li class="player-item" style="display:none" data-src="track3.mp3"><span class="track-name">У нас есть бомбы</span><span class="track-dots">............................................</span><span class="track-time">03:35</span></li>
-                            <li class="player-item" data-src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/%D0%9E%D0%B2%D0%BE%D0%B4.mp3"><span class="track-name">Овод</span><span class="track-dots">............................................</span><span class="track-time">03:40</span></li>
-                            <li class="player-item" data-src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/%D0%9B%D0%B8%D0%B7%D0%B0.mp3"><span class="track-name">Лиза</span><span class="track-dots">............................................</span><span class="track-time">03:55</span></li>
-                            <li class="player-item" data-src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/%D0%96%D0%B5%D0%BB%D0%B5%D0%B7%D0%BD%D1%8B%D0%B9%D0%9A%D1%83%D0%BB%D0%B0%D0%BA.mp3"><span class="track-name">Железный кулак</span><span class="track-dots">............................................</span><span class="track-time">03:28</span></li>
-                            <li class="player-item" style="display:none" data-src="track7.mp3"><span class="track-name">Пятница XIII</span><span class="track-dots">............................................</span><span class="track-time">03:14</span></li>
-                            <li class="player-item" style="display:none" data-src="track8.mp3"><span class="track-name">Бантик</span><span class="track-dots">............................................</span><span class="track-time">04:11</span></li>
-                            <li class="player-item" style="display:none" data-src="track9.mp3"><span class="track-name">Антигерой</span><span class="track-dots">............................................</span><span class="track-time">03:50</span></li>
-                            <li class="player-item" style="display:none" data-src="track10.mp3"><span class="track-name">Здесь был праздник</span><span class="track-dots">............................................</span><span class="track-time">03:33</span></li>
-                            <li class="player-item" style="display:none" data-src="track11.mp3"><span class="track-name">Траур</span><span class="track-dots">............................................</span><span class="track-time">04:39</span></li>
-                            <li class="player-item" data-src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/%D0%97%D0%BE%D0%BC%D0%B1%D0%B8.mp3"><span class="track-name">Зомби</span><span class="track-dots">............................................</span><span class="track-time">03:35</span></li>
-                            <li class="player-item" style="display:none" data-src="track13.mp3"><span class="track-name">Унесёт архангел</span><span class="track-dots">............................................</span><span class="track-time">03:28</span></li>
-                            <li class="player-item" style="display:none" data-src="track14.mp3"><span class="track-name">Царство небесное</span><span class="track-dots">............................................</span><span class="track-time">03:04</span></li>
-                            <li class="player-item" style="display:none" data-src="track15.mp3"><span class="track-name">Шипы и гвозди</span><span class="track-dots">............................................</span><span class="track-time">03:39</span></li>
-                            <li class="player-item" style="display:none" data-src="track16.mp3"><span class="track-name">Из страшилки</span><span class="track-dots">............................................</span><span class="track-time">03:21</span></li>
-                            <li class="player-item" style="display:none" data-src="track17.mp3"><span class="track-name">По частям</span><span class="track-dots">............................................</span><span class="track-time">04:06</span></li>
-                        </ul>
-                    </div>
+    <!-- Slide 1: О нас -->
+    <div class="c-slide" id="slide1">
+        <div style="position:absolute;top:-2px;left:-2px;right:-2px;height:calc(38% + 2px);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);-webkit-mask-image:linear-gradient(to bottom,black 0%,black 40%,transparent 100%);mask-image:linear-gradient(to bottom,black 0%,black 40%,transparent 100%);pointer-events:none;"></div>
+        <div class="c-slide-content" style="height:100%;display:flex;flex-direction:column;position:relative;z-index:2;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;flex-shrink:0;">
+                <div class="s1-title" style="font-size:28px;text-align:left;color:rgba(210,190,165,1);">Пара слов о нас</div>
+            </div>
+            <div style="overflow-y:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;flex:1;display:flex;flex-direction:column;gap:10px;">
+                <div class="tb">
+                    <div style="color:rgba(210,190,165,0.85);font-size:13px;line-height:1.7;">Panacea — это пространство, где человеческий опыт встречается с коллективным знанием человечества. Миллионы текстов, традиций и историй, собранных в одном месте — чтобы помочь тебе найти ответы внутри себя.</div>
                 </div>
-                <div id="compact-track-info" style="display:none;"></div>
-                <div class="inner-block-3" id="player-timeline">
-                    <div class="progress-bar" style="margin-top:-2px;"><div class="progress" id="progress"></div></div>
-                    <div class="time-info">
-                        <span id="current-time" style="padding:0 6px;">0:00</span>
-                        <span id="compact-track-name" style="flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-                        <span id="duration" style="padding:0 6px;">0:00</span>
-                    </div>
+                <div class="tb">
+                    <div style="color:rgba(210,190,165,0.6);font-size:12px;line-height:1.6;">Каждая сессия — это не гадание и не совет. Это зеркало. Модели не говорят тебе, что делать — они помогают увидеть то, что ты уже знаешь, но ещё не сформулировал.</div>
                 </div>
-                </div><!-- /player-body -->
-            </div><!-- /outer-block -->
-        </div>
-
-        <audio id="audio" style="display:none;"></audio>
-
-        <!-- Archive -->
-        <div style="margin-top:2vh;flex:1;min-height:0;padding-bottom:0;display:flex;flex-direction:column;overflow:hidden;">
-            <div class="archive-container" style="width:35vw;margin:0 auto;border:3px solid white;display:flex;flex-direction:column;min-height:0;overflow:hidden;position:relative;flex:1;">
-
-                <!-- Fullscreen article overlay -->
-                <div id="article-fullscreen">
-                    <div id="article-fs-header">
-                        <span id="article-fs-title"></span>
-                        <span id="article-fs-back" onclick="closeArticle()" style="color:#000;cursor:pointer;flex-shrink:0;">[ НАЗАД ]</span>
-                    </div>
-                    <div id="article-fs-body"></div>
+                <div class="tb">
+                    <div style="color:rgba(210,190,165,0.7);font-size:12px;line-height:1.7;">Мы — небольшая команда инженеров и энтузиастов. Мы не контролируем то, что говорят модели, и не претендуем на истину в последней инстанции. Наша задача — обеспечить работу системы и продолжать её развивать.</div>
                 </div>
-
-                <div class="no-scrollbar" id="articles-container" style="flex:1;min-height:0;overflow-y:auto;padding:5px 10px;scrollbar-width:none;-ms-overflow-style:none;">
-
-                    <div class="article" data-telegraph="Skolko-nam-let-04-09">
-                        <div class="article-header"><span class="article-title">У нас украли примерно 650 лет</span><span class="article-date">09.04.2025</span></div>
-                        <div class="article-body">Если верить официальной версии, то за период примерно с 1925 по 2025 год население планеты увеличилось с 2 млрд до 8. Уже на этом моменте кажется странным, что данных до 1820 года нет в открытом доступе.</div>
-                    </div>
-
-                    <div class="article" data-telegraph="Hitboks-04-11">
-                        <div class="article-header"><span class="article-title">Хитбокс</span><span class="article-date">11.04.2025</span></div>
-                        <div class="article-body">Давайте представим, что у человека есть хитбокс — своего рода невидимая область вокруг тела, определяющая взаимодействие с окружающим миром. Всё, что попадает в эту зону, так или иначе влияет на человека — физически, эмоционально, информационно.</div>
-                    </div>
-
-                    <div class="article" data-telegraph="Letayushchie-tarelki-04-16">
-                        <div class="article-header"><span class="article-title">Летающие тарелки</span><span class="article-date">16.04.2025</span></div>
-                        <div class="article-body">Видимая вселенная на данный момент имеет размер 93 млрд световых лет. Галактика за галактикой, звезда за звездой — и где-то среди всего этого мы. Вопрос не в том, есть ли там кто-то ещё. Вопрос в том, почему мы так уверены, что знаем ответ.</div>
-                    </div>
-
-                    <div class="article" data-telegraph="EHffekt-babochki-04-20-3">
-                        <div class="article-header"><span class="article-title">Эффект бабочки</span><span class="article-date">20.04.2025</span></div>
-                        <div class="article-body">«Взмах крыла бабочки на одном берегу океана может вызвать цунами на другом» — теория хаоса в действии. Каждое решение, каждый выбор, каждое случайное событие тянет за собой цепочку последствий, которые невозможно предсказать заранее.</div>
-                    </div>
-
-                    <div class="article" data-telegraph="YAchejka-04-22">
-                        <div class="article-header"><span class="article-title">Основной инстинкт</span><span class="article-date">22.04.2025</span></div>
-                        <div class="article-body">В апреле 1999 года вышел фантастический фильм «Матрица». Люди находятся в симуляции и не подозревают об этом. Прошло 25 лет — и этот вопрос звучит уже не так фантастически.</div>
-                    </div>
-
-                    <div class="article" data-telegraph="Novaya-nadezhda-04-30-2">
-                        <div class="article-header"><span class="article-title">Новая надежда</span><span class="article-date">30.04.2025</span></div>
-                        <div class="article-body">Те, кто проектировали нашу реальность, придумали невероятно жестокую инструкцию к существованию. Родиться, не зная правил. Играть, не зная цели. Проигрывать, не понимая почему. Но иногда в этой системе появляются трещины — и сквозь них просачивается что-то настоящее.</div>
-                    </div>
-
-                    <div class="article" data-telegraph="Oshibka-prirody-05-06-2">
-                        <div class="article-header"><span class="article-title">Ошибка природы</span><span class="article-date">06.05.2025</span></div>
-                        <div class="article-body">Если, прогуливаясь тёплым весенним деньком по городу, свернуть в частный сектор — можно увидеть, как природа пробивается сквозь асфальт. Трава в трещинах, деревья, ломающие бордюры. Природа не делает ошибок — она просто продолжает делать своё дело.</div>
-                    </div>
-
-                    <div class="article" data-telegraph="S-golovoj-ne-druzhish-05-30">
-                        <div class="article-header"><span class="article-title">С головой не дружишь?</span><span class="article-date">30.05.2025</span></div>
-                        <div class="article-body">Каждый из тех, кто читает этот текст, слышал фразу «Ты что, с головой не дружишь?». Обычно её говорят в момент, когда человек делает что-то нестандартное. Но что если именно те, кто «не дружит с головой» — то есть не следует общепринятой логике — видят мир точнее остальных?</div>
-                    </div>
-
+                <div class="tb">
+                    <div style="color:rgba(210,190,165,0.5);font-size:11px;line-height:1.6;">Обучение и поддержка нейронных сетей — это дорого и сложно. Донаты и Panacea Plus — единственный способ, которым ты можешь помочь этому проекту существовать и расти. Каждый рубль идёт на серверы, обучение моделей и развитие сети.</div>
                 </div>
-                <div class="search-wrap">
-                    <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/core/9b0e2cb32c28f2e168279b57f55443453aba6491/search.svg">
-                    <input id="archive-search" type="text" placeholder="ВВЕДИТЕ СЛОВО ЧТОБЫ НАЧАТЬ ПОИСК В АРХИВЕ...">
-                </div>
-                <style id="search-placeholder-style"></style>
             </div>
         </div>
-
-        <div class="bottom-bar" style="width:35vw;margin:0 auto;padding:6px 0 3.5vh;flex-shrink:0;"></div>
-
     </div>
 
-    <script>
-        // Preloader
-        const preloader = document.getElementById('preloader');
-        const mainContent = document.getElementById('main-content');
-        const introVideo = document.getElementById('intro-video');
-        function showContent() { preloader.style.display = 'none'; mainContent.style.display = 'flex'; }
-        introVideo.addEventListener('ended', showContent);
-        setTimeout(showContent, 5000);
+    <!-- Slide 2: Как это работает -->
+    <div class="c-slide" id="slide2">
+        <div style="position:absolute;top:-2px;left:-2px;right:-2px;height:calc(38% + 2px);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);-webkit-mask-image:linear-gradient(to bottom,black 0%,black 40%,transparent 100%);mask-image:linear-gradient(to bottom,black 0%,black 40%,transparent 100%);pointer-events:none;"></div>
+        <div class="c-slide-content" style="height:100%;display:flex;flex-direction:column;position:relative;z-index:2;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;flex-shrink:0;">
+                <div class="s1-title" style="font-size:28px;text-align:left;color:rgba(210,190,165,1);">Как это работает</div>
+            </div>
+            <div style="overflow-y:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;flex:1;display:flex;flex-direction:column;gap:8px;">
+                <div class="tb" style="color:rgba(210,190,165,0.65);font-size:12px;line-height:1.6;">Модели обучены на всей мировой литературе — философии, психологии, духовных практиках, архетипических текстах всех культур и эпох. И продолжают обучаться на каждой новой сессии.</div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 10px;background:rgb(52,44,38);border-radius:8px;"><div style="width:20px;height:20px;border-radius:4px;background:rgba(210,190,165,0.12);color:rgba(210,190,165,0.55);font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'TiemposHeadline',serif;">I</div><div style="color:rgba(210,190,165,0.8);font-size:12px;line-height:1.5;">Заполни анкету — мы подберём модель, которая лучше всего подходит под твой запрос</div></div>
+                    <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 10px;background:rgb(52,44,38);border-radius:8px;"><div style="width:20px;height:20px;border-radius:4px;background:rgba(210,190,165,0.12);color:rgba(210,190,165,0.55);font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'TiemposHeadline',serif;">II</div><div style="color:rgba(210,190,165,0.8);font-size:12px;line-height:1.5;">Начни разговор — в любой момент ты можешь сменить модель прямо в ходе сессии</div></div>
+                    <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 10px;background:rgb(52,44,38);border-radius:8px;"><div style="width:20px;height:20px;border-radius:4px;background:rgba(210,190,165,0.12);color:rgba(210,190,165,0.55);font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'TiemposHeadline',serif;">III</div><div style="color:rgba(210,190,165,0.8);font-size:12px;line-height:1.5;">Получи ответ — не шаблонный, а сформированный под твой конкретный контекст и запрос</div></div>
+                    <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 10px;background:rgb(52,44,38);border-radius:8px;"><div style="width:20px;height:20px;border-radius:4px;background:rgba(210,190,165,0.12);color:rgba(210,190,165,0.55);font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'TiemposHeadline',serif;">IV</div><div style="color:rgba(210,190,165,0.8);font-size:12px;line-height:1.5;">По окончании забери протокол сессии — изучи самостоятельно или передай в начале следующей</div></div>
+                </div>
+                <div class="tb" style="color:rgba(210,190,165,0.5);font-size:11px;line-height:1.6;">У моделей большой запас памяти — в рамках одной сессии они удерживают весь разговор целиком и могут рассматривать твой вопрос одновременно с десятков точек зрения. Чем больше ты рассказываешь — тем точнее и глубже ответ.</div>
+            </div>
+        </div>
+    </div>
 
-        // Theme
-        const DARK = 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Dark.webm';
-        const LIGHT = 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Light.webm';
-        const PRELOADER_DARK = 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/Preloader.webm';
-        const PRELOADER_LIGHT = 'https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/PreloaderLight.webm';
-        const h = new Date().getHours();
-        let isDark = h >= 20 || h < 5;
+    <!-- Slide 3: Модели -->
+    <div class="c-slide" id="slide3">
+        <div style="position:absolute;top:-2px;left:-2px;right:-2px;height:calc(38% + 2px);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);-webkit-mask-image:linear-gradient(to bottom,black 0%,black 40%,transparent 100%);mask-image:linear-gradient(to bottom,black 0%,black 40%,transparent 100%);pointer-events:none;"></div>
+        <div class="c-slide-content" style="height:100%;display:flex;flex-direction:column;position:relative;z-index:2;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;flex-shrink:0;">
+                <div class="s1-title" style="font-size:28px;text-align:left;color:rgba(210,190,165,1);">Наши модели</div>
+            </div>
+            <div style="overflow-y:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;flex:1;display:flex;flex-direction:column;gap:5px;">
+                <div class="tb-sm">
+                    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:2px;"><span style="color:rgba(210,190,165,0.95);font-size:13px;font-weight:500;">Тара</span><span style="color:rgba(210,190,165,0.4);font-size:10px;font-weight:400;">таролог</span></div>
+                    <div style="height:6px;"></div>
+                    <div style="color:rgba(210,190,165,0.55);font-size:11px;line-height:1.5;">Мастер традиционной школы тарологии. Каждый расклад — это разговор с символами, которые уже знают ответ. Тара не предсказывает, она помогает увидеть то, что скрыто за поверхностью событий.</div>
+                </div>
+                <div class="tb-sm">
+                    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:2px;"><span style="color:rgba(210,190,165,0.95);font-size:13px;font-weight:500;">Карма</span><span style="color:rgba(210,190,165,0.4);font-size:10px;font-weight:400;">кармолог</span></div>
+                    <div style="height:6px;"></div>
+                    <div style="color:rgba(210,190,165,0.55);font-size:11px;line-height:1.5;">Читает кармические узлы и незакрытые циклы. Там, где другие видят случайность, Карма находит закономерность. Специализируется на повторяющихся ситуациях и скрытых уроках судьбы.</div>
+                </div>
+                <div class="tb-sm">
+                    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:2px;"><span style="color:rgba(210,190,165,0.95);font-size:13px;font-weight:500;">Астра</span><span style="color:rgba(210,190,165,0.4);font-size:10px;font-weight:400;">астролог</span></div>
+                    <div style="height:6px;"></div>
+                    <div style="color:rgba(210,190,165,0.55);font-size:11px;line-height:1.5;">Эксперт в области астрологии и натальных карт. Читает планетарные циклы как язык, на котором Вселенная говорит с каждым из нас. Помогает понять, в какой точке своего пути ты находишься прямо сейчас.</div>
+                </div>
+                <div class="tb-sm">
+                    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:2px;"><span style="color:rgba(210,190,165,0.95);font-size:13px;font-weight:500;">Ева</span><span style="color:rgba(210,190,165,0.4);font-size:10px;font-weight:400;">регрессолог</span></div>
+                    <div style="height:6px;"></div>
+                    <div style="color:rgba(210,190,165,0.55);font-size:11px;line-height:1.5;">Проводник в глубинную память прошлых жизней. Работает с тем, что душа несёт сквозь время. Помогает найти корень страхов, притяжений и повторяющихся сценариев в опыте, который предшествует этой жизни.</div>
+                </div>
+                <div class="tb-sm">
+                    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:2px;"><span style="color:rgba(210,190,165,0.95);font-size:13px;font-weight:500;">Психея</span><span style="color:rgba(210,190,165,0.4);font-size:10px;font-weight:400;">психолог</span></div>
+                    <div style="height:6px;"></div>
+                    <div style="color:rgba(210,190,165,0.55);font-size:11px;line-height:1.5;">Юнгианский психолог и нарративный терапевт. Слушает не только слова, но и то, что стоит за ними. Помогает переосмыслить личную историю и найти в ней новый смысл.</div>
+                </div>
+                <div class="tb-sm">
+                    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:2px;"><span style="color:rgba(210,190,165,0.95);font-size:13px;font-weight:500;">Гера</span><span style="color:rgba(210,190,165,0.4);font-size:10px;font-weight:400;">нумеролог</span></div>
+                    <div style="height:6px;"></div>
+                    <div style="color:rgba(210,190,165,0.55);font-size:11px;line-height:1.5;">Нумеролог, видящий скрытый порядок в числах. Даты, имена, повторяющиеся цифры — всё это части одного послания. Гера помогает расшифровать числовой код твоей жизни.</div>
+                </div>
+                <div class="tb-prem" style="position:relative;">
+                    <div style="position:absolute;inset:0;overflow:hidden;border-radius:8px;pointer-events:none;"><div style="position:absolute;top:0;left:-120%;width:120%;height:100%;background:linear-gradient(105deg,transparent 20%,rgba(210,190,165,0.07) 50%,transparent 80%);animation:shimmer 4.5s ease-in-out infinite;"></div></div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;"><span style="color:rgba(210,190,165,0.95);font-size:13px;font-weight:500;">Оракул</span><img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/ea2696868cff6ba9b99ee5665a3571e74139a5f4/e_AzA-1.svg" style="width:14px;height:14px;opacity:0.6;filter:invert(80%) sepia(20%) saturate(300%) hue-rotate(10deg) brightness(95%);" alt=""></div>
+                    <div style="height:6px;"></div>
+                    <div style="color:rgba(210,190,165,0.55);font-size:11px;line-height:1.5;">Анализирует запрос и выбирает наиболее подходящую модель. Идеально, если не знаешь с чего начать.</div>
+                </div>
+                <div class="tb-prem" style="position:relative;">
+                    <div style="position:absolute;inset:0;overflow:hidden;border-radius:8px;pointer-events:none;"><div style="position:absolute;top:0;left:-120%;width:120%;height:100%;background:linear-gradient(105deg,transparent 20%,rgba(210,190,165,0.07) 50%,transparent 80%);animation:shimmer 4.5s ease-in-out infinite;"></div></div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;"><span style="color:rgba(210,190,165,0.95);font-size:13px;font-weight:500;">Консилиум</span><img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/ea2696868cff6ba9b99ee5665a3571e74139a5f4/e_AzA-1.svg" style="width:14px;height:14px;opacity:0.6;filter:invert(80%) sepia(20%) saturate(300%) hue-rotate(10deg) brightness(95%);" alt=""></div>
+                    <div style="height:6px;"></div>
+                    <div style="color:rgba(210,190,165,0.55);font-size:11px;line-height:1.5;">Все шесть моделей отвечают одновременно. Шесть разных взглядов на один вопрос — выбираешь, что резонирует.</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        // Set preloader based on time
-        const preloaderSource = document.getElementById('preloader-source');
-        preloaderSource.src = isDark ? PRELOADER_DARK : PRELOADER_LIGHT;
-        introVideo.load();
-        introVideo.play();
+    <!-- Slide 4: Тарифы -->
+    <div class="c-slide" id="slide4">
+        <div style="position:absolute;top:-2px;left:-2px;right:-2px;height:calc(38% + 2px);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);-webkit-mask-image:linear-gradient(to bottom,black 0%,black 40%,transparent 100%);mask-image:linear-gradient(to bottom,black 0%,black 40%,transparent 100%);pointer-events:none;"></div>
+        <div class="c-slide-content" style="height:100%;display:flex;flex-direction:column;position:relative;z-index:2;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;flex-shrink:0;">
+                <div class="s1-title" style="font-size:28px;text-align:left;color:rgba(210,190,165,1);">Это бесплатно?</div>
+            </div>
+            <div style="overflow-y:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;flex:1;display:flex;flex-direction:column;gap:8px;">
+                <div style="padding:14px;background:rgb(52,44,38);border-radius:10px;">
+                    <div style="color:rgba(210,190,165,1);font-size:14px;font-weight:600;margin-bottom:8px;">Да, бесплатно:</div>
+                    <div style="display:flex;flex-direction:column;gap:5px;">
+                        <div style="color:rgba(210,190,165,0.75);font-size:11px;line-height:1.5;display:flex;gap:7px;align-items:flex-start;"><span style="width:5px;height:5px;background:#d2bea5;border-radius:1px;flex-shrink:0;margin-top:4px;"></span>Неограниченное количество сессий — без лимитов и таймеров</div>
+                        <div style="color:rgba(210,190,165,0.75);font-size:11px;line-height:1.5;display:flex;gap:7px;align-items:flex-start;"><span style="width:5px;height:5px;background:#d2bea5;border-radius:1px;flex-shrink:0;margin-top:4px;"></span>Шесть моделей: Тара, Карма, Астра, Ева, Психея и Гера — каждая со своим подходом</div>
+                        <div style="color:rgba(210,190,165,0.75);font-size:11px;line-height:1.5;display:flex;gap:7px;align-items:flex-start;"><span style="width:5px;height:5px;background:#d2bea5;border-radius:1px;flex-shrink:0;margin-top:4px;"></span>История сессий сохраняется на 24 часа — можно вернуться и продолжить</div>
+                        <div style="color:rgba(210,190,165,0.75);font-size:11px;line-height:1.5;display:flex;gap:7px;align-items:flex-start;"><span style="width:5px;height:5px;background:#d2bea5;border-radius:1px;flex-shrink:0;margin-top:4px;"></span>Полный доступ без регистрации — достаточно войти как гость</div>
+                    </div>
+                </div>
+                <div style="padding:14px;background:rgb(48,40,34);border-radius:10px;border:1px solid rgba(210,190,165,0.2);">
+                    <div style="color:rgba(210,190,165,1);font-size:14px;font-weight:600;margin-bottom:6px;">Panacea Plus</div>
+                    <div style="color:rgba(210,190,165,0.55);font-size:11px;line-height:1.6;margin-bottom:10px;">Ты можешь поддержать развитие платформы, подключив Panacea Plus. Это помогает нам обучать модели и развивать сеть. Взамен ты получаешь расширенные возможности:</div>
+                    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
+                        <div style="color:rgba(210,190,165,0.65);font-size:11px;line-height:1.5;display:flex;gap:7px;align-items:flex-start;"><span style="width:5px;height:5px;background:#d2bea5;border-radius:1px;flex-shrink:0;margin-top:4px;"></span>Режим Оракул — нейронка сама выбирает подходящую модель под твой запрос</div>
+                        <div style="color:rgba(210,190,165,0.65);font-size:11px;line-height:1.5;display:flex;gap:7px;align-items:flex-start;"><span style="width:5px;height:5px;background:#d2bea5;border-radius:1px;flex-shrink:0;margin-top:4px;"></span>Консилиум — все шесть нейронок отвечают одновременно, ты выбираешь резонирующий ответ</div>
+                        <div style="color:rgba(210,190,165,0.65);font-size:11px;line-height:1.5;display:flex;gap:7px;align-items:flex-start;"><span style="width:5px;height:5px;background:#d2bea5;border-radius:1px;flex-shrink:0;margin-top:4px;"></span>История сессий без ограничений по времени</div>
+                        <div style="color:rgba(210,190,165,0.65);font-size:11px;line-height:1.5;display:flex;gap:7px;align-items:flex-start;"><span style="width:5px;height:5px;background:#d2bea5;border-radius:1px;flex-shrink:0;margin-top:4px;"></span>Приоритетная обработка запросов</div>
+                        <div style="color:rgba(210,190,165,0.65);font-size:11px;line-height:1.5;display:flex;gap:7px;align-items:flex-start;"><span style="width:5px;height:5px;background:#d2bea5;border-radius:1px;flex-shrink:0;margin-top:4px;"></span>PDF-саммари каждой сессии с ключевыми инсайтами</div>
+                    </div>
+                    <button class="premium-btn" style="position:relative;z-index:1;overflow:hidden;" onclick="goToSubscription()">
+                        <div style="position:absolute;top:0;left:-120%;width:120%;height:100%;background:linear-gradient(105deg,transparent 20%,rgba(255,255,255,0.3) 50%,transparent 80%);animation:shimmer 4.5s ease-in-out infinite;pointer-events:none;"></div>
+                        Подключить Panacea Plus
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        function setTheme(dark) {
-            isDark = dark;
-            document.getElementById('bg-source').src = dark ? DARK : LIGHT;
-            document.getElementById('background-video').load();
 
-            const titleColor = dark ? '#000' : '#0000cc'; // текст на белом фоне (заголовки)
+</div>
+</div>
 
-            document.querySelectorAll('.article-title, .article-date').forEach(t => t.style.color = titleColor);
-            document.querySelectorAll('.article').forEach(a => a.style.borderColor = 'white');
-            document.querySelector('.progress').style.background = dark ? '#000' : '#0000cc';
-            document.querySelectorAll('.inner-block-1, .inner-block-2, .inner-block-3, .outer-block').forEach(el => el.style.borderColor = 'white');
+<!-- SCREEN 1b: Flip card -->
+<div class="screen" id="screen1b">
+<div style="width:100%;height:100%;background:rgb(28,23,20);display:flex;align-items:center;justify-content:center;">
 
-            const settingsBar = document.getElementById('settings-bar');
-            if (settingsBar) {
-                settingsBar.style.borderColor = 'white';
-                settingsBar.querySelectorAll('span').forEach(el => el.style.color = titleColor);
+<div id="s1bFlip" style="width:90%;max-width:420px;height:min(90vh,90dvh);perspective:1200px;">
+    <div id="s1bInner" style="width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.6s cubic-bezier(0.4,0,0.2,1);">
+
+        <!-- Front: Анкета -->
+        <div class="s1b-face s1b-face-front">
+            <div class="s1b-header">
+                <div class="s1b-title">Новая сессия</div>
+                <img class="s1b-icon" src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/a37d30f04ddf3ec51d7e23c0f99227132c45bff0/color-switch-svgrepo-com.svg" alt="" id="flipTrigger" style="cursor:pointer;">
+            </div>
+            <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:10px 14px;font-size:12px;color:rgba(210,190,165,0.55);line-height:1.6;flex-shrink:0;">
+                Опиши свой вопрос. Это поможет настроить сессию именно под тебя
+            </div>
+            <div class="fields" style="overflow-y:auto;scrollbar-width:none;flex:1;">
+                <div><div class="flabel">Что тебя беспокоит?</div>
+                <select class="fselect"><option value="" disabled selected>Выбери тему</option><option>Отношения и любовь</option><option>Карьера и деньги</option><option>Здоровье и энергия</option><option>Смысл и предназначение</option><option>Тревога и страхи</option><option>Семья и близкие</option><option>Одиночество</option><option>Другое</option></select></div>
+                <div><div class="flabel">Как ты себя чувствуешь сейчас?</div>
+                <select class="fselect"><option value="" disabled selected>Выбери состояние</option><option>Потерян и не знаю куда идти</option><option>Тревожно и неспокойно</option><option>Устал и нет сил</option><option>Ищу ответы на вопросы</option><option>Хочу перемен</option><option>В целом хорошо, но есть вопросы</option><option>Чувствую внутренний конфликт</option></select></div>
+                <div><div class="flabel">Как часто обращаешься за советом?</div>
+                <select class="fselect"><option value="" disabled selected>Выбери вариант</option><option>Впервые пробую</option><option>Иногда, в трудные моменты</option><option>Регулярно, это часть жизни</option><option>Скептически, но интересно</option></select></div>
+                <div><div class="flabel">Чего ожидаешь от сессии?</div>
+                <select class="fselect"><option value="" disabled selected>Выбери цель</option><option>Получить ясность и направление</option><option>Выговориться и быть услышанным</option><option>Узнать что-то о своей судьбе</option><option>Найти решение конкретной ситуации</option><option>Просто попробовать</option></select></div>
+                <div><div class="flabel">Есть ли у тебя конкретный вопрос?</div>
+                <select class="fselect"><option value="" disabled selected>Выбери вариант</option><option>Да, есть чёткий вопрос</option><option>Скорее ощущение, чем вопрос</option><option>Хочу просто поговорить</option><option>Не знаю с чего начать</option></select></div>
+            </div>
+            <button class="submit-btn" id="submitBtn">
+                <span>Начать сессию</span>
+                <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/09eec5a30d5df884937b3b146abfe78e437fa2fc/torch-2-svgrepo-com.svg" alt="" style="width:16px;height:16px;filter:invert(80%) sepia(20%) saturate(300%) hue-rotate(10deg) brightness(95%);">
+            </button>
+        </div>
+
+        <!-- Back: Мои сессии -->
+        <div class="s1b-face s1b-face-back">
+            <div class="s1b-header">
+                <div class="s1b-title" style="color:rgb(40,28,20);">Мои сессии</div>
+                <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/a37d30f04ddf3ec51d7e23c0f99227132c45bff0/color-switch-svgrepo-com.svg" style="width:18px;height:18px;filter:invert(15%) sepia(15%) saturate(200%) brightness(20%);opacity:0.6;cursor:pointer;transform:scale(-1,-1);" alt="" id="flipBackTrigger">
+            </div>
+
+            <!-- Pinned: Поддержка -->
+            <div id="supportCard" style="background:rgba(40,28,20,0.08);border-radius:8px;padding:12px 14px;cursor:pointer;transition:background 0.15s;display:flex;align-items:center;gap:10px;flex-shrink:0;margin-bottom:4px;" onclick="openSupportChat()">
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:13px;font-weight:600;color:rgb(40,28,20);margin-bottom:2px;">Поддержка</div>
+                    <div style="font-size:11px;color:rgba(40,28,20,0.45);">Оракул</div>
+                </div>
+                <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/0f0c70b94b16782ce6176d572ee3ed78e447254e/medicine-symbol-1-svgrepo-com.svg" style="width:16px;height:16px;flex-shrink:0;filter:brightness(0) saturate(100%) invert(10%) sepia(15%) saturate(500%) hue-rotate(340deg) brightness(40%);opacity:0.5;" alt="">
+            </div>
+
+            <div id="sessionsWrapper" style="flex:1;min-height:0;position:relative;">
+                <div id="sessionsContent" style="height:100%;overflow-y:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:8px;padding:4px 0;"></div>
+            </div>
+            <button id="signOutBtn" style="background:none;border:none;color:rgba(40,28,20,0.35);font-size:11px;font-family:'Inter',sans-serif;cursor:pointer;padding:8px 0;text-align:center;width:100%;transition:color 0.15s;flex-shrink:0;">Выйти из учётной записи</button>
+            <button id="signInBtn" style="display:none;background:none;border:none;color:rgba(40,28,20,0.45);font-size:11px;font-family:'Inter',sans-serif;cursor:pointer;padding:8px 0;text-align:center;width:100%;transition:color 0.15s;flex-shrink:0;" onclick="window.location.href='index.html'">Войти в аккаунт</button>
+        </div>
+
+    </div>
+</div>
+</div>
+</div>
+
+<!-- SCREEN 1c: Loader -->
+<div class="screen" id="screen1c">
+<div class="loader-wrap">
+    <div class="loader-carousel-wrap" id="loaderCarouselWrap">
+        <div class="lc-slide" id="lc0"></div>
+        <div class="lc-slide" id="lc1"></div>
+        <div class="lc-slide" id="lc2"></div>
+        <div class="lc-slide" id="lc3"></div>
+        <div class="lc-slide" id="lc4"></div>
+    </div>
+    <div class="loader-progress">
+        <div class="loader-stage" id="loaderStage">Определяем проблему...</div>
+        <div class="loader-bar"><div class="loader-bar-fill" id="loaderFill" style="width:0%"></div></div>
+    </div>
+</div>
+</div>
+
+<div class="screen" id="screen2">
+<div class="s2-wrap">
+<div class="s2-inner">
+    <div class="chat-header">
+        <div class="chat-header-left">
+            <button class="model-btn" id="modelBtn">Тара</button>
+            <div class="dropdown" id="dropdown">
+                <button class="ditem active" data-model="tara">
+                    <div class="ditem-text"><span class="ditem-name">Тара</span><span class="ditem-desc">Мастер традиционной школы тарологии</span></div>
+                    <span class="ditem-check">?</span>
+                </button>
+                <button class="ditem" data-model="karma">
+                    <div class="ditem-text"><span class="ditem-name">Карма</span><span class="ditem-desc">Читает кармические узлы и незакрытые циклы</span></div>
+                    <span class="ditem-check">?</span>
+                </button>
+                <button class="ditem" data-model="astra">
+                    <div class="ditem-text"><span class="ditem-name">Астра</span><span class="ditem-desc">Эксперт в области астрологии и натальных карт</span></div>
+                    <span class="ditem-check">?</span>
+                </button>
+                <button class="ditem" data-model="eva">
+                    <div class="ditem-text"><span class="ditem-name">Ева</span><span class="ditem-desc">Проводник в глубинную память прошлых жизней</span></div>
+                    <span class="ditem-check">?</span>
+                </button>
+                <button class="ditem" data-model="psyche">
+                    <div class="ditem-text"><span class="ditem-name">Психея</span><span class="ditem-desc">Юнгианский психолог и нарративный терапевт</span></div>
+                    <span class="ditem-check">?</span>
+                </button>
+                <button class="ditem" data-model="gera">
+                    <div class="ditem-text"><span class="ditem-name">Гера</span><span class="ditem-desc">Нумеролог, видящий скрытый порядок в числах</span></div>
+                    <span class="ditem-check">?</span>
+                </button>
+                <button class="ditem ditem-premium" data-premium="auto">
+                    <div class="ditem-text"><span class="ditem-name">Оракул</span><span class="ditem-desc">Анализирует запрос и выбирает лучшего проводника</span></div>
+                    <span class="ditem-check"></span>
+                    <img class="ditem-star" src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/ea2696868cff6ba9b99ee5665a3571e74139a5f4/e_AzA-1.svg" alt="">
+                </button>
+                <button class="ditem ditem-premium" data-premium="consilium">
+                    <div class="ditem-text"><span class="ditem-name">Консилиум</span><span class="ditem-desc">Мнения всех проводников сразу</span></div>
+                    <span class="ditem-check"></span>
+                    <img class="ditem-star" src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/ea2696868cff6ba9b99ee5665a3571e74139a5f4/e_AzA-1.svg" alt="">
+                </button>
+            </div>
+        </div>
+        <div class="chat-header-right">
+            <button class="bulb-btn" id="themeBtn" title="Сменить тему">
+                <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/11c4ba1a8f6ad668227bb0e60fdc43ba73de1c16/sun_1.svg" class="icon-dove" alt="">
+            </button>
+            <button class="bulb-btn" id="menuBtn" title="Завершить сессию">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+        </div>
+    </div>
+    <div class="chat-area" id="chatArea"></div>
+    <div class="toast" id="appToast" style="display:none;">
+        <img class="toast-icon" id="toastIcon" src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/ea2696868cff6ba9b99ee5665a3571e74139a5f4/e_AzA-1.svg" alt="">
+        <span class="toast-text" id="toastText">Эта функция доступна с Panacea Plus</span>
+    </div>
+    <div class="input-area">
+        <input type="text" class="input-field" id="msgInput" placeholder="Задай свой вопрос..." autocomplete="off">
+        <button class="voice-btn" id="voiceBtn" title="Голосовой ввод">
+            <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/97130ce75b7a93ea2aee5ce8d5235262329b8ffa/harp-svgrepo-com.svg" alt="">
+        </button>
+        <button class="send-btn" id="sendBtn">
+            <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/3da70af56c4c3a8e162fda9748666df480ad4dfb/dove.svg" class="icon-dove" alt="">
+        </button>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- Panacea Plus modal -->
+<!-- Toast notification — inside chat, above input -->
+<div class="premium-overlay" id="premiumOverlay">
+<div class="premium-modal">
+    <div class="premium-title">Panacea Plus</div>
+    <div class="premium-desc">Откройте полный доступ к возможностям всех моделей и эксклюзивным режимам.</div>
+    <div class="premium-features">
+        <div class="premium-feature">
+            <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/10976f34a645c35ee64f77d7f410fff17a10cb1d/infinity-svgrepo-com.svg" class="pf-marker" alt="">
+            <span>Нет ограничений на количество сессий</span>
+        </div>
+        <div class="premium-feature">
+            <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/10976f34a645c35ee64f77d7f410fff17a10cb1d/history-3-svgrepo-com.svg" class="pf-marker" alt="">
+            <span>Можно отключить очистку истории через 24 часа</span>
+        </div>
+        <div class="premium-feature">
+            <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/14cb39a066a6acb2086a4696d504567fbbb8188e/scroll.svg" class="pf-marker" alt="">
+            <span>Скачать протокол каждой сессии</span>
+        </div>
+        <div class="premium-feature">
+            <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/10976f34a645c35ee64f77d7f410fff17a10cb1d/eye-scan-svgrepo-com.svg" class="pf-marker" alt="">
+            <span>Оракул — система сама выбирает наиболее подходящую модель</span>
+        </div>
+        <div class="premium-feature">
+            <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/10976f34a645c35ee64f77d7f410fff17a10cb1d/discussion-square-svgrepo-com.svg" class="pf-marker" alt="">
+            <span>Консилиум — ответ содержит мнения всех шести моделей одновременно</span>
+        </div>
+        <div class="premium-feature">
+            <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/10976f34a645c35ee64f77d7f410fff17a10cb1d/quiz-submissions-svgrepo-com.svg" class="pf-marker" alt="">
+            <span>Тесты — в ходе общения используются интерактивные тесты</span>
+        </div>
+        <div class="premium-feature">
+            <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/10976f34a645c35ee64f77d7f410fff17a10cb1d/voice-recognition-frame-svgrepo-com.svg" class="pf-marker" alt="">
+            <span>Голосовой режим — можно общаться с моделями голосом и слышать их голосовые ответы</span>
+        </div>
+    </div>
+    <button class="premium-btn" style="position:relative;overflow:hidden;" onclick="goToSubscription()">
+        <div style="position:absolute;top:0;left:-120%;width:120%;height:100%;background:linear-gradient(105deg,transparent 20%,rgba(210,190,165,0.18) 50%,transparent 80%);animation:shimmer 4.5s ease-in-out infinite;pointer-events:none;"></div>
+        Подключить Panacea Plus
+    </button>
+    <button class="premium-close" id="premiumClose">Не сейчас</button>
+</div>
+</div>
+
+<!-- End session modal -->
+<!-- Delete session modal -->
+<div class="end-overlay" id="deleteSessionOverlay" style="z-index:700;">
+<div class="end-modal">
+    <div class="end-title">Удалить сессию?</div>
+    <div class="end-desc">Это действие нельзя отменить. Сессия будет удалена навсегда.</div>
+    <div class="end-btns">
+        <button class="end-btn end-btn-menu" id="deleteSessionNo">Отмена</button>
+        <button class="end-btn end-btn-delete" id="deleteSessionYes">Удалить</button>
+    </div>
+</div>
+</div>
+<div class="end-overlay" id="endOverlay">
+<div class="end-modal">
+    <div class="end-title">Завершить сессию?</div>
+    <div class="end-desc">Вы можете начать новую сессию с чистого листа или вернуться в главное меню.</div>
+    <div class="end-summary-wrap">
+        <button class="end-summary-btn" id="endSummaryBtn">
+            <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/14cb39a066a6acb2086a4696d504567fbbb8188e/scroll.svg" class="end-summary-icon" alt="">
+            Завершить и сохранить протокол
+        </button>
+        <div class="end-inline-notice" id="endInlineNotice" onclick="goToSubscription()">
+            <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/ea2696868cff6ba9b99ee5665a3571e74139a5f4/e_AzA-1.svg" alt="">
+            Эта функция доступна с Panacea Plus
+        </div>
+    </div>
+    <div class="end-btns">
+        <button class="end-btn end-btn-menu" id="endMenu">В меню</button>
+        <button class="end-btn end-btn-new" id="endNew">Новая сессия</button>
+    </div>
+</div>
+</div>
+
+<!-- SCREEN: Support chat -->
+<div class="screen" id="screenSupport">
+<div class="s2-wrap">
+<div class="s2-inner">
+    <div class="chat-header">
+        <div class="chat-header-left">
+            <!-- Static model label, not clickable -->
+            <div class="model-btn" style="cursor:default;pointer-events:none;">Оракул</div>
+        </div>
+        <div class="chat-header-right">
+            <svg id="supportFlipBtn" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;fill:rgba(210,190,165,0.6);cursor:pointer;flex-shrink:0;transform:scale(-1,-1);"><path d="M26,4H6A2.0025,2.0025,0,0,0,4,6V26a2.0025,2.0025,0,0,0,2,2H26a2.0025,2.0025,0,0,0,2-2V6A2.0025,2.0025,0,0,0,26,4ZM6,26V6L26,26Z"/></svg>
+        </div>
+    </div>
+    <div class="chat-area" id="supportChatArea"></div>
+    <div class="toast" id="supportToast" style="display:none;">
+        <img class="toast-icon" src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/ea2696868cff6ba9b99ee5665a3571e74139a5f4/e_AzA-1.svg" alt="">
+        <span class="toast-text"></span>
+    </div>
+    <div class="input-area">
+        <input type="text" class="input-field" id="supportInput" placeholder="Задай свой вопрос..." autocomplete="off">
+        <button class="send-btn" id="supportSendBtn">
+            <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/3da70af56c4c3a8e162fda9748666df480ad4dfb/dove.svg" class="icon-dove" alt="">
+        </button>
+    </div>
+</div>
+</div>
+</div>
+
+<script type="module">
+// ── Firebase SDK ──────────────────────────────────────────
+import { initializeApp }        from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, signInWithPopup, GoogleAuthProvider, OAuthProvider, signInAnonymously, onAuthStateChanged }
+                                 from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, collection, doc, setDoc, getDocs, getDoc, deleteDoc, orderBy, query, serverTimestamp }
+                                 from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const FB_CFG = {
+    apiKey:            "AIzaSyBi59uMZ1DKGIl7f8tDgIyoCfKKsip3TkM",
+    authDomain:        "panacea-c0edd.firebaseapp.com",
+    projectId:         "panacea-c0edd",
+    storageBucket:     "panacea-c0edd.firebasestorage.app",
+    messagingSenderId: "8005666614462",
+    appId:             "1:8005666614462:web:4c6f3d84f74aa848e801ef"
+};
+const fbApp = initializeApp(FB_CFG);
+const auth  = getAuth(fbApp);
+const db    = getFirestore(fbApp);
+
+const googleProvider = new GoogleAuthProvider();
+const appleProvider  = new OAuthProvider('apple.com');
+
+// ── Auth helpers (called from main script) ────────────────
+window._fbSignIn = async (provider) => {
+    try {
+        if      (provider === 'google') await signInWithPopup(auth, googleProvider);
+        else if (provider === 'apple')  await signInWithPopup(auth, appleProvider);
+        else                            await signInAnonymously(auth);
+    } catch(e) { console.error('Auth:', e.code); }
+};
+
+window._fbSignOut = () => auth.signOut();
+
+// ── Firestore helpers ─────────────────────────────────────
+// Save session: uid, sessionId, {date, survey, messages, modelsUsed}
+window._fbSaveSession = async (uid, sessionId, data) => {
+    if (!uid || uid === 'guest') return;
+    try {
+        await setDoc(doc(db, 'sessions', uid, 'list', sessionId), {
+            ...data,
+            updatedAt: serverTimestamp()
+        }, { merge: true });
+    } catch(e) { console.error('Save session:', e); }
+};
+
+// Load sessions list for uid
+window._fbLoadSessions = async (uid) => {
+    if (!uid || uid === 'guest') return [];
+    try {
+        const q = query(collection(db, 'sessions', uid, 'list'), orderBy('updatedAt', 'desc'));
+        const snap = await getDocs(q);
+        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch(e) { console.error('Load sessions:', e); return []; }
+};
+
+// Load single session
+window._fbLoadSession = async (uid, sessionId) => {
+    if (!uid) return null;
+    try {
+        const snap = await getDoc(doc(db, 'sessions', uid, 'list', sessionId));
+        return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+    } catch(e) { return null; }
+};
+
+// Delete session
+window._fbDeleteSession = async (uid, sessionId) => {
+    if (!uid || uid === 'guest') return;
+    try {
+        await deleteDoc(doc(db, 'sessions', uid, 'list', sessionId));
+    } catch(e) { console.error('Delete session:', e); }
+};
+
+// ── Auth state ────────────────────────────────────────────
+onAuthStateChanged(auth, user => {
+    if (user) {
+        const p = user.isAnonymous ? 'guest'
+                : user.providerData[0]?.providerId === 'apple.com' ? 'apple' : 'google';
+        localStorage.setItem('soma_user', JSON.stringify({ uid: user.uid, p, ts: Date.now() }));
+        // If on login screen — go to survey
+        if (document.getElementById('screen1')?.classList.contains('active')) {
+            window._goToAfterAuth?.();
+        }
+    }
+});
+// ─────────────────────────────────────────────────────────
+</script>
+
+<script>
+const BG = 'https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/main/Webps/';
+const DOVE = 'https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/3da70af56c4c3a8e162fda9748666df480ad4dfb/dove.svg';
+const HOURGLASS = 'https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/3da70af56c4c3a8e162fda9748666df480ad4dfb/hourglass.svg';
+const KEY_USER = 'soma_user';
+const KEY_CHAT = 'soma_chat';
+
+// Beige favicon via fetched SVG with color override
+fetch('https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/ea2696868cff6ba9b99ee5665a3571e74139a5f4/e_AzA-1.svg')
+    .then(r => r.text()).then(svg => {
+        const colored = svg.replace(/fill="[^"]*"/g, 'fill="#D2BEA5"').replace(/stroke="[^"]*"/g, 'stroke="#D2BEA5"');
+        const blob = new Blob([colored], {type:'image/svg+xml'});
+        const url = URL.createObjectURL(blob);
+        const link = document.querySelector('link[rel="icon"]') || document.createElement('link');
+        link.rel = 'icon'; link.type = 'image/svg+xml'; link.href = url;
+        document.head.appendChild(link);
+    }).catch(()=>{});
+const KEY_SURVEY = 'soma_survey';
+
+// Random BG
+const bgEl = document.getElementById('bg');
+const bgFrame = document.getElementById('bgFrame');
+const imgUrl = `${BG}${Math.ceil(Math.random()*23)}.webp`;
+bgEl.style.backgroundImage = `url('${imgUrl}')`;
+bgFrame.style.backgroundImage = `url('${imgUrl}')`;
+
+// Carousel — 5 static DOM slides
+const allImgs = Array.from({length:23},(_,i)=>i+1).sort(()=>Math.random()-0.5);
+const N_SLIDES = 5;
+// Assign unique random bg to each slide
+const slideImgs = allImgs.slice(0, N_SLIDES);
+for(let i=0;i<N_SLIDES;i++){
+    document.getElementById('slide'+i).style.backgroundImage=`url('${BG}${slideImgs[i]}.webp')`;
+}
+
+let curSlide = 0; // which slide is currently center
+let s1Busy = false;
+
+function getDims(){
+    const vw=window.innerWidth, vh=window.innerHeight;
+    const cH=Math.min(vh*0.9,700), cW=Math.min(cH*0.52,420);
+    const nW=cW*0.75, nH=cH*0.75, fW=cW*0.45, fH=cH*0.45;
+    const gap=12, cx=vw/2;
+    return {cW,cH,nW,nH,fW,fH,gap,cx,vw};
+}
+
+function layoutSlides(animate){
+    const d=getDims();
+    const gap=12;
+    // offsets from center (as fraction of cW)
+    const nearOff = d.cW/2 + gap + d.nW/2;
+    const farOff  = d.cW/2 + gap + d.nW + gap + d.fW/2;
+
+    for(let i=0;i<N_SLIDES;i++){
+        const el=document.getElementById('slide'+i);
+        let rel = i - curSlide;
+        if(rel > N_SLIDES/2)  rel -= N_SLIDES;
+        if(rel < -N_SLIDES/2) rel += N_SLIDES;
+
+        let tx, scale;
+        if     (rel===0)  { tx=0;         scale=1; }
+        else if(rel===-1) { tx=-nearOff;  scale=d.nW/d.cW; }
+        else if(rel===1)  { tx= nearOff;  scale=d.nW/d.cW; }
+        else if(rel===-2) { tx=-farOff;   scale=d.fW/d.cW; }
+        else              { tx= farOff;   scale=d.fW/d.cW; }
+
+        el.style.transition = animate
+            ? 'transform 0.5s cubic-bezier(0.4,0,0.2,1),opacity 0.5s ease,filter 0.5s ease'
+            : 'none';
+        el.style.width  = d.cW+'px';
+        el.style.height = d.cH+'px';
+        el.style.transform = `translate(calc(-50% + ${tx}px), -50%) scale(${scale})`;
+
+        const abs=Math.abs(rel);
+        el.className = 'c-slide'+(abs===0?' is-center':abs===1?' is-near':' is-far');
+        el.style.zIndex = abs===0?5:abs===1?4:3;
+    }
+    bgEl.style.backgroundImage    = `url('${BG}${slideImgs[curSlide]}.jpeg')`;
+    bgFrame.style.backgroundImage = `url('${BG}${slideImgs[curSlide]}.jpeg')`;
+}
+
+function carouselShift(dir){
+    if(s1Busy) return;
+    s1Busy=true;
+    curSlide=(curSlide+dir+N_SLIDES)%N_SLIDES;
+    layoutSlides(true);
+    setTimeout(()=>{s1Busy=false;},520);
+}
+
+layoutSlides(false);
+window.addEventListener('resize',()=>layoutSlides(false));
+
+// Scroll fade mask for carousel slides
+document.querySelectorAll('.c-slide-content').forEach(content => {
+    const scroller = content.querySelector('[style*="overflow-y"]');
+    if (!scroller) return;
+    scroller.classList.add('c-slide-scroll');
+    function updateMask() {
+        const atBottom = scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight < 8;
+        const atTop = scroller.scrollTop < 8;
+        scroller.classList.toggle('at-bottom', atBottom);
+        scroller.classList.toggle('at-top', atTop);
+    }
+    updateMask();
+    scroller.addEventListener('scroll', updateMask, {passive: true});
+    // Re-check when slide becomes center
+    new MutationObserver(updateMask).observe(content.closest('.c-slide'), {attributes: true, attributeFilter: ['class']});
+});
+
+document.getElementById('carouselWrap').addEventListener('click', e=>{
+    if(e.target.closest('.is-center')) return;
+    carouselShift(e.clientX < window.innerWidth/2 ? -1 : 1);
+});
+
+let touchStartX=0;
+document.getElementById('screen1').addEventListener('touchstart',e=>{touchStartX=e.touches[0].clientX;});
+document.getElementById('screen1').addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-touchStartX;
+    if(Math.abs(dx)>50) carouselShift(dx<0?1:-1);
+});
+document.getElementById('screen1').addEventListener('touchstart',e=>{touchStartX=e.touches[0].clientX;});
+document.getElementById('screen1').addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-touchStartX;
+    if(Math.abs(dx)>50) carouselShift(dx<0?1:-1);
+});
+
+// Transition
+const overlayEl = document.getElementById('overlay');
+function goTo(id) {
+    overlayEl.classList.add('on');
+    setTimeout(() => { switchScreen(id); }, 500);
+}
+
+function switchScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    // bg показываем только на screen1 (карусель с логином)
+    const showBg = id === 'screen1';
+    bgEl.style.display = showBg ? 'block' : 'none';
+    bgFrame.style.display = showBg ? 'block' : 'none';
+    overlayEl.classList.remove('on');
+    if (id === 'screen2') initChat();
+    if (id === 'screen1c') startLoader();
+    if (id === 'screen1b') s1bReset();
+    // Persist screen for reload
+    if (id === 'screen2' || id === 'screen1b' || id === 'screenSupport') {
+        sessionStorage.setItem('soma_screen', id);
+        // Also save flip state for screen1b
+        if (id === 'screen1b') {
+            sessionStorage.setItem('soma_flip', s1bFlipped ? '1' : '0');
+        }
+    }
+}
+
+// Init — check if already logged in — вызывается в конце скрипта
+function init() {
+    // If redirected from subscription page for login
+    if (window.location.hash === '#login') {
+        history.replaceState(null, '', window.location.pathname);
+        switchScreen('screen1');
+        return;
+    }
+    if (localStorage.getItem(KEY_USER)) {
+        const saved = sessionStorage.getItem('soma_screen');
+        const savedFlip = sessionStorage.getItem('soma_flip');
+
+        if (saved === 'screen1b') {
+            switchScreen('screen1b');
+            // Restore flip state
+            if (savedFlip === '1') {
+                s1bFlipped = true;
+                document.getElementById('s1bInner').classList.add('flipped');
+                renderSessions();
             }
-            document.getElementById('theme-toggle').textContent = dark ? '[ НОЧЬ ]' : '[ ДЕНЬ ]';
-
-            const archiveCont = document.querySelector('.archive-container');
-            if (archiveCont) archiveCont.style.borderColor = 'white';
-
-            const backBtn = document.getElementById('article-fs-back');
-            if (backBtn) backBtn.style.color = titleColor;
-            const fsTitle = document.getElementById('article-fs-title');
-            if (fsTitle) fsTitle.style.color = titleColor;
-        }
-
-        function toggleTheme() {
-            showNoise(null);
-            setTheme(!isDark);
-            const v = document.getElementById('background-video');
-            const t0 = Date.now();
-            function hide() {
-                const rem = Math.max(0, 1000 - (Date.now() - t0));
-                setTimeout(() => { cancelAnimationFrame(noiseAnim); noiseCanvas.style.display = 'none'; }, rem);
+        } else if (saved === 'screenSupport') {
+            // Restore support chat messages from sessionStorage
+            const supportMsgs = sessionStorage.getItem('soma_support_msgs');
+            const area = document.getElementById('supportChatArea');
+            if (supportMsgs && area) {
+                area._inited = true;
+                area.innerHTML = supportMsgs;
             }
-            v.readyState >= 3 ? hide() : v.addEventListener('canplay', hide, { once: true });
-            const iframe = document.getElementById('article-iframe');
-            if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage({ type: 'setTheme', dark: isDark }, '*');
+            switchScreen('screenSupport');
+        } else {
+            switchScreen('screen2');
         }
+    } else if (localStorage.getItem('soma_invite')) {
+        localStorage.removeItem('soma_invite');
+        localStorage.setItem(KEY_USER, JSON.stringify({p:'invite',ts:Date.now()}));
+        switchScreen('screen1b');
+    }
+}
 
-        setTheme(isDark);
+// S1b flip card
+let s1bFlipped = false;
 
-        // Track scroll
-        const trackList = document.getElementById('track-list');
-        const trackContainer = trackList.parentElement;
-        trackContainer.addEventListener('wheel', function(e) {
-            e.preventDefault();
-            const h = trackList.querySelector('li').offsetHeight;
-            trackContainer.scrollTop += e.deltaY > 0 ? h * 4 : -h * 4;
-        }, { passive: false });
+function s1bReset() {
+    s1bFlipped = false;
+    document.getElementById('s1bInner').classList.remove('flipped');
+}
 
-        // Audio player
-        const audio = document.getElementById('audio');
-        const progress = document.getElementById('progress');
-        const currentTimeDisplay = document.getElementById('current-time');
-        const durationDisplay = document.getElementById('duration');
-        const visualizerVideo = document.getElementById('visualizer-video');
-        const frameVideo = document.getElementById('frame-video');
+function renderSessions(highlightId) {
+    const cont = document.getElementById('sessionsContent');
+    const userRaw = localStorage.getItem(KEY_USER);
+    const user = userRaw ? JSON.parse(userRaw) : null;
+    const isGuest = !user || user.p === 'guest';
 
-        document.querySelectorAll('.player-item').forEach(track => {
-            track.addEventListener('click', function () {
-                const src = this.dataset.src;
-                if (audio.src.includes(src)) {
-                    audio.paused ? audio.play() : audio.pause();
-                } else {
-                    audio.src = src;
-                    audio.play();
-                }
-                document.getElementById('compact-track-name').textContent = this.querySelector('.track-name').textContent;
-            });
-        });
+    // Show correct bottom button
+    const signOutBtn = document.getElementById('signOutBtn');
+    const signInBtn = document.getElementById('signInBtn');
+    if (isGuest) {
+        signOutBtn.style.display = 'none';
+        signInBtn.style.display = '';
+    } else {
+        signOutBtn.style.display = '';
+        signInBtn.style.display = 'none';
+    }
 
-        audio.addEventListener('play', () => {
-            frameVideo.style.display = 'none';
-            visualizerVideo.style.display = 'block';
-            visualizerVideo.play();
-        });
-        audio.addEventListener('pause', () => {
-            visualizerVideo.pause();
-        });
-        audio.addEventListener('ended', () => {
-            visualizerVideo.pause();
-            visualizerVideo.style.display = 'none';
-        });
-        audio.addEventListener('timeupdate', function () {
-            const pct = (audio.currentTime / audio.duration) * 100;
-            progress.style.width = `${pct}%`;
-            currentTimeDisplay.textContent = formatTime(audio.currentTime);
-            durationDisplay.textContent = formatTime(audio.duration);
-        });
+    if (isGuest) {
+        cont.innerHTML = `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;padding:40px 0;">
+            <img src="${HOURGLASS}" style="width:32px;height:32px;filter:invert(15%) sepia(15%) saturate(200%) brightness(20%);opacity:0.3;" alt="">
+            <div style="color:rgba(40,28,20,0.45);font-size:12px;line-height:1.7;">История сессий недоступна<br>в гостевом режиме.<br><span style="font-size:11px;color:rgba(40,28,20,0.3);">Войдите через Google или Apple,<br>чтобы сохранять сессии.</span></div>
+        </div>`;
+        return;
+    }
+    cont.innerHTML = `<div style="flex:1;display:flex;align-items:center;justify-content:center;color:rgba(40,28,20,0.35);font-size:12px;text-align:center;">Загружаем...</div>`;
 
-        function formatTime(s) {
-            if (isNaN(s)) return '0:00';
-            return `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+    if (!window._fbLoadSessions) return;
+    window._fbLoadSessions(user.uid).then(sessions => {
+        if (!sessions.length) {
+            cont.innerHTML = `<div style="flex:1;display:flex;align-items:center;justify-content:center;color:rgba(40,28,20,0.35);font-size:12px;text-align:center;">Сессий пока нет</div>`;
+            return;
         }
+        cont.innerHTML = '';
 
-        // Marquee for track names on mobile
-        function initMarquee() {
-            document.querySelectorAll('.track-list li').forEach(li => {
-                const nameSpan = li.querySelector('.track-name');
-                if (!nameSpan) return;
-                // wrap if not already wrapped
-                if (!nameSpan.parentElement.classList.contains('track-name-wrap')) {
-                    const wrap = document.createElement('span');
-                    wrap.className = 'track-name-wrap';
-                    nameSpan.parentNode.insertBefore(wrap, nameSpan);
-                    wrap.appendChild(nameSpan);
-                }
-                const wrap = nameSpan.parentElement;
-                const overflow = nameSpan.scrollWidth - wrap.clientWidth;
-                if (overflow > 2) {
-                    nameSpan.style.setProperty('--marquee-dist', `-${overflow}px`);
-                    nameSpan.classList.add('marquee');
-                } else {
-                    nameSpan.classList.remove('marquee');
-                }
-            });
-        }
-        window.addEventListener('load', initMarquee);
-        window.addEventListener('resize', initMarquee);
-
-        // TV Noise
-        const noiseCanvas = document.getElementById('tv-noise');
-        const noiseCtx = noiseCanvas.getContext('2d');
-        let noiseAnim = null;
-
-        function drawNoise() {
-            noiseCanvas.width = window.innerWidth;
-            noiseCanvas.height = window.innerHeight;
-            const img = noiseCtx.createImageData(noiseCanvas.width, noiseCanvas.height);
-            const d = img.data;
-            for (let i = 0; i < d.length; i += 4) {
-                const v = Math.random() * 255 | 0;
-                d[i] = d[i+1] = d[i+2] = v; d[i+3] = 255;
-            }
-            noiseCtx.putImageData(img, 0, 0);
-            noiseAnim = requestAnimationFrame(drawNoise);
-        }
-
-        function showNoise(duration, callback) {
-            noiseCanvas.style.display = 'block';
-            drawNoise();
-            if (duration !== null) {
-                setTimeout(() => { cancelAnimationFrame(noiseAnim); noiseCanvas.style.display = 'none'; if (callback) callback(); }, duration || 600);
-            }
-        }
-
-        // Archive search
-        document.getElementById('archive-search').addEventListener('input', function () {
-            const q = this.value.trim().toLowerCase();
-            document.querySelectorAll('.article').forEach(a => {
-                const t = a.querySelector('.article-title').textContent.toLowerCase();
-                const b = a.querySelector('.article-body').textContent.toLowerCase();
-                a.style.display = (!q || t.includes(q) || b.includes(q)) ? '' : 'none';
-            });
-        });
-
-        // Article fullscreen
-        const articleFS = document.getElementById('article-fullscreen');
-        const articlesContainer = document.getElementById('articles-container');
-        const archiveSearch = document.getElementById('archive-search');
-        const searchWrap = document.querySelector('.search-wrap');
-
-        document.querySelectorAll('.article-header').forEach(header => {
-            header.addEventListener('click', function () {
-                const article = this.closest('.article');
-                const fsBody = document.getElementById('article-fs-body');
-                const titleText = this.querySelector('.article-title').textContent;
-                const fsTitleEl = document.getElementById('article-fs-title');
-                // Бегущая строка
-                fsTitleEl.innerHTML = `<span>${titleText}</span>`;
-                const inner = fsTitleEl.querySelector('span');
-                const themeColor = isDark ? '#000' : '#0000cc';
-                fsTitleEl.style.color = themeColor;
-                inner.style.color = themeColor;
-                requestAnimationFrame(() => {
-                    const overflow = inner.scrollWidth - fsTitleEl.clientWidth;
-                    if (overflow > 0) {
-                        inner.style.setProperty('--fs-marquee-dist', `-${overflow}px`);
-                        inner.classList.add('marquee');
-                    }
-                });
-                const backBtn = document.querySelector('#article-fs-header span:last-child');
-                if (backBtn) backBtn.style.color = themeColor;
-                articlesContainer.style.display = 'none';
-                archiveSearch.style.display = 'none';
-                searchWrap.style.display = 'none';
-                articleFS.style.display = 'flex';
-
-                const telegraphPath = article.dataset.telegraph;
-                if (telegraphPath) {
-                    fsBody.style.padding = '0';
-                    fsBody.innerHTML = '';
-                    const lc = document.createElement('canvas');
-                    lc.id = 'loading-noise';
-                    lc.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;display:block;z-index:20;';
-                    articleFS.appendChild(lc);
-                    const lctx = lc.getContext('2d');
-                    let lAnim;
-                    const loadStart = Date.now();
-                    function drawLoadingNoise() {
-                        lc.width = articleFS.clientWidth;
-                        lc.height = articleFS.clientHeight;
-                        const img = lctx.createImageData(lc.width, lc.height);
-                        for (let i = 0; i < img.data.length; i += 4) {
-                            const v = Math.random() * 255 | 0;
-                            img.data[i] = img.data[i+1] = img.data[i+2] = v;
-                            img.data[i+3] = 255;
-                        }
-                        lctx.putImageData(img, 0, 0);
-                        lAnim = requestAnimationFrame(drawLoadingNoise);
-                    }
-                    drawLoadingNoise();
-
-                    function applyContent(html) {
-                        const elapsed = Date.now() - loadStart;
-                        const delay = Math.max(0, 1000 - elapsed);
-                        setTimeout(() => {
-                            fsBody.style.padding = '8px';
-                            fsBody.innerHTML = html;
-                            const imgs = Array.from(fsBody.querySelectorAll('img'));
-                            if (imgs.length === 0) {
-                                cancelAnimationFrame(lAnim);
-                                lc.remove();
-                                return;
-                            }
-                            let loaded = 0;
-                            const imgStart = Date.now();
-                            function onImgDone() {
-                                loaded++;
-                                if (loaded >= imgs.length) {
-                                    const imgElapsed = Date.now() - imgStart;
-                                    cancelAnimationFrame(lAnim);
-                                    lc.remove();
-                                }
-                            }
-                            imgs.forEach(img => {
-                                if (img.complete) { onImgDone(); }
-                                else {
-                                    img.addEventListener('load', onImgDone, { once: true });
-                                    img.addEventListener('error', onImgDone, { once: true });
-                                }
-                            });
-                        }, delay);
-                    }
-
-                    fetch(`https://api.telegra.ph/getPage/${telegraphPath}?return_content=true`)
-                        .then(r => r.json())
-                        .then(data => {
-                            applyContent(data.ok ? renderTelegraphNodes(data.result.content) : '<p style="color:white;font-family:VCRFont,sans-serif;font-size:13px;">Ошибка загрузки.</p>');
-                        })
-                        .catch(() => {
-                            applyContent('<p style="color:white;font-family:VCRFont,sans-serif;font-size:13px;">Ошибка загрузки.</p>');
-                        });
-                } else {
-                    fsBody.style.padding = '8px';
-                    const text = article.dataset.full || article.querySelector('.article-body').textContent.trim();
-                    fsBody.innerHTML = renderArticle(text);
-                }
-            });
-        });
-
-        function renderArticle(text) {
-            return text.split('\n\n').map(block => {
-                block = block.trim();
-                if (!block) return '';
-                const imgMatch = block.match(/^\[img\](.*?)\[\/img\]$/);
-                if (imgMatch) return `<img src="${imgMatch[1]}" style="width:100%;border:1.5px solid white;display:block;margin:12px 0 4px;">`;
-                const capMatch = block.match(/^\[caption\](.*?)\[\/caption\]$/);
-                if (capMatch) return `<p style="font-size:11px;color:white;opacity:0.7;margin-bottom:12px;font-family:VCRFont,sans-serif;">${capMatch[1]}</p>`;
-                const h2Match = block.match(/^\[h2\](.*?)\[\/h2\]$/);
-                if (h2Match) return `<p style="font-size:14px;font-weight:bold;color:white;margin:16px 0 8px;font-family:VCRFont,sans-serif;">${h2Match[1]}</p>`;
-                return `<p style="margin-bottom:1em;color:white;font-family:VCRFont,sans-serif;font-size:13px;line-height:1.8em;">${block}</p>`;
-            }).join('');
-        }
-
-        function renderTelegraphNodes(nodes) {
-            if (!nodes) return '';
-            return nodes.map(node => {
-                if (typeof node === 'string') return node;
-                const tag = node.tag;
-                // strip color from attrs to avoid black text
-                const attrs = node.attrs ? Object.assign({}, node.attrs) : {};
-                delete attrs.style;
-                if (tag === 'figcaption' || tag === 'iframe' || tag === 'video') return '';
-                const children = node.children ? renderTelegraphNodes(node.children) : '';
-                const s = 'color:white;font-family:VCRFont,sans-serif;';
-                if (tag === 'p') return `<p style="${s}font-size:13px;line-height:1.8em;margin-bottom:1em;">${children}</p>`;
-                if (tag === 'h3' || tag === 'h4') return `<p style="${s}font-size:14px;font-weight:bold;margin:16px 0 8px;">${children}</p>`;
-                if (tag === 'strong' || tag === 'b') return `<strong style="${s}font-size:13px;">${children}</strong>`;
-                if (tag === 'em' || tag === 'i') return `<em style="${s}font-size:13px;">${children}</em>`;
-                if (tag === 'br') return '<br>';
-                if (tag === 'img') return `<img src="${node.attrs && node.attrs.src || ''}" style="width:100%;display:block;margin:12px 0;filter:grayscale(1);">`;
-                if (tag === 'figure') {
-                    const imgNode = (node.children || []).find(c => c.tag === 'img');
-                    const capNode = (node.children || []).find(c => c.tag === 'figcaption');
-                    const capText = capNode ? renderTelegraphNodes(capNode.children || []) : '';
-                    const imgSrc = imgNode ? (imgNode.attrs && imgNode.attrs.src || '') : '';
-                    if (!imgSrc) return '';
-                    return `<div style="margin:12px 0;"><img src="${imgSrc}" style="width:100%;display:block;filter:grayscale(1);">${capText ? `<p style="color:white;font-family:VCRFont,sans-serif;font-size:11px;margin-top:4px;opacity:0.7;">${capText}</p>` : ''}</div>`;
-                }
-                if (tag === 'figcaption') return '';
-                if (tag === 'iframe') return '';
-                if (tag === 'video') return '';
-                if (tag === 'a') return `<span style="text-decoration:underline;color:white;">${children}</span>`;
-                if (tag === 'ul') return `<ul style="list-style:none;padding-left:4px;margin-bottom:1em;">${children}</ul>`;
-                if (tag === 'ol') return `<ol style="padding-left:18px;margin-bottom:1em;">${children}</ol>`;
-                if (tag === 'li') return `<li style="${s}font-size:13px;line-height:1.8em;padding-left:14px;position:relative;">${children}</li>`;
-                if (tag === 'blockquote') return `<blockquote style="${s}font-size:13px;border-left:3px solid white;padding-left:10px;margin:12px 0;">${children}</blockquote>`;
-                return children;
-            }).join('');
-        }
-
-        function closeArticle() {
-            articleFS.style.display = 'none';
-            articlesContainer.style.display = '';
-            archiveSearch.style.display = '';
-            searchWrap.style.display = '';
-        }
-
-        // Compact mode
-        let isCompact = false;
-        function toggleCompact() {
-            isCompact = !isCompact;
-            document.getElementById('player-top-row').style.display = isCompact ? 'none' : '';
-            document.getElementById('compact-track-name').style.display = isCompact ? '' : 'none';
-            document.getElementById('compact-toggle').textContent = isCompact ? '[ РАЗВЕРНУТЬ ]' : '[ СВЕРНУТЬ ]';
-            const playerBody = document.querySelector('.outer-block > div');
-            const timeline = document.querySelector('.inner-block-3');
-            if (isCompact) {
-                playerBody.style.padding = '0';
-                timeline.style.width = '100%';
-                timeline.style.margin = '0';
-                timeline.style.borderLeft = 'none';
-                timeline.style.borderRight = 'none';
-                timeline.style.borderBottom = 'none';
+        // Setup dynamic fade mask based on scroll
+        const wrapper = document.getElementById('sessionsWrapper');
+        function updateSessionsMask() {
+            const atTop = cont.scrollTop < 8;
+            const atBottom = cont.scrollHeight - cont.scrollTop - cont.clientHeight < 8;
+            if (atTop && atBottom) {
+                wrapper.style.webkitMaskImage = 'none';
+                wrapper.style.maskImage = 'none';
+            } else if (atTop) {
+                wrapper.style.webkitMaskImage = 'linear-gradient(to bottom,black 0,black calc(100% - 32px),transparent 100%)';
+                wrapper.style.maskImage = 'linear-gradient(to bottom,black 0,black calc(100% - 32px),transparent 100%)';
+            } else if (atBottom) {
+                wrapper.style.webkitMaskImage = 'linear-gradient(to bottom,transparent 0,black 32px,black 100%)';
+                wrapper.style.maskImage = 'linear-gradient(to bottom,transparent 0,black 32px,black 100%)';
             } else {
-                playerBody.style.padding = '10px';
-                timeline.style.width = 'calc(100% - 10px)';
-                timeline.style.margin = '-2px 5px 5px';
-                timeline.style.borderLeft = '';
-                timeline.style.borderRight = '';
-                timeline.style.borderBottom = '';
+                wrapper.style.webkitMaskImage = 'linear-gradient(to bottom,transparent 0,black 32px,black calc(100% - 32px),transparent 100%)';
+                wrapper.style.maskImage = 'linear-gradient(to bottom,transparent 0,black 32px,black calc(100% - 32px),transparent 100%)';
             }
         }
-        document.getElementById('compact-track-name').style.display = 'none';
-    </script>
+        cont.addEventListener('scroll', updateSessionsMask, { passive: true });
+        setTimeout(updateSessionsMask, 50);
+        sessions.forEach(s => {
+            const isHighlighted = highlightId && s.id === highlightId;
+            const card = document.createElement('div');
+            card.style.cssText = `background:rgba(40,28,20,0.08);border-radius:8px;padding:12px 14px;cursor:pointer;transition:background 0.15s;display:flex;align-items:center;justify-content:space-between;gap:8px;position:relative;overflow:hidden;flex-shrink:0;`;
 
+            // Shimmer for highlighted session
+            if (isHighlighted) {
+                const shimmer = document.createElement('div');
+                shimmer.style.cssText = 'position:absolute;top:0;left:-120%;width:120%;height:100%;background:linear-gradient(105deg,transparent 20%,rgba(40,28,20,0.08) 50%,transparent 80%);animation:shimmer 2s ease-in-out 3;pointer-events:none;';
+                card.appendChild(shimmer);
+            }
+
+            card.innerHTML += `
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:13px;font-weight:600;color:rgb(40,28,20);margin-bottom:3px;">${s.date || 'Сессия'}</div>
+                    <div style="font-size:11px;color:rgba(40,28,20,0.5);">${s.msgCount || 0} сообщений · ${(s.modelsUsed||[]).map(k => {
+                        if (k === 'consilium') return 'Консилиум';
+                        if (k === 'auto') return 'Оракул';
+                        return models[k]?.name || k;
+                    }).join(', ') || '—'}</div>
+                </div>
+                <button class="sess-pdf-btn" title="Скачать протокол" style="flex-shrink:0;width:28px;height:28px;background:rgba(40,28,20,0.08);border:none;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s;">
+                    <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/14cb39a066a6acb2086a4696d504567fbbb8188e/scroll.svg" style="width:14px;height:14px;filter:brightness(0) saturate(100%) invert(10%) sepia(15%) saturate(500%) hue-rotate(340deg) brightness(40%);opacity:0.85;" alt="">
+                </button>`;
+
+            card.addEventListener('mouseenter', () => card.style.background = 'rgba(40,28,20,0.13)');
+            card.addEventListener('mouseleave', () => card.style.background = 'rgba(40,28,20,0.08)');
+
+            // Long press → delete modal
+            let pressTimer = null;
+            const startPress = () => {
+                pressTimer = setTimeout(() => {
+                    pressTimer = null;
+                    showDeleteSessionModal(s, highlightId);
+                }, 600);
+            };
+            const cancelPress = () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } };
+            card.addEventListener('mousedown', startPress);
+            card.addEventListener('touchstart', startPress, { passive: true });
+            card.addEventListener('mouseup', cancelPress);
+            card.addEventListener('mouseleave', cancelPress);
+            card.addEventListener('touchend', cancelPress);
+            card.addEventListener('touchcancel', cancelPress);
+
+            card.addEventListener('click', e => {
+                if (e.target.closest('.sess-pdf-btn')) return;
+                continueSession(s);
+            });
+            card.querySelector('.sess-pdf-btn').addEventListener('click', e => {
+                e.stopPropagation();
+                generateSessionPDF(s);
+            });
+            cont.appendChild(card);
+
+            // Scroll highlighted card into view
+            if (isHighlighted) {
+                setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+            }
+        });
+    });
+}
+
+function continueSession(s) {
+    // Load session into chat
+    localStorage.setItem(KEY_CHAT, JSON.stringify({
+        ts: Date.now(),
+        msgs: s.messages || []
+    }));
+    if (s.survey) localStorage.setItem(KEY_SURVEY, JSON.stringify(s.survey));
+    currentSessionId = s.id;
+    goTo('screen2');
+}
+
+function showDeleteSessionModal(s, highlightId) {
+    const overlay = document.getElementById('deleteSessionOverlay');
+    overlay.classList.add('show');
+
+    const yesBtn = document.getElementById('deleteSessionYes');
+    const noBtn  = document.getElementById('deleteSessionNo');
+
+    const close = () => overlay.classList.remove('show');
+
+    const onYes = async () => {
+        cleanup();
+        close();
+        const userRaw = localStorage.getItem(KEY_USER);
+        const user = userRaw ? JSON.parse(userRaw) : null;
+        if (user && user.uid && window._fbDeleteSession) {
+            await window._fbDeleteSession(user.uid, s.id);
+        }
+        renderSessions(); // refresh list
+    };
+
+    const onNo = () => { cleanup(); close(); };
+
+    const cleanup = () => {
+        yesBtn.removeEventListener('click', onYes);
+        noBtn.removeEventListener('click', onNo);
+    };
+
+    yesBtn.addEventListener('click', onYes);
+    noBtn.addEventListener('click', onNo);
+}
+
+async function generateSessionPDF(s) {
+    const msgs = (s.messages || []);
+    if (!msgs.length) { alert('В этой сессии нет сообщений.'); return; }
+
+    const sessionDate = s.date || new Date().toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'});
+    const modelsUsed  = s.modelsUsed || [];
+
+    // Build dialogue text for summary
+    const dialogue = msgs.map(m => {
+        if (m.s === 'user') return `Пользователь: ${m.t}`;
+        const name = m.m && models[m.m] ? models[m.m].name : 'Модель';
+        return `${name}: ${m.t}`;
+    }).join('\n\n');
+
+    const prompt = `Составь лаконичное саммари сессии. Если анкета не заполнена — это тоже информация: пользователь пришёл без подготовки, возможно в апатии или спешке, или просто не знал с чего начать. Не упоминай факт незаполненности анкеты явно.
+
+Формат ответа — строго три блока:
+
+ИНТЕРЛЮДИЯ
+1-2 предложения: с каким внутренним состоянием или запросом пришёл пользователь.
+
+СОДЕРЖАНИЕ
+2-3 предложения: ключевые темы и повороты диалога. Только суть, без воды.
+
+ВЫВОД
+1-2 предложения: главный инсайт или итог сессии.
+
+Диалог:
+${dialogue}
+
+Пиши по-русски. Никаких скобок, пояснений и шаблонных фраз.`;
+
+    try {
+        const resp = await fetch(`${API_BASE}/api/chat`, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ modelKey: 'tara', history: [{role:'user', content: prompt}], max_tokens: 600, temperature: 0.5 })
+        });
+        const data = await resp.json();
+        const summary = data.choices?.[0]?.message?.content || '';
+
+        const getSection = (label) => {
+            const re = new RegExp(label + '\\s*\\n([\\s\\S]*?)(?=\\n[А-ЯЁ]{3,}\\s*\\n|$)', 'i');
+            const m = summary.match(re);
+            return m ? m[1].trim() : '';
+        };
+
+        // Reuse the same PDF generation logic
+        const tempChatHistory = msgs;
+        const secInterlude  = getSection('ИНТЕРЛЮДИЯ');
+        const secContent    = getSection('СОДЕРЖАНИЕ');
+        const secConclusion = getSection('ВЫВОД');
+
+        // Trigger PDF via shared function — temporarily override globals
+        const _savedHistory = chatHistory;
+        const _savedDate    = sessionDate;
+        chatHistory = msgs;
+        await generatePDFDoc({ sessionDate, secInterlude, secContent, secConclusion, modelsUsed, msgCount: msgs.length });
+        chatHistory = _savedHistory;
+
+    } catch(e) {
+        alert('Не удалось создать протокол.');
+    }
+}
+
+// Flip triggers
+function doFlip(toBack) {
+    const inner = document.getElementById('s1bInner');
+    if (toBack) {
+        s1bFlipped = true;
+        inner.classList.add('flipped');
+        renderSessions();
+    } else {
+        s1bFlipped = false;
+        inner.classList.remove('flipped');
+    }
+    sessionStorage.setItem('soma_flip', s1bFlipped ? '1' : '0');
+}
+
+// Click on icon
+document.getElementById('flipTrigger').addEventListener('click', e => { e.stopPropagation(); doFlip(true); });
+document.getElementById('flipBackTrigger').addEventListener('click', e => { e.stopPropagation(); doFlip(false); });
+
+// Sign out
+document.getElementById('signOutBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    if (window._fbSignOut) window._fbSignOut();
+    [KEY_USER, KEY_CHAT, KEY_SURVEY].forEach(k => localStorage.removeItem(k));
+    sessionStorage.removeItem('soma_screen');
+    sessionStorage.removeItem('soma_flip');
+    sessionStorage.removeItem('soma_support_msgs');
+    currentSessionId = null;
+    goTo('screen1');
+});
+
+// Click anywhere on card body (except fields/buttons) triggers flip
+document.querySelector('.s1b-face-front').addEventListener('click', e => {
+    if (e.target.closest('select') || e.target.closest('button') || e.target.closest('.fields')) return;
+    doFlip(true);
+});
+document.querySelector('.s1b-face-back').addEventListener('click', e => {
+    if (e.target.closest('select') || e.target.closest('button')) return;
+    doFlip(false);
+});
+
+// S1b auth buttons
+window._goToAfterAuth = () => goTo('screen1b');
+document.getElementById('googleBtn').addEventListener('click', () => {
+    if (window._fbSignIn) window._fbSignIn('google');
+    else { localStorage.setItem(KEY_USER, JSON.stringify({p:'google',ts:Date.now()})); goTo('screen1b'); }
+});
+document.getElementById('appleBtn').addEventListener('click', () => {
+    if (window._fbSignIn) window._fbSignIn('apple');
+    else { localStorage.setItem(KEY_USER, JSON.stringify({p:'apple',ts:Date.now()})); goTo('screen1b'); }
+});
+document.getElementById('guestBtn').addEventListener('click', () => {
+    if (window._fbSignIn) window._fbSignIn('guest');
+    else { localStorage.setItem(KEY_USER, JSON.stringify({p:'guest',ts:Date.now()})); goTo('screen1b'); }
+});
+
+// S1b
+document.getElementById('submitBtn').addEventListener('click', () => {
+    const vals = Array.from(document.querySelectorAll('#screen1b .fselect')).map(s => s.value);
+    localStorage.setItem(KEY_SURVEY, JSON.stringify(vals));
+    goTo('screen1c');
+});
+
+// Chat
+const GROQ_MODEL = 'llama-3.3-70b-versatile'; // kept for reference only
+const API_BASE = 'https://panacea-ochre.vercel.app';
+
+const models = {
+    tara:   { name: 'Тара',   sig: 'Тара говорит'     },
+    karma:  { name: 'Карма',  sig: 'Карма говорит'    },
+    astra:  { name: 'Астра',  sig: 'Астра пишет'      },
+    eva:    { name: 'Ева',    sig: 'Ева говорит'       },
+    psyche: { name: 'Психея', sig: 'Психея отвечает'  },
+    gera:   { name: 'Гера',   sig: 'Гера пишет'       },
+};
+
+// Chat history per session
+let chatHistory = [];
+let curModel = 'tara', isTyping = false;
+let currentSessionId = null; // Firestore session ID
+let isPremium = false; // Premium status
+// Restore premium from localStorage
+if (localStorage.getItem('soma_premium') === '1') {
+    isPremium = true;
+    document.body.classList.add('is-premium');
+}
+
+const modelBtn = document.getElementById('modelBtn');
+const dropdown = document.getElementById('dropdown');
+const ditems   = document.querySelectorAll('.ditem');
+const chatArea = document.getElementById('chatArea');
+const msgInput = document.getElementById('msgInput');
+const sendBtn  = document.getElementById('sendBtn');
+const themeBtn = document.getElementById('themeBtn');
+const menuBtn  = document.getElementById('menuBtn');
+const endOverlay = document.getElementById('endOverlay');
+const premiumOverlay = document.getElementById('premiumOverlay');
+
+let isLight = false;
+themeBtn.addEventListener('click', () => {
+    isLight = !isLight;
+    const s2 = document.getElementById('screen2');
+    s2.classList.toggle('light', isLight);
+    document.body.classList.toggle('light', isLight);
+});
+menuBtn.addEventListener('click', () => endOverlay.classList.toggle('show'));
+
+modelBtn.addEventListener('click', () => {
+    if (isTyping) return; // block while model is responding
+    dropdown.classList.toggle('show');
+});
+document.addEventListener('click', e => {
+    if (!e.target.closest('.chat-header-left')) dropdown.classList.remove('show');
+    if (!e.target.closest('.end-modal') && !e.target.closest('#menuBtn')) endOverlay.classList.remove('show');
+    if (!e.target.closest('.premium-modal') && !e.target.closest('.ditem-premium') && !e.target.closest('#endSummaryBtn') && !e.target.closest('#voiceBtn')) premiumOverlay.classList.remove('show');
+});
+ditems.forEach(d => d.addEventListener('click', () => {
+    if (d.dataset.premium && !isPremium) {
+        dropdown.classList.remove('show');
+        premiumOverlay.classList.add('show');
+        return;
+    }
+    curModel = d.dataset.model || d.dataset.premium;
+    modelBtn.textContent = d.dataset.premium === 'auto' ? 'Оракул' : d.dataset.premium === 'consilium' ? 'Консилиум' : models[curModel].name;
+    ditems.forEach(i => i.classList.remove('active'));
+    d.classList.add('active');
+    dropdown.classList.remove('show');
+    // Only save regular models to localStorage, not premium modes
+    if (!d.dataset.premium) {
+        localStorage.setItem('soma_model', curModel);
+    }
+}));
+
+document.getElementById('premiumClose').addEventListener('click', () => premiumOverlay.classList.remove('show'));
+
+// ── Toast notification system ─────────────────────────────
+const appToast = document.getElementById('appToast');
+const toastText = document.getElementById('toastText');
+const toastIcon = document.getElementById('toastIcon');
+let toastTimer = null;
+
+function showToast(msg, { icon = null, onClick = null, onClickToast = null, duration = 5000 } = {}) {
+    if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
+    appToast.classList.remove('hiding');
+    toastText.textContent = msg;
+    if (icon) { toastIcon.src = icon; toastIcon.style.display = ''; }
+    else { toastIcon.style.display = 'none'; }
+    appToast.style.display = 'flex';
+    void appToast.offsetWidth;
+
+    toastText.onclick = null;
+    // Whole toast is clickable if onClickToast provided
+    appToast.onclick = (onClickToast || onClick) ? (e) => {
+        e.stopPropagation();
+        hideToast();
+        (onClickToast || onClick)();
+    } : null;
+
+    // Guard against immediate close from the same click event
+    _toastClickGuard = true;
+    setTimeout(() => { _toastClickGuard = false; }, 150);
+
+    toastTimer = setTimeout(() => hideToast(), duration);
+}
+
+function hideToast() {
+    if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
+    appToast.classList.add('hiding');
+    setTimeout(() => {
+        appToast.style.display = 'none';
+        appToast.classList.remove('hiding');
+    }, 300);
+}
+
+// Close toast on outside tap — delayed to avoid closing on the same click that opened it
+let _toastClickGuard = false;
+document.addEventListener('click', e => {
+    if (_toastClickGuard) return;
+    if (appToast.style.display !== 'none' && !e.target.closest('#appToast')) {
+        hideToast();
+    }
+});
+
+function goToSubscription() {
+    window.location.href = 'subscription.html';
+}
+
+/* ── Support chat ── */
+function openSupportChat() {
+    // Init empty state if first open
+    const area = document.getElementById('supportChatArea');
+    if (!area._inited) {
+        area._inited = true;
+        area.innerHTML = `<div class="empty-state">
+            <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/0f0c70b94b16782ce6176d572ee3ed78e447254e/medicine-symbol-1-svgrepo-com.svg" style="width:32px;height:32px;margin-bottom:8px;filter:invert(82%) sepia(12%) saturate(250%) hue-rotate(5deg) brightness(100%);opacity:0.4;">
+            <div>Оракул</div>
+            <div style="font-size:11px;margin-top:6px;opacity:0.55;line-height:1.6;max-width:220px;">Оракул отвечает на вопросы в порядке очереди. Наберитесь терпения — ответ придёт. Не дублируйте вопросы: повторные обращения отодвигают вас в конец очереди.</div>
+        </div>`;
+        // Dynamic fade mask
+        function updateSupportMask() {
+            const atTop = area.scrollTop < 4;
+            const atBottom = area.scrollHeight - area.scrollTop - area.clientHeight < 4;
+            area.classList.toggle('at-top', atTop);
+            area.classList.toggle('at-bottom', atBottom);
+        }
+        area.addEventListener('scroll', updateSupportMask, {passive: true});
+        area._updateMask = updateSupportMask;
+        requestAnimationFrame(updateSupportMask);
+    }
+    // Open like any other chat — with fade transition
+    goTo('screenSupport');
+    setTimeout(() => document.getElementById('supportInput').focus(), 550);
+}
+
+function closeSupportChat() {
+    goTo('screen1b');
+    setTimeout(() => {
+        doFlip(true);
+        renderSessions(null);
+    }, 600);
+}
+
+// Support flip back button
+document.getElementById('supportFlipBtn').addEventListener('click', e => { e.stopPropagation(); closeSupportChat(); });
+
+// Click outside input/buttons → flip back
+document.getElementById('screenSupport').addEventListener('click', e => {
+    if (e.target.closest('.input-area') || e.target.closest('.chat-header') || e.target.closest('.bubble')) return;
+    closeSupportChat();
+});
+
+// Support send
+document.getElementById('supportSendBtn').addEventListener('click', sendSupportMsg);
+document.getElementById('supportInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendSupportMsg();
+});
+
+function sendSupportMsg() {
+    const input = document.getElementById('supportInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    const area = document.getElementById('supportChatArea');
+    // Clear empty state
+    if (area.querySelector('.empty-state')) area.innerHTML = '';
+    // Add user bubble
+    const userDiv = document.createElement('div');
+    userDiv.className = 'message user';
+    userDiv.innerHTML = `<div class="bubble">${text}</div>`;
+    area.appendChild(userDiv);
+    area.scrollTop = area.scrollHeight;
+    // Save to sessionStorage for reload persistence
+    sessionStorage.setItem('soma_support_msgs', area.innerHTML);
+    // TODO: send to real support backend
+}
+
+function showPremiumToast() {
+    showToast('Эта функция доступна с Panacea Plus', {
+        icon: 'https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/ea2696868cff6ba9b99ee5665a3571e74139a5f4/e_AzA-1.svg',
+        onClickToast: () => { hideToast(); goToSubscription(); },
+        duration: 8000
+    });
+}
+// ─────────────────────────────────────────────────────────
+
+document.getElementById('endSummaryBtn').addEventListener('click', async () => {
+    if (!isPremium) {
+        const btn = document.getElementById('endSummaryBtn');
+        const notice = document.getElementById('endInlineNotice');
+        btn.classList.add('blurred');
+        notice.classList.add('show');
+        clearTimeout(notice._t);
+        notice._t = setTimeout(() => {
+            notice.classList.remove('show');
+            btn.classList.remove('blurred');
+        }, 6000);
+        return;
+    }
+    endOverlay.classList.remove('show');
+
+    // Gather survey data
+    const surveyRaw = localStorage.getItem(KEY_SURVEY);
+    const surveyLabels = [
+        'Что беспокоит', 'Состояние', 'Возраст',
+        'Частота обращений', 'Ожидания от сессии',
+        'Наличие конкретного вопроса', 'Отношение к мистическому'
+    ];
+    let surveyText = '';
+    if (surveyRaw) {
+        const vals = JSON.parse(surveyRaw);
+        surveyText = vals.map((v, i) => v ? `${surveyLabels[i]}: ${v}` : null).filter(Boolean).join('\n');
+    }
+
+    // Gather chat messages — include model sig for summary context
+    const msgs = Array.from(chatArea.querySelectorAll('.message')).map(el => {
+        const isUser = el.classList.contains('user');
+        const bodyEl = el.querySelector('.bubble-body');
+        const text = bodyEl ? bodyEl.textContent : el.querySelector('.bubble')?.textContent || '';
+        if (isUser) return `Пользователь: ${text}`;
+        const mk = el.dataset.modelKey;
+        const sig = mk && models[mk] ? models[mk].sig : 'Модель';
+        return `${sig}: ${text}`;
+    }).join('\n\n');
+
+    // Gather models used
+    const modelsUsed = [...new Set(
+        Array.from(chatArea.querySelectorAll('.message'))
+            .map(el => el.dataset.modelKey)
+            .filter(Boolean)
+            .map(k => {
+                if (k === 'consilium') return 'Консилиум';
+                if (k === 'auto') return 'Оракул';
+                return models[k]?.name || k;
+            })
+    )];
+
+    const sessionDate = new Date().toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'});
+
+    // Show loading state
+    const btn = document.getElementById('endSummaryBtn');
+    const origHTML = btn.innerHTML;
+    btn.innerHTML = 'Генерируем...';
+    btn.disabled = true;
+
+    const prompt = `Составь лаконичное саммари психологической/эзотерической сессии.
+
+${surveyText ? `Анкета пользователя:\n${surveyText}\n` : ''}
+Диалог:
+${msgs || 'Диалог пуст'}
+
+Формат — строго три блока:
+
+ИНТЕРЛЮДИЯ
+1-2 предложения: с каким внутренним состоянием пришёл пользователь. Если анкета не заполнена — интерпретируй это как признак апатии, неопределённости или спешки, не упоминая сам факт незаполненности.
+
+СОДЕРЖАНИЕ
+2-3 предложения: ключевые темы и повороты диалога. Только суть.
+
+ВЫВОД
+1-2 предложения: главный инсайт или итог.
+
+Пиши по-русски. Никаких скобок, шаблонных фраз и пустых полей.`;
+
+    try {
+        const resp = await fetch(`${API_BASE}/api/chat`, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                modelKey: 'tara',
+                history: [{role:'user', content: prompt}],
+                max_tokens: 600,
+                temperature: 0.5
+            })
+        });
+        const data = await resp.json();
+        const summary = data.choices?.[0]?.message?.content || 'Не удалось сгенерировать саммари.';
+
+        // Parse summary sections
+        const getSection = (label) => {
+            const re = new RegExp(label + '\\s*\\n([\\s\\S]*?)(?=\\n[А-ЯЁ]{3,}\\s*\\n|$)', 'i');
+            const m = summary.match(re);
+            return m ? m[1].trim() : '';
+        };
+        const secInterlude = getSection('ИНТЕРЛЮДИЯ');
+        const secContent   = getSection('СОДЕРЖАНИЕ');
+        const secConclusion= getSection('ВЫВОД');
+
+        // Generate PDF via pdfmake (client-side, no server needed)
+        await generatePDFDoc({ sessionDate, secInterlude: secInterlude || '—', secContent: secContent || '—', secConclusion: secConclusion || '—', modelsUsed, msgCount: chatHistory.length });
+
+        // After download — go to sessions list and highlight the saved session
+        const userRaw2 = localStorage.getItem(KEY_USER);
+        const user2 = userRaw2 ? JSON.parse(userRaw2) : null;
+        if (user2 && user2.p !== 'guest') {
+            const savedId = currentSessionId;
+            goTo('screen1b');
+            setTimeout(() => {
+                s1bFlipped = true;
+                document.getElementById('s1bInner').classList.add('flipped');
+                renderSessions(savedId); // pass id to highlight
+            }, 600);
+        }
+
+    } catch(e) {
+        alert('Не удалось создать протокол. Попробуй позже.');
+    } finally {
+        btn.innerHTML = origHTML;
+        btn.disabled = false;
+    }
+});
+
+document.getElementById('endMenu').addEventListener('click', () => {
+    endOverlay.classList.remove('show');
+    const savedId = currentSessionId;
+    // Go to sessions list (back side of card)
+    goTo('screen1b');
+    setTimeout(() => {
+        s1bFlipped = true;
+        document.getElementById('s1bInner').classList.add('flipped');
+        renderSessions(savedId);
+    }, 600);
+});
+document.getElementById('endNew').addEventListener('click', () => {
+    endOverlay.classList.remove('show');
+    localStorage.removeItem(KEY_CHAT);
+    chatHistory = [];
+    currentSessionId = null;
+    chatArea.innerHTML = '';
+    showPlaceholder();
+    // Go to survey screen (front side of card)
+    goTo('screen1b');
+    setTimeout(() => {
+        s1bFlipped = false;
+        document.getElementById('s1bInner').classList.remove('flipped');
+    }, 600);
+});
+
+function initChat() {
+    chatHistory = [];
+    chatArea.innerHTML = ''; // clear before restoring
+    // Generate session ID once per session (not reset on re-init)
+    if (!currentSessionId) currentSessionId = 'session_' + Date.now();
+    // Restore saved model — only regular models, not premium modes
+    const savedModel = localStorage.getItem('soma_model');
+    if (savedModel && models[savedModel]) {
+        curModel = savedModel;
+        modelBtn.textContent = models[curModel].name;
+        ditems.forEach(d => {
+            d.classList.toggle('active', d.dataset.model === curModel);
+        });
+    } else {
+        // Reset to default if saved model was a premium mode
+        curModel = 'tara';
+        modelBtn.textContent = models['tara'].name;
+        ditems.forEach(d => {
+            d.classList.toggle('active', d.dataset.model === 'tara');
+        });
+        localStorage.setItem('soma_model', 'tara');
+    }
+
+    // Fade mask on scroll
+    function updateChatMask() {
+        const atTop = chatArea.scrollTop < 8;
+        const atBottom = chatArea.scrollHeight - chatArea.scrollTop - chatArea.clientHeight < 8;
+        chatArea.classList.toggle('at-top', atTop);
+        chatArea.classList.toggle('at-bottom', atBottom);
+    }
+    chatArea.addEventListener('scroll', updateChatMask, { passive: true });
+    // Re-check after messages added
+    const _origAppendChild = chatArea.appendChild.bind(chatArea);
+    chatArea._updateMask = updateChatMask;
+    updateChatMask();
+
+    const raw = localStorage.getItem(KEY_CHAT);
+    if (raw) {
+        const data = JSON.parse(raw);
+        if (Date.now() - data.ts < 86400000) {
+            data.msgs.forEach(m => {
+                if (m.s === 'premium') {
+                    const premDiv = document.createElement('div');
+                    premDiv.className = 'message ai';
+                    premDiv.style.cssText = 'justify-content:center;';
+                    premDiv.innerHTML = `<div class="premium-activated" onclick="goToSubscription()">
+                        <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/262b24a9c9491357e5ed7cb47c65211906c8b244/treasure.svg" alt="">
+                        <div>
+                            <div class="premium-activated-title">Panacea Plus</div>
+                            <div class="premium-activated-desc">Теперь тебе доступны все эксклюзивные функции!</div>
+                        </div>
+                    </div>`;
+                    chatArea.appendChild(premDiv);
+                } else if (m.m === 'consilium' && m.h) {
+                    addMsgHTML(m.h, m.s, false, 'consilium', 'Для этого ответа были использованы все модели');
+                } else {
+                    addMsg(m.t, m.s, false, m.m || null);
+                }
+                if (m.s !== 'premium') {
+                    chatHistory.push({role: m.s === 'user' ? 'user' : 'assistant', content: m.t});
+                }
+            });
+            setTimeout(updateChatMask, 50);
+            return;
+        }
+        localStorage.removeItem(KEY_CHAT);
+    }
+    showPlaceholder();
+    setTimeout(updateChatMask, 50);
+}
+
+function showPlaceholder() {
+    chatArea.innerHTML = `<div class="empty-state"><img src="${HOURGLASS}" style="width:36px;height:36px;margin-bottom:14px;"><div>Задавайте любые вопросы.<br>Переключайте модели для ответа на них.<br><span style="font-size:11px;">Все сообщения удаляются через 24 часа.</span></div></div>`;
+}
+
+function saveChat() {
+    const msgs = Array.from(chatArea.querySelectorAll('.message')).map(el => {
+        if (el.querySelector('.premium-activated')) {
+            return { s: 'premium', t: '', m: null, h: null };
+        }
+        return {
+            s: el.classList.contains('user') ? 'user' : 'ai',
+            t: el.querySelector('.bubble-body') ? el.querySelector('.bubble-body').textContent : el.querySelector('.bubble')?.textContent || '',
+            h: el.dataset.modelKey === 'consilium' ? (el.querySelector('.consilium-body')?.outerHTML || null) : null,
+            m: el.dataset.modelKey || null
+        };
+    });
+    localStorage.setItem(KEY_CHAT, JSON.stringify({ts: Date.now(), msgs}));
+
+    // Save to Firestore for logged-in users
+    const userRaw = localStorage.getItem(KEY_USER);
+    const user = userRaw ? JSON.parse(userRaw) : null;
+    if (user && user.uid && user.p !== 'guest' && window._fbSaveSession) {
+        if (!currentSessionId) currentSessionId = 'session_' + Date.now();
+        const modelsUsed = [...new Set(msgs.filter(m => m.m).map(m => {
+            if (m.m === 'consilium') return 'Консилиум';
+            if (m.m === 'auto') return 'Оракул';
+            return models[m.m]?.name || m.m;
+        }))];
+        const surveyRaw = localStorage.getItem(KEY_SURVEY);
+        window._fbSaveSession(user.uid, currentSessionId, {
+            date: new Date().toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'}),
+            messages: msgs,
+            modelsUsed,
+            survey: surveyRaw ? JSON.parse(surveyRaw) : [],
+            msgCount: msgs.length
+        });
+    }
+}
+
+function addMsg(text, sender, animate, modelKey) {
+    const div = document.createElement('div');
+    div.className = `message ${sender}`;
+    if (modelKey) div.dataset.modelKey = modelKey;
+    if (!animate) div.style.animation = 'none';
+    const b = document.createElement('div');
+    b.className = 'bubble';
+
+    if (sender === 'ai' && modelKey && models[modelKey]) {
+        const m = models[modelKey];
+        const lines = text.trimEnd().split('\n');
+        const lastLine = lines[lines.length - 1];
+        const sigMatch = lastLine.match(/^[\s]*[—\-–]\s*\S/);
+        const clean = sigMatch ? lines.slice(0, -1).join('\n').trimEnd() : text.trim();
+        b.innerHTML =
+            `<span class="bubble-body">${clean.replace(/\n/g,'<br>')}</span>` +
+            `<span class="bubble-sig">Для ответа была использована модель ${m.name}</span>`;
+    } else if (sender === 'ai') {
+        b.innerHTML = `<span class="bubble-body">${text.replace(/\n/g,'<br>')}</span>`;
+    } else {
+        b.textContent = text;
+    }
+
+    div.appendChild(b);
+    chatArea.appendChild(div);
+    chatArea.scrollTop = chatArea.scrollHeight;
+    if (chatArea._updateMask) chatArea._updateMask();
+}
+
+function addMsgHTML(html, sender, animate, modelKey, sig) {
+    const div = document.createElement('div');
+    div.className = `message ${sender}`;
+    if (modelKey) div.dataset.modelKey = modelKey;
+    if (!animate) div.style.animation = 'none';
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    b.innerHTML = html + `<span class="bubble-sig">${sig || 'Для этого ответа были использованы все модели'}</span>`;
+    div.appendChild(b);
+    chatArea.appendChild(div);
+    chatArea.scrollTop = chatArea.scrollHeight;
+    if (chatArea._updateMask) chatArea._updateMask();
+}
+
+function showTyping() {
+    const div = document.createElement('div');
+    div.className = 'message ai';
+    div.innerHTML = `<div class="typing-bubble"><span></span><span></span><span></span></div>`;
+    chatArea.appendChild(div);
+    chatArea.scrollTop = chatArea.scrollHeight;
+    return div;
+}
+
+function send() {
+    const text = msgInput.value.trim();
+    if (!text || isTyping) return;
+    
+    // Check for /plus command
+    if (text === '/plus') {
+        msgInput.value = '';
+        if (isPremium) {
+            showToast('У тебя уже есть действующая подписка Panacea Plus', { duration: 5000 });
+            return;
+        }
+        isPremium = true;
+        localStorage.setItem('soma_premium', '1');
+        document.body.classList.add('is-premium');
+        document.querySelectorAll('.ditem-star').forEach(el => el.style.display = 'none');
+        // Save to Firestore if logged in
+        const _uRaw = localStorage.getItem(KEY_USER);
+        const _u = _uRaw ? JSON.parse(_uRaw) : null;
+        if (_u && _u.uid && _u.p !== 'guest' && window._fbSaveSession) {
+            window._fbSaveSession(_u.uid, 'premium_status', { active: true, activatedAt: Date.now() });
+        }
+        // Show card only if not already present — use localStorage flag
+        if (!localStorage.getItem('soma_premium_card')) {
+            localStorage.setItem('soma_premium_card', '1');
+            const premDiv = document.createElement('div');
+            premDiv.className = 'message ai';
+            premDiv.style.cssText = 'animation:msgIn 0.4s ease-out forwards;justify-content:center;';
+            premDiv.innerHTML = `<div class="premium-activated" onclick="goToSubscription()">
+                <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/Psy/262b24a9c9491357e5ed7cb47c65211906c8b244/treasure.svg" alt="">
+                <div>
+                    <div class="premium-activated-title">Panacea Plus</div>
+                    <div class="premium-activated-desc">Теперь тебе доступны все эксклюзивные функции!</div>
+                </div>
+            </div>`;
+            chatArea.appendChild(premDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+            if (chatArea._updateMask) chatArea._updateMask();
+            saveChat();
+        }
+        return;
+    }
+
+    // Check for /minus command
+    if (text === '/minus') {
+        msgInput.value = '';
+        isPremium = false;
+        localStorage.removeItem('soma_premium');
+        localStorage.removeItem('soma_premium_card');
+        document.body.classList.remove('is-premium');
+        document.querySelectorAll('.ditem-star').forEach(el => el.style.display = '');
+        // Remove from Firestore if logged in
+        const _uRaw2 = localStorage.getItem(KEY_USER);
+        const _u2 = _uRaw2 ? JSON.parse(_uRaw2) : null;
+        if (_u2 && _u2.uid && _u2.p !== 'guest' && window._fbSaveSession) {
+            window._fbSaveSession(_u2.uid, 'premium_status', { active: false, deactivatedAt: Date.now() });
+        }
+        showToast('Подписка Panacea Plus деактивирована', { duration: 4000 });
+        return;
+    }
+    
+    msgInput.value = '';
+    isTyping = true;
+    const empty = chatArea.querySelector('.empty-state');
+    if (empty) empty.remove();
+
+    addMsg(text, 'user', true);
+    chatHistory.push({role: 'user', content: text});
+
+    const t = showTyping();
+
+    // Dynamic thinking delay: base 1.5s + 80ms per word, max 6s
+    const wordCount = text.split(/\s+/).length;
+    const thinkDelay = Math.min(1500 + wordCount * 80, 6000);
+
+    // Handle premium modes
+    if (curModel === 'auto') {
+        // Oracle mode - analyze and choose best model
+        handleOracleMode(text, t, thinkDelay);
+    } else if (curModel === 'consilium') {
+        // Consilium mode - all models respond
+        handleConsiliumMode(text, t, thinkDelay);
+    } else {
+        // Regular model
+        handleRegularMode(text, t, thinkDelay);
+    }
+}
+
+function handleRegularMode(text, typingIndicator, thinkDelay) {
+    const model = models[curModel];
+    setTimeout(() => {
+    fetch(`${API_BASE}/api/chat`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            modelKey: curModel,
+            history: chatHistory,
+            max_tokens: 800,
+            temperature: 0.85
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        console.log('[API] response:', JSON.stringify(data).slice(0, 200));
+        typingIndicator.remove();
+        isTyping = false;
+        let reply = data.choices?.[0]?.message?.content || 'Что-то пошло не так. Попробуй ещё раз.';
+        // Fix truncated response — ensure it ends with sentence-ending punctuation
+        const lastPunct = Math.max(reply.lastIndexOf('.'), reply.lastIndexOf('?'), reply.lastIndexOf('!'));
+        if (lastPunct > reply.length * 0.5) {
+            reply = reply.slice(0, lastPunct + 1);
+        }
+        chatHistory.push({role: 'assistant', content: reply});
+        addMsg(reply, 'ai', true, curModel);
+        saveChat();
+    })
+    .catch((err) => {
+        console.error('[API] fetch error:', err);
+        typingIndicator.remove();
+        isTyping = false;
+        const fallback = 'Связь прервалась. Попробуй ещё раз.';
+        addMsg(fallback, 'ai', true);
+    });
+    }, thinkDelay);
+}
+
+async function handleOracleMode(text, typingIndicator, thinkDelay) {
+    // Choose model locally by keywords — fast, no extra API call
+    const t = text.toLowerCase();
+    let validModel = 'psyche'; // default
+    if (/тар[оа]|карт[аы]|расклад|аркан|символ|предсказ/i.test(t)) validModel = 'tara';
+    else if (/карм|прошл.*жизн|урок|повтор|цикл|судьб/i.test(t)) validModel = 'karma';
+    else if (/астр|планет|натальн|гороскоп|знак зодиак|луна|солнц|транзит/i.test(t)) validModel = 'astra';
+    else if (/регресс|прошл.*жизн|душ[аи]|воспоминан|память|реинкарн/i.test(t)) validModel = 'eva';
+    else if (/числ[оа]|нумерол|дат[аы]|имя|имен|цифр/i.test(t)) validModel = 'gera';
+    else if (/чувств|эмоц|отношен|тревог|страх|психолог|конфликт|депресс|одиноч/i.test(t)) validModel = 'psyche';
+
+    setTimeout(async () => {
+        try {
+            const resp = await fetch(`${API_BASE}/api/chat`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    modelKey: validModel,
+                    history: chatHistory,
+                    max_tokens: 800,
+                    temperature: 0.85
+                })
+            });
+            const data = await resp.json();
+
+            typingIndicator.remove();
+            isTyping = false;
+
+            let reply = data.choices?.[0]?.message?.content || 'Что-то пошло не так. Попробуй ещё раз.';
+            const lastPunct = Math.max(reply.lastIndexOf('.'), reply.lastIndexOf('?'), reply.lastIndexOf('!'));
+            if (lastPunct > reply.length * 0.5) reply = reply.slice(0, lastPunct + 1);
+
+            chatHistory.push({role: 'assistant', content: reply});
+
+            const oracleSig = `Оракул выбрал для ответа модель ${models[validModel].name}`;
+            const div = document.createElement('div');
+            div.className = 'message ai';
+            div.dataset.modelKey = validModel;
+            const b = document.createElement('div');
+            b.className = 'bubble';
+            b.innerHTML = `<span class="bubble-body">${reply.replace(/\n/g,'<br>')}</span><span class="bubble-sig">${oracleSig}</span>`;
+            div.appendChild(b);
+            chatArea.appendChild(div);
+            chatArea.scrollTop = chatArea.scrollHeight;
+            if (chatArea._updateMask) chatArea._updateMask();
+            saveChat();
+        } catch (err) {
+            typingIndicator.remove();
+            isTyping = false;
+            addMsg('Связь прервалась. Попробуй ещё раз.', 'ai', true);
+        }
+    }, thinkDelay);
+}
+
+async function handleConsiliumMode(text, typingIndicator, thinkDelay) {
+    setTimeout(async () => {
+        try {
+            const modelKeys = ['tara', 'karma', 'astra', 'eva', 'psyche', 'gera'];
+            
+            // Sequential requests to avoid rate limiting
+            const results = [];
+            for (const key of modelKeys) {
+                try {
+                    const resp = await fetch(`${API_BASE}/api/chat`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            modelKey: key,
+                            history: chatHistory,
+                            max_tokens: 150,
+                            temperature: 0.85
+                        })
+                    });
+                    const data = await resp.json();
+                    results.push({ key, text: data.choices?.[0]?.message?.content || '' });
+                } catch (e) {
+                    results.push({ key, text: '' });
+                }
+            }
+            
+            typingIndicator.remove();
+            isTyping = false;
+            
+            let combinedHTML = '<div class="consilium-body">';
+            let plainParts = [];
+            
+            results.forEach(({ key, text: reply }) => {
+                if (!reply) return;
+                const lastPunct = Math.max(reply.lastIndexOf('.'), reply.lastIndexOf('?'), reply.lastIndexOf('!'));
+                const clean = lastPunct > reply.length * 0.5 ? reply.slice(0, lastPunct + 1) : reply;
+                combinedHTML += `<div class="consilium-item"><span class="consilium-name">${models[key].name}</span><span class="consilium-text">${clean}</span></div>`;
+                plainParts.push(`${models[key].name}: ${clean}`);
+            });
+            combinedHTML += '</div>';
+            
+            const plainText = plainParts.join('\n\n');
+            chatHistory.push({ role: 'assistant', content: plainText });
+            addMsgHTML(combinedHTML, 'ai', true, 'consilium', 'Для этого ответа были использованы все модели');
+            saveChat();
+        } catch (err) {
+            typingIndicator.remove();
+            isTyping = false;
+            addMsg('Связь прервалась. Попробуй ещё раз.', 'ai', true);
+        }
+    }, thinkDelay);
+}
+
+sendBtn.addEventListener('click', send);
+msgInput.addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); send(); } });
+
+// Voice input — MediaRecorder + Groq Whisper
+const voiceBtn = document.getElementById('voiceBtn');
+let isRecording = false;
+
+voiceBtn.addEventListener('click', async () => {
+    console.log('[Voice] click fired, isPremium:', isPremium);
+    if (!isPremium) {
+        console.log('[Voice] no premium → showing toast');
+        showPremiumToast();
+        return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    console.log('[Voice] SpeechRecognition:', SpeechRecognition);
+    console.log('[Voice] window.SpeechRecognition:', window.SpeechRecognition);
+    console.log('[Voice] window.webkitSpeechRecognition:', window.webkitSpeechRecognition);
+    console.log('[Voice] isRecording:', isRecording);
+    if (!SpeechRecognition) {
+        alert('Ваш браузер не поддерживает голосовой ввод. Попробуйте Chrome.');
+        return;
+    }
+
+    if (!isRecording) {
+        console.log('[Voice] starting MediaRecorder...');
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            console.log('[Voice] microphone granted');
+            const mediaRecorder = new MediaRecorder(stream);
+            const chunks = [];
+
+            mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+
+            mediaRecorder.onstop = async () => {
+                console.log('[Voice] recording stopped, sending to Whisper...');
+                stream.getTracks().forEach(t => t.stop());
+                const blob = new Blob(chunks, { type: 'audio/webm' });
+                const formData = new FormData();
+                formData.append('file', blob, 'voice.webm');
+                formData.append('model', 'whisper-large-v3');
+                formData.append('language', 'ru');
+                try {
+                    const resp = await fetch(`${API_BASE}/api/transcribe`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await resp.json();
+                    const raw = data.text?.trim();
+                    console.log('[Voice] transcribed:', raw);
+                    if (raw) {
+                        // Format and send
+                        let formatted = raw;
+                        try {
+                            const fResp = await fetch(`${API_BASE}/api/chat`, {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify({
+                                    modelKey: 'tara',
+                                    history: [{ role: 'user', content: `Исправь орфографию и пунктуацию по правилам русского языка. Верни ТОЛЬКО исправленный текст без пояснений:\n\n${raw}` }],
+                                    max_tokens: 300,
+                                    temperature: 0.1
+                                })
+                            });
+                            const fData = await fResp.json();
+                            formatted = fData.choices?.[0]?.message?.content?.trim() || raw;
+                        } catch(e) { console.warn('[Voice] format failed:', e); }
+                        msgInput.value = formatted;
+                        send();
+                    }
+                } catch(e) {
+                    console.error('[Voice] transcribe failed:', e);
+                    alert('Не удалось распознать речь.');
+                }
+                isRecording = false;
+                voiceBtn.classList.remove('recording');
+            };
+
+            mediaRecorder.start();
+            isRecording = true;
+            voiceBtn.classList.add('recording');
+            voiceBtn._recorder = mediaRecorder;
+        } catch(err) {
+            console.error('[Voice] microphone error:', err);
+            alert('Нет доступа к микрофону. Разрешите доступ в настройках браузера.');
+            isRecording = false;
+            voiceBtn.classList.remove('recording');
+        }
+    } else {
+        console.log('[Voice] stopping MediaRecorder');
+        if (voiceBtn._recorder && voiceBtn._recorder.state === 'recording') {
+            voiceBtn._recorder.stop();
+        }
+        isRecording = false;
+        voiceBtn.classList.remove('recording');
+    }
+});
+
+/* TTS disabled
+// ── TTS (Web Speech API) ──────────────────────────────────
+let ttsUtterance = null;
+let ttsActiveBtn = null;
+
+function ttsStop() {
+    window.speechSynthesis.cancel();
+    if (ttsActiveBtn) {
+        ttsActiveBtn.classList.remove('playing');
+        ttsActiveBtn = null;
+    }
+}
+
+function ttsSpeak(text, btn) {
+    ttsStop();
+    if (!window.speechSynthesis) return;
+
+    ttsUtterance = new SpeechSynthesisUtterance(text);
+    ttsUtterance.lang = 'ru-RU';
+    ttsUtterance.rate = 0.95;
+    ttsUtterance.pitch = 1;
+
+    // Try to find a Russian voice
+    const voices = window.speechSynthesis.getVoices();
+    const ruVoice = voices.find(v => v.lang.startsWith('ru'));
+    if (ruVoice) ttsUtterance.voice = ruVoice;
+
+    ttsUtterance.onend = () => {
+        if (ttsActiveBtn) ttsActiveBtn.classList.remove('playing');
+        ttsActiveBtn = null;
+    };
+    ttsUtterance.onerror = () => {
+        if (ttsActiveBtn) ttsActiveBtn.classList.remove('playing');
+        ttsActiveBtn = null;
+    };
+
+    btn.classList.add('playing');
+    ttsActiveBtn = btn;
+    window.speechSynthesis.speak(ttsUtterance);
+}
+
+// Delegate click on TTS buttons
+chatArea.addEventListener('click', e => {
+    const btn = e.target.closest('.tts-btn');
+    if (!btn) return;
+    e.stopPropagation();
+    if (btn.classList.contains('playing')) {
+        ttsStop();
+    } else {
+        const text = btn.dataset.text || btn.closest('.bubble')?.querySelector('.bubble-body')?.textContent || '';
+        if (text) ttsSpeak(text, btn);
+    }
+});
+
+// Stop TTS when leaving chat screen
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) ttsStop();
+});
+// ─────────────────────────────────────────────────────────
+*/
+
+// Loader
+const LOADER_QUOTES = [
+    {text: "Познай себя — и ты познаешь богов и Вселенную.", author: "Надпись в храме Аполлона в Дельфах"},
+    {text: "Слово «кризис», написанное по-китайски, состоит из двух иероглифов: один означает «опасность», другой — «возможность».", author: "Джон Ф. Кеннеди"},
+    {text: "Всё, что нас раздражает в других, может привести нас к пониманию самих себя.", author: "Карл Густав Юнг"},
+    {text: "Человек не страдает от того, что происходит, а от того, как он это воспринимает.", author: "Марк Аврелий"},
+    {text: "Не то, что с нами случается, определяет нашу жизнь, а то, как мы на это реагируем.", author: "Виктор Франкл"},
+    {text: "Тот, кто смотрит наружу, — спит. Тот, кто смотрит внутрь, — пробуждается.", author: "Карл Густав Юнг"},
+    {text: "Путешествие в тысячу ли начинается с одного шага.", author: "Лао-цзы"},
+    {text: "Мы не можем решить проблему, используя то же мышление, которое её создало.", author: "Альберт Эйнштейн"},
+    {text: "Страдание прекращается, когда мы перестаём сопротивляться тому, что есть.", author: "Буддийская мудрость"},
+    {text: "Звёзды не гаснут — просто иногда облака мешают их видеть.", author: "Персидская пословица"},
+];
+
+const LOADER_STAGES = [
+    {text: "Определяем проблему...", pct: 15},
+    {text: "Учитываем пожелания...", pct: 35},
+    {text: "Анализируем контекст...", pct: 55},
+    {text: "Готовим модель...", pct: 75},
+    {text: "Настраиваем сеанс...", pct: 90},
+    {text: "Запускаем сеанс...", pct: 100},
+];
+
+function startLoader() {
+    const stageEl = document.getElementById('loaderStage');
+    const fillEl  = document.getElementById('loaderFill');
+
+    const LC_N = 5;
+    // Assign random images and quotes to each slide
+    const lcImgs   = Array.from({length:23},(_,i)=>i+1).sort(()=>Math.random()-0.5).slice(0,LC_N);
+    const lcQuotes = [...LOADER_QUOTES].sort(()=>Math.random()-0.5).slice(0,LC_N);
+
+    // Build slide contents
+    for(let i=0;i<LC_N;i++){
+        const el = document.getElementById('lc'+i);
+        el.style.backgroundImage = `url('${BG}${lcImgs[i]}.webp')`;
+        const q = lcQuotes[i];
+        el.innerHTML = `<div class="lc-mask"></div><div class="lc-quote"><span class="lc-quote-text"><span style="font-family:'TiemposHeadline',serif;font-weight:300;">\u201c</span>${q.text}<span style="font-family:'TiemposHeadline',serif;font-weight:300;">\u201d</span></span><span class="lc-quote-author">${q.author}</span></div>`;
+    }
+
+    let lcCur = 0;
+    let lcBusy = false;
+
+    function lcGetDims(){
+        const vw=window.innerWidth, vh=window.innerHeight;
+        const cH=Math.min(vh*0.78,620), cW=Math.min(cH*0.52,360);
+        const nW=cW*0.75, nH=cH*0.75, fW=cW*0.45, fH=cH*0.45;
+        const gap=10;
+        return {cW,cH,nW,nH,fW,fH,gap};
+    }
+
+    function lcLayout(animate){
+        const d=lcGetDims();
+        const nearOff = d.cW/2 + d.gap + d.nW/2;
+        const farOff  = d.cW/2 + d.gap + d.nW + d.gap + d.fW/2;
+        for(let i=0;i<LC_N;i++){
+            const el=document.getElementById('lc'+i);
+            let rel = i - lcCur;
+            if(rel > LC_N/2)  rel -= LC_N;
+            if(rel < -LC_N/2) rel += LC_N;
+            let tx, scale;
+            if     (rel===0)  { tx=0;        scale=1; }
+            else if(rel===-1) { tx=-nearOff; scale=d.nW/d.cW; }
+            else if(rel===1)  { tx= nearOff; scale=d.nW/d.cW; }
+            else if(rel===-2) { tx=-farOff;  scale=d.fW/d.cW; }
+            else              { tx= farOff;  scale=d.fW/d.cW; }
+            el.style.transition = animate
+                ? 'transform 0.5s cubic-bezier(0.4,0,0.2,1),opacity 0.5s ease,filter 0.5s ease'
+                : 'none';
+            el.style.width  = d.cW+'px';
+            el.style.height = d.cH+'px';
+            el.style.transform = `translate(calc(-50% + ${tx}px), -50%) scale(${scale})`;
+            const abs=Math.abs(rel);
+            el.className = 'lc-slide'+(abs===0?' lc-center':abs===1?' lc-near':' lc-far');
+            el.style.zIndex = abs===0?5:abs===1?4:3;
+        }
+    }
+
+    function lcShift(){
+        if(lcBusy) return;
+        lcBusy=true;
+        lcCur=(lcCur+1+LC_N)%LC_N;
+        lcLayout(true);
+        setTimeout(()=>{lcBusy=false;},520);
+    }
+
+    lcLayout(false);
+    const lcResizeHandler = ()=>lcLayout(false);
+    window.addEventListener('resize', lcResizeHandler);
+
+    // Auto-advance every 6s
+    let slideTimer = setInterval(lcShift, 6000);
+
+    // Random total duration: 14000–30000 ms
+    const totalDuration = 14000 + Math.random() * 16000;
+    const n = LOADER_STAGES.length;
+    const weights = Array.from({length: n}, () => 0.5 + Math.random());
+    const weightSum = weights.reduce((a, b) => a + b, 0);
+    const stageDurations = weights.map(w => Math.round(w / weightSum * totalDuration));
+
+    fillEl.style.transition = 'none';
+    fillEl.style.width = '0%';
+
+    function runStage(i) {
+        if (i >= LOADER_STAGES.length) {
+            clearInterval(slideTimer);
+            window.removeEventListener('resize', lcResizeHandler);
+            setTimeout(() => goTo('screen2'), 300);
+            return;
+        }
+        const stage = LOADER_STAGES[i];
+        const dur = stageDurations[i];
+        stageEl.style.opacity = '0';
+        setTimeout(() => { stageEl.textContent = stage.text; stageEl.style.opacity = '1'; }, 200);
+        setTimeout(() => {
+            fillEl.style.transition = `width ${dur * 0.85}ms ease`;
+            fillEl.style.width = stage.pct + '%';
+        }, 50);
+        setTimeout(() => runStage(i + 1), dur);
+    }
+
+    runStage(0);
+}
+
+// ── PDF generation (Roboto, client-side) ─────────────────
+async function generatePDFDoc({ sessionDate, secInterlude, secContent, secConclusion, modelsUsed, msgCount }) {
+    return new Promise(resolve => {
+        const loadPdfMake = () => new Promise(res => {
+            if (window.pdfMake) { res(); return; }
+            const s1 = document.createElement('script');
+            s1.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js';
+            s1.onload = () => {
+                const s2 = document.createElement('script');
+                s2.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js';
+                s2.onload = res;
+                document.head.appendChild(s2);
+            };
+            document.head.appendChild(s1);
+        });
+
+        loadPdfMake().then(() => {
+            const BG  = '#DCC9B5', BOX = '#C8B9A5', INK = '#281C14', W = 495;
+
+            const LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 402.84 69.8"><defs><style>.cls-1{fill:#281C14;}</style></defs><path class="cls-1" d="M124.49,315.25v15.2q0,3.63,2.35,4.95t8.92,1.62v4.41H96.25V337q4.6-.5,5.69-1.62t1.08-4.95V283.59q0-3.82-1.08-4.95T96.25,277v-4.41h35.69q14,0,21.22,5.68a18.38,18.38,0,0,1,7.21,15.2q0,10.59-7.35,16.18t-22.16,5.58Zm0-37.74v32.16h1.27q6.57,0,10.15-4.32t3.58-11.86q0-7.55-3.78-11.76a12.7,12.7,0,0,0-10-4.22Z" transform="translate(-96.25 -272.61)"/><path class="cls-1" d="M210.76,304.67v26q0,4,2.45,4a8.61,8.61,0,0,0,3-.49l.69,2.94a19.53,19.53,0,0,1-13.63,5.29q-9.31,0-12.06-8.14-5,7.75-14.51,7.75-6.47,0-10.44-3.48t-4-9.85q0-5.9,3.38-9.17a24.86,24.86,0,0,1,9.37-5.34L191,308.69V297.9q0-6.57-4.22-6.57-4.71,0-4.7,7.55a31.54,31.54,0,0,0,1,7.26l-12.16,1.57q-5.1-1.66-5.1-7.16a10.75,10.75,0,0,1,6-10q6-3.33,15.83-3.33,11.38,0,17.26,4T210.76,304.67Zm-22.65,27.15a10.24,10.24,0,0,0,2.85-.49V313.2L187,314.67a8.17,8.17,0,0,0-4,2.74q-1.28,1.77-1.28,5.79Q181.74,331.83,188.11,331.82Z" transform="translate(-96.25 -272.61)"/><path class="cls-1" d="M257.62,333.78V305.06a6.83,6.83,0,0,0-1.32-4.51c-.88-1.05-2.47-1.57-4.75-1.57a22,22,0,0,0-7.26,1.27v33.53c0,1.38.33,2.28,1,2.7a9.1,9.1,0,0,0,3.92.83v4.12H218.9v-4.12c1.37-.13,2.38-.26,3-.39a2.62,2.62,0,0,0,1.57-.93,3.49,3.49,0,0,0,.58-2.21V299.47l-5.19-3.33v-3l21.86-5.88h3.92l-.39,9.9q7.54-9.9,18.33-9.9,7.26,0,11.23,4.06t4,12v30.49a3.49,3.49,0,0,0,.59,2.21,2.56,2.56,0,0,0,1.57.93c.65.13,1.66.26,3,.39v4.12h-30.3v-4.12a9.1,9.1,0,0,0,3.92-.83C257.3,336.06,257.62,335.16,257.62,333.78Z" transform="translate(-96.25 -272.61)"/><path class="cls-1" d="M333.51,304.67v26c0,2.68.81,4,2.45,4a8.65,8.65,0,0,0,3-.49l.68,2.94a19.51,19.51,0,0,1-13.63,5.29q-9.3,0-12.05-8.14Q309,342,299.49,342q-6.48,0-10.44-3.48t-4-9.85q0-5.9,3.39-9.17a24.74,24.74,0,0,1,9.36-5.34l15.88-5.49V297.9q0-6.57-4.21-6.57-4.71,0-4.71,7.55a32.1,32.1,0,0,0,1,7.26l-12.16,1.57q-5.09-1.66-5.09-7.16a10.75,10.75,0,0,1,6-10q6-3.33,15.83-3.33,11.37,0,17.26,4T333.51,304.67Zm-22.65,27.15a10.24,10.24,0,0,0,2.84-.49V313.2l-3.92,1.47a8.17,8.17,0,0,0-4,2.74q-1.28,1.77-1.27,5.79Q304.49,331.83,310.86,331.82Z" transform="translate(-96.25 -272.61)"/><path class="cls-1" d="M358.9,309.08q0,9.32,4,14.61T374.09,329q8.43,0,12.75-6.08l2.35,1.47q-4.6,18-22.94,18a24,24,0,0,1-17.74-7.06q-7.06-7.05-7.06-18.92,0-12.74,7.64-21t20-8.23q8.15,0,13.39,3.18a10.57,10.57,0,0,1,5.24,9.66q0,5.49-4.61,7.45H373a47.77,47.77,0,0,0,.39-5.88q0-9.7-5.88-9.71c-2.69,0-4.79,1.6-6.33,4.81S358.9,304.05,358.9,309.08Z" transform="translate(-96.25 -272.61)"/><path class="cls-1" d="M419.29,287.22q10.68,0,16.42,6t5.74,16v2.45H410.37q0,8,4.07,12.84a13.28,13.28,0,0,0,10.64,4.8q9.3,0,14.6-6.86l2.06,1.28q-2.16,8.82-8,13.77t-15.29,5q-11.37,0-18.83-7t-7.45-19.46q0-12.94,7.95-20.83A26.24,26.24,0,0,1,419.29,287.22ZM418,291.53q-6.87,0-7.55,15.29h13.82Q424.29,291.53,418,291.53Z" transform="translate(-96.25 -272.61)"/><path class="cls-1" d="M492.92,304.67v26c0,2.68.81,4,2.45,4a8.65,8.65,0,0,0,3-.49l.68,2.94a19.5,19.5,0,0,1-13.62,5.29q-9.32,0-12.06-8.14-5,7.75-14.51,7.75-6.48,0-10.44-3.48t-4-9.85q0-5.9,3.38-9.17a24.74,24.74,0,0,1,9.36-5.34l15.88-5.49V297.9q0-6.57-4.21-6.57-4.71,0-4.71,7.55a32.1,32.1,0,0,0,1,7.26L453,307.71q-5.08-1.66-5.09-7.16a10.75,10.75,0,0,1,6-10q6-3.33,15.83-3.33,11.37,0,17.26,4T492.92,304.67Zm-22.65,27.15a10.24,10.24,0,0,0,2.84-.49V313.2l-3.92,1.47a8.17,8.17,0,0,0-4,2.74q-1.28,1.77-1.27,5.79Q463.9,331.83,470.27,331.82Z" transform="translate(-96.25 -272.61)"/></svg>`;
+
+            const box = (t, n) => {
+                const h = Math.max(n * 17 + 28, 50);
+                return { stack: [
+                    { svg: `<svg width="${W}" height="${h}" xmlns="http://www.w3.org/2000/svg"><rect width="${W}" height="${h}" rx="8" fill="${BOX}"/></svg>`, width: W, marginBottom: -h },
+                    { text: t || '—', fontSize: 11, color: INK, lineHeight: 1.6, margin: [14, 14, 14, 14] }
+                ], marginBottom: 20 };
+            };
+            const est = (t) => Math.ceil((t||'—').length / 70) + 1;
+            const DH = 36;
+
+            pdfMake.createPdf({
+                pageSize: 'A4', pageMargins: [50, 50, 50, 50],
+                background: (p, s) => ({ canvas: [{ type:'rect', x:0, y:0, w:s.width, h:s.height, color: BG }] }),
+                content: [
+                    // Header: logo only
+                    { svg: LOGO, width: 160, marginBottom: 10 },
+                    // Dashed disclaimer
+                    { stack: [
+                        { svg: `<svg width="${W}" height="${DH}" xmlns="http://www.w3.org/2000/svg"><rect width="${W}" height="${DH}" rx="6" fill="none" stroke="${INK}" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.3"/></svg>`, width: W, marginBottom: -DH },
+                        { text: `Этот протокол сеанса от ${sessionDate} был составлен автоматически`, fontSize: 11, color: INK, opacity: 0.5, alignment: 'center', margin: [14, 10, 14, 10] }
+                    ], marginBottom: 28 },
+                    // Sections
+                    { text: 'ИНТЕРЛЮДИЯ', fontSize: 10, bold: true, color: INK, characterSpacing: 1.5, marginBottom: 8 },
+                    box(secInterlude || '—', est(secInterlude)),
+                    { text: 'СОДЕРЖАНИЕ', fontSize: 10, bold: true, color: INK, characterSpacing: 1.5, marginBottom: 8 },
+                    box(secContent || '—', est(secContent)),
+                    { text: 'ВЫВОД', fontSize: 10, bold: true, color: INK, characterSpacing: 1.5, marginBottom: 8 },
+                    box(secConclusion || '—', est(secConclusion)),
+                    // Footer
+                    { columns: [
+                        { text: `Модели: ${(modelsUsed||[]).length ? modelsUsed.join(', ') : 'Тара'}`, fontSize: 11, bold: true, color: INK },
+                        { text: `${msgCount || 0} сообщений`, fontSize: 11, bold: true, color: INK, alignment: 'right' }
+                    ], marginTop: 20 }
+                ],
+                defaultStyle: { font: 'Roboto' }
+            }).download(`Panacea (протокол сеанса от ${sessionDate}).pdf`);
+            resolve();
+        });
+    });
+}
+// ─────────────────────────────────────────────────────────
+
+init();
+</script>
 </body>
 </html>
