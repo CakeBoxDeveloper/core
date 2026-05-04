@@ -1295,7 +1295,7 @@ function continueSession(s) {
     }));
     if (s.survey) localStorage.setItem(KEY_SURVEY, JSON.stringify(s.survey));
     currentSessionId = s.id;
-    goTo('screen2');
+    flipToChat(() => switchScreen('screen2'));
 }
 
 function showDeleteSessionModal(s, highlightId) {
@@ -1406,6 +1406,25 @@ function doFlip(toBack) {
         inner.classList.remove('flipped');
     }
     sessionStorage.setItem('soma_flip', s1bFlipped ? '1' : '0');
+}
+
+// Flip card to chat: rotate to 90deg, switch screen, rotate back to 0deg
+function flipToChat(switchFn) {
+    const flip = document.getElementById('s1bFlip');
+    // Phase 1: rotate to 90deg (half flip)
+    flip.style.transition = 'transform 0.3s cubic-bezier(0.4,0,1,1)';
+    flip.style.transform = 'rotateY(90deg)';
+    setTimeout(() => {
+        // Switch screen at the midpoint (card is edge-on, invisible)
+        switchFn();
+        // Phase 2: rotate from -90deg to 0deg on new screen
+        flip.style.transition = 'none';
+        flip.style.transform = 'rotateY(-90deg)';
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            flip.style.transition = 'transform 0.3s cubic-bezier(0,0,0.6,1)';
+            flip.style.transform = 'rotateY(0deg)';
+        }));
+    }, 300);
 }
 
 // Click on icon
@@ -1602,9 +1621,8 @@ function openSupportChat() {
         area._updateMask = updateSupportMask;
         requestAnimationFrame(updateSupportMask);
     }
-    // Open like any other chat — with fade transition
-    goTo('screenSupport');
-    setTimeout(() => document.getElementById('supportInput').focus(), 550);
+    // Open without fade — flip animation
+    flipToChat(() => switchScreen('screenSupport'));
 }
 
 function closeSupportChat() {
