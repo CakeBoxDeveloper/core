@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>АРХИВ</title>
-    <link rel="icon" type="image/svg+xml" href="https://raw.githubusercontent.com/CakeBoxDeveloper/core/ca9abb7865ad344348408ebd61fa987661313d27/folder-type.svg">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <style>
         @font-face { font-family: 'VCRFont'; src: url('https://raw.githubusercontent.com/CakeBoxDeveloper/core/main/VCR%20OSD%20Mono%20Cyr.ttf') format('truetype'); }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -95,6 +95,70 @@
         #article-fs-body::-webkit-scrollbar-thumb { background: white; border-radius: 0; }
         #article-fs-body::-webkit-scrollbar-button { display: none; }
 
+        /* Donate modal */
+        #donate-modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75); z-index: 99999;
+            justify-content: center; align-items: center;
+        }
+        #donate-modal-overlay.open { display: flex; }
+        #donate-modal {
+            width: 320px; border: 3px solid white; background: #000;
+            font-family: VCRFont, sans-serif; display: flex; flex-direction: column;
+        }
+        #donate-modal-header {
+            background: white; display: flex; justify-content: space-between;
+            align-items: center; padding: 3px 8px; flex-shrink: 0;
+        }
+        #donate-modal-header span { font-family: VCRFont, sans-serif; font-size: 13px; color: #000; text-transform: uppercase; }
+        #donate-modal-close { cursor: pointer; flex-shrink: 0; }
+        #donate-modal-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+
+        /* Custom dropdown */
+        #donate-dropdown { position: relative; width: 100%; user-select: none; }
+        #donate-dropdown-selected {
+            border: 3px solid white; color: white; background: #000;
+            font-family: VCRFont, sans-serif; font-size: 13px; padding: 4px 8px;
+            cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            text-transform: uppercase;
+        }
+        #donate-dropdown-selected::after { content: '▼'; font-size: 10px; margin-left: 8px; }
+        #donate-dropdown.open #donate-dropdown-selected::after { content: '▲'; }
+        #donate-dropdown-list {
+            display: none; position: absolute; top: 100%; left: -3px; right: -3px;
+            border: 3px solid white; border-top: none;
+            background: #000; z-index: 10;
+        }
+        #donate-dropdown.open #donate-dropdown-list { display: block; }
+        .donate-option {
+            font-family: VCRFont, sans-serif; font-size: 13px; color: white;
+            padding: 5px 8px; cursor: pointer; text-transform: uppercase;
+        }
+        .donate-option:hover { background: rgba(255,255,255,0.15); }
+        .donate-option.active { background: white; color: #000; }
+
+        #donate-qr-wrap {
+            display: flex; justify-content: center; align-items: center;
+            min-height: 160px;
+        }
+        #donate-qr-wrap canvas, #donate-qr-wrap img { border: 3px solid white; display: block; }
+        #donate-addr-row {
+            display: flex; border: 3px solid white; cursor: pointer;
+        }
+        #donate-addr-row:hover { opacity: 0.8; }
+        #donate-addr-text {
+            flex: 1; background: transparent; border: none; outline: none;
+            color: white; font-family: VCRFont, sans-serif; font-size: 11px;
+            padding: 4px 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            cursor: pointer; pointer-events: none;
+        }
+        #donate-copied-msg {
+            text-align: center; font-size: 11px; color: white; opacity: 0;
+            transition: opacity 0.3s; height: 14px;
+        }
+        #donate-copied-msg.show { opacity: 1; }
+        @media (max-width: 768px) { #donate-modal { width: 90vw; } }
+
         @media (max-width: 768px) {
             .outer-block { width: 90vw; }
             .inner-block-1 { width: 20vw; height: 12vh; }
@@ -119,7 +183,7 @@
 </head>
 <body>
 
-    <canvas id="tv-noise" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:99998;opacity:1;"></canvas>
+    <canvas id="tv-noise" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:99998;opacity:1;pointer-events:none;"></canvas>
 
     <div class="video-container" id="preloader">
         <video id="intro-video" autoplay muted playsinline>
@@ -141,6 +205,7 @@
         <div id="settings-bar" style="width:35vw;margin:2vh auto 0;background:white;border:3px solid white;display:flex;align-items:center;justify-content:space-between;padding:3px 8px;box-sizing:border-box;flex-shrink:0;">
             <span id="settings-label" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;">НАСТРОЙКИ</span>
             <span style="display:flex;gap:12px;align-items:center;">
+                <span id="donate-btn" onclick="openDonate()" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;cursor:pointer;">[ ДОНАТ ]</span>
                 <span id="theme-toggle" onclick="toggleTheme()" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;cursor:pointer;">[ НОЧЬ ]</span>
                 <span id="compact-toggle" onclick="toggleCompact()" style="font-family:VCRFont,sans-serif;font-size:15px;color:#000;cursor:pointer;">[ СВЕРНУТЬ ]</span>
             </span>
@@ -241,6 +306,11 @@
                         <div class="article-body">Если, прогуливаясь тёплым весенним деньком по городу, свернуть в частный сектор — можно увидеть, как природа пробивается сквозь асфальт. Трава в трещинах, деревья, ломающие бордюры. Природа не делает ошибок — она просто продолжает делать своё дело.</div>
                     </div>
 
+                    <div class="article" data-telegraph="Adresnaya-stroka-05-16">
+                        <div class="article-header"><span class="article-title">Адресная строка</span><span class="article-date">16.05.2025</span></div>
+                        <div class="article-body">О чем вы думаете глядя на адресную строку, когда заполняете очередной бланк или договор? Рука на автомате вписывает: квартира, дом, улица, город, регион, а иногда и страна...</div>
+                    </div>
+
                     <div class="article" data-telegraph="S-golovoj-ne-druzhish-05-30">
                         <div class="article-header"><span class="article-title">С головой не дружишь?</span><span class="article-date">30.05.2025</span></div>
                         <div class="article-body">Каждый из тех, кто читает этот текст, слышал фразу «Ты что, с головой не дружишь?». Обычно её говорят в момент, когда человек делает что-то нестандартное. Но что если именно те, кто «не дружит с головой» — то есть не следует общепринятой логике — видят мир точнее остальных?</div>
@@ -308,6 +378,29 @@
             if (backBtn) backBtn.style.color = titleColor;
             const fsTitle = document.getElementById('article-fs-title');
             if (fsTitle) fsTitle.style.color = titleColor;
+
+            // Donate modal theme (only if already rendered)
+            const donateModal = document.getElementById('donate-modal');
+            if (donateModal) {
+                const bg = dark ? '#000000' : '#0000cc';
+                const headerFg = dark ? '#000' : '#0000cc';
+                donateModal.style.background = bg;
+                donateModal.style.borderColor = 'white';
+                document.getElementById('donate-modal-header').style.background = 'white';
+                document.getElementById('donate-modal-header').querySelectorAll('span').forEach(s => s.style.color = headerFg);
+                document.getElementById('donate-modal-body').style.background = bg;
+                const ddSel = document.getElementById('donate-dropdown-selected');
+                if (ddSel) { ddSel.style.background = bg; ddSel.style.borderColor = 'white'; ddSel.style.color = 'white'; }
+                const ddList = document.getElementById('donate-dropdown-list');
+                if (ddList) { ddList.style.background = bg; ddList.style.borderColor = 'white'; }
+                document.querySelectorAll('.donate-option').forEach(o => {
+                    if (o.classList.contains('active')) { o.style.background = 'white'; o.style.color = bg; }
+                    else { o.style.background = bg; o.style.color = 'white'; }
+                });
+                document.getElementById('donate-addr-row').style.borderColor = 'white';
+                document.getElementById('donate-addr-text').style.color = 'white';
+                document.getElementById('donate-copied-msg').style.color = 'white';
+            }
         }
 
         function toggleTheme() {
@@ -479,7 +572,7 @@
                     fsBody.innerHTML = '';
                     const lc = document.createElement('canvas');
                     lc.id = 'loading-noise';
-                    lc.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;display:block;z-index:20;';
+                    lc.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;display:block;z-index:20;pointer-events:none;';
                     articleFS.appendChild(lc);
                     const lctx = lc.getContext('2d');
                     let lAnim;
@@ -630,6 +723,131 @@
             }
         }
         document.getElementById('compact-track-name').style.display = 'none';
+    </script>
+
+    <!-- Donate modal -->
+    <div id="donate-modal-overlay" onclick="if(event.target===this)closeDonate()">
+        <div id="donate-modal">
+            <div id="donate-modal-header">
+                <span>ДОНАТ</span>
+                <span id="donate-modal-close" onclick="closeDonate()">[ ЗАКРЫТЬ ]</span>
+            </div>
+            <div id="donate-modal-body">
+                <div id="donate-dropdown">
+                    <div id="donate-dropdown-selected" onclick="toggleDonateDropdown()">BTC</div>
+                    <div id="donate-dropdown-list">
+                        <div class="donate-option active" data-addr="bc1qdcwwyytcjcs0r00q02lkamuasd89p6qwy3yesy" onclick="selectDonateOption(this)">BTC</div>
+                        <div class="donate-option" data-addr="0x9B1e48150Fc6F32C7a4F0C22bCabAfF6685F8a60" onclick="selectDonateOption(this)">ETH / USDT ERC-20</div>
+                        <div class="donate-option" data-addr="THh2yxKkyvf1uKkJ26W9N2CzA3TpjxLqHJ" onclick="selectDonateOption(this)">USDT TRC-20</div>
+                    </div>
+                </div>
+                <div id="donate-qr-wrap"></div>
+                <div id="donate-addr-row" onclick="copyDonateAddr()">
+                    <input id="donate-addr-text" type="text" readonly>
+                </div>
+                <div id="donate-copied-msg">АДРЕС СКОПИРОВАН</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        function toggleDonateDropdown() {
+            document.getElementById('donate-dropdown').classList.toggle('open');
+        }
+
+        function selectDonateOption(el) {
+            // Mark active
+            document.querySelectorAll('.donate-option').forEach(o => o.classList.remove('active'));
+            el.classList.add('active');
+            // Update selected label
+            document.getElementById('donate-dropdown-selected').childNodes[0].textContent = el.textContent;
+            // Close dropdown
+            document.getElementById('donate-dropdown').classList.remove('open');
+            // Render QR + address
+            renderDonateAddr(el.dataset.addr);
+        }
+
+        function renderDonateAddr(addr) {
+            document.getElementById('donate-addr-text').value = addr;
+            document.getElementById('donate-addr-row').style.display = 'flex';
+            document.getElementById('donate-copied-msg').classList.remove('show');
+
+            const dark    = isDark;
+            const qrDark  = dark ? '#ffffff' : '#0000cc';
+            const qrLight = dark ? '#000000' : '#ffffff';
+
+            const qrWrap = document.getElementById('donate-qr-wrap');
+            qrWrap.innerHTML = '';
+            new QRCode(qrWrap, {
+                text: addr,
+                width: 160, height: 160,
+                colorDark: qrDark, colorLight: qrLight,
+                correctLevel: QRCode.CorrectLevel.M
+            });
+        }
+
+        function openDonate() {
+            const dark = isDark;
+            const bg = dark ? '#000000' : '#0000cc';
+            const border = 'white';
+            const headerFg = dark ? '#000' : '#0000cc';
+            const textFg = 'white';
+
+            const modal = document.getElementById('donate-modal');
+            modal.style.background = bg;
+            modal.style.borderColor = border;
+
+            const header = document.getElementById('donate-modal-header');
+            header.style.background = 'white';
+            header.querySelectorAll('span').forEach(s => s.style.color = headerFg);
+
+            document.getElementById('donate-modal-body').style.background = bg;
+
+            // Style custom dropdown
+            document.getElementById('donate-dropdown-selected').style.background = bg;
+            document.getElementById('donate-dropdown-selected').style.borderColor = border;
+            document.getElementById('donate-dropdown-selected').style.color = textFg;
+            document.getElementById('donate-dropdown-list').style.background = bg;
+            document.getElementById('donate-dropdown-list').style.borderColor = border;
+            document.querySelectorAll('.donate-option').forEach(o => {
+                if (!o.classList.contains('active')) {
+                    o.style.background = bg;
+                    o.style.color = textFg;
+                } else {
+                    o.style.background = textFg;
+                    o.style.color = bg;
+                }
+            });
+
+            document.getElementById('donate-addr-row').style.borderColor = border;
+            document.getElementById('donate-addr-text').style.color = textFg;
+            document.getElementById('donate-copied-msg').style.color = textFg;
+
+            // Render first option by default
+            const firstOption = document.querySelector('.donate-option.active');
+            if (firstOption) renderDonateAddr(firstOption.dataset.addr);
+
+            document.getElementById('donate-modal-overlay').classList.add('open');
+        }
+
+        function closeDonate() {
+            document.getElementById('donate-dropdown').classList.remove('open');
+            document.getElementById('donate-modal-overlay').classList.remove('open');
+        }
+
+        function copyDonateAddr() {
+            const addr = document.getElementById('donate-addr-text').value;
+            if (!addr) return;
+            navigator.clipboard.writeText(addr).then(() => {
+                const msg = document.getElementById('donate-copied-msg');
+                const row = document.getElementById('donate-addr-row');
+                msg.classList.add('show');
+                row.style.opacity = '0.6';
+                setTimeout(() => { msg.classList.remove('show'); row.style.opacity = '1'; }, 2000);
+            });
+        }
     </script>
 
 </body>
